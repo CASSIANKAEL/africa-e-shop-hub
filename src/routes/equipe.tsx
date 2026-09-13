@@ -97,13 +97,8 @@ function TeamPage() {
     setOpen(false);
   }
 
-  return (
-    <AppShell>
-      <PageHeader
-        title={t("team")}
-        description={t("teamDescription", { store: store?.name ?? "" })}
-      >
-        <Dialog open={open} onOpenChange={setOpen}>
+  const addDialog = (
+    <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2">
               <UserPlus className="h-4 w-4" /> {t("addMember")}
