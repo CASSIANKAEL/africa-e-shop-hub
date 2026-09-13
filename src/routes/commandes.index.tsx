@@ -17,6 +17,7 @@ import {
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { CourierAssign } from "@/components/commerce/courier-assign";
+import { OrderStats } from "@/components/commerce/order-stats";
 import { isFollowUpDue, useActiveStoreId, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n";
