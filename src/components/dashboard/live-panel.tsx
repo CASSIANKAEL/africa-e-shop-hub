@@ -17,29 +17,36 @@ import {
   activeVisitors,
   countBySource,
   countByType,
-  liveEventLabels,
   perMinuteSeries,
   useRealtime,
 } from "@/services/realtime";
 import type { Currency } from "@/types";
 import { useLanguage } from "@/lib/i18n";
 
-function timeAgo(ms: number) {
-  const s = Math.max(0, Math.round(ms / 1000));
-  if (s < 60) return `il y a ${s} s`;
-  return `il y a ${Math.round(s / 60)} min`;
-}
+const liveEventKeys: Record<string, string> = {
+  page_view: "eventPageView",
+  view_content: "eventViewProduct",
+  form_view: "eventFormView",
+  add_to_cart: "eventAddToCart",
+  initiate_checkout: "eventInitiateCheckout",
+  purchase: "eventPurchase",
+};
 
 export function LivePanel({
   storeId,
   currency = "XOF",
-  title = "Temps réel",
+  title,
 }: {
   storeId?: string;
   currency?: Currency;
   title?: string;
 }) {
   const { t } = useLanguage();
+  const timeAgo = (ms: number) => {
+    const s = Math.max(0, Math.round(ms / 1000));
+    return s < 60 ? t("secondsAgo", { n: s }) : t("minutesAgo", { n: Math.round(s / 60) });
+  };
+  const eventLabel = (type: string) => t(liveEventKeys[type] ?? type);
   const { events, now } = useRealtime(storeId);
   const series = perMinuteSeries(events, now);
   const active = activeVisitors(events, now);
@@ -58,7 +65,7 @@ export function LivePanel({
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-70" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-success" />
           </span>
-          {title}
+          {title ?? t("live")}
         </CardTitle>
         <Badge variant="secondary" className="gap-1">
           <Radio className="h-3 w-3" /> {t("last30Minutes")}
@@ -72,8 +79,10 @@ export function LivePanel({
               {formatNumber(active)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {formatNumber(events.length)} évènements captés · {formatNumber(purchases.length)}{" "}
-              commandes
+              {t("eventsCaptured", {
+                events: formatNumber(events.length),
+                purchases: formatNumber(purchases.length),
+              })}
             </p>
             <p className="mt-3 text-xs text-muted-foreground">{t("liveSales")}</p>
             <p className="font-display text-lg font-semibold">
@@ -98,7 +107,7 @@ export function LivePanel({
                 <XAxis dataKey="day" tickLine={false} axisLine={false} fontSize={11} interval={5} />
                 <YAxis tickLine={false} axisLine={false} width={28} fontSize={11} />
                 <Tooltip
-                  formatter={(v: number) => [formatNumber(v), "Évènements"]}
+                  formatter={(v: number) => [formatNumber(v), t("events")]}
                   contentStyle={{
                     borderRadius: 12,
                     border: "1px solid var(--color-border)",
@@ -125,7 +134,7 @@ export function LivePanel({
             {byType.map((t) => (
               <div key={t.type}>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{liveEventLabels[t.type]}</span>
+                  <span className="text-muted-foreground">{eventLabel(t.type)}</span>
                   <span className="font-medium">{formatNumber(t.count)}</span>
                 </div>
                 <Progress value={(t.count / maxType) * 100} className="mt-1.5" />
@@ -173,11 +182,11 @@ export function LivePanel({
                       {timeAgo(now - e.at)}
                     </TableCell>
                     <TableCell className="whitespace-nowrap font-medium">
-                      {liveEventLabels[e.type]}
+                      {eventLabel(e.type)}
                     </TableCell>
                      <TableCell className="hidden text-muted-foreground sm:table-cell">{e.source}</TableCell>
                      <TableCell className="hidden text-muted-foreground md:table-cell">
-                      {e.city} · {e.device === "mobile" ? "Mobile" : "Ordinateur"}
+                      {e.city} · {e.device === "mobile" ? t("deviceMobile") : t("deviceDesktop")}
                     </TableCell>
                      <TableCell className="hidden text-muted-foreground lg:table-cell">{e.page}</TableCell>
                      <TableCell className="hidden lg:table-cell">

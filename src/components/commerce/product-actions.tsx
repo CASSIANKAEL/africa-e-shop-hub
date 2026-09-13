@@ -27,10 +27,12 @@ import {
 } from "@/components/ui/select";
 import { commerceStore, useStores } from "@/services/commerce.store";
 import type { Product } from "@/types";
+import { useLanguage } from "@/lib/i18n";
 
 type Mode = "duplicate" | "move" | null;
 
 export function ProductActions({ product }: { product: Product }) {
+  const { t } = useLanguage();
   const stores = useStores();
   const others = stores.filter((s) => s.id !== product.storeId);
   const [mode, setMode] = useState<Mode>(null);
@@ -42,11 +44,11 @@ export function ProductActions({ product }: { product: Product }) {
 
   const confirmDuplicate = () => {
     if (targets.length === 0) {
-      toast.error("Choisissez au moins une boutique de destination.");
+      toast.error(t("chooseStore"));
       return;
     }
     commerceStore.duplicateProduct(product.id, targets);
-    toast.success(`« ${product.name} » dupliqué dans ${targets.length} boutique(s).`);
+    toast.success(t("productDuplicatedTo", { name: product.name, n: targets.length }));
     setTargets([]);
     setMode(null);
   };
@@ -54,8 +56,8 @@ export function ProductActions({ product }: { product: Product }) {
   const confirmMove = () => {
     if (!moveTarget) return;
     commerceStore.moveProduct(product.id, moveTarget);
-    const name = stores.find((s) => s.id === moveTarget)?.name ?? "la boutique";
-    toast.success(`« ${product.name} » transféré vers ${name}.`);
+    const name = stores.find((s) => s.id === moveTarget)?.name ?? t("store");
+    toast.success(t("productMoved", { name: product.name, store: name }));
     setMode(null);
   };
 
@@ -63,7 +65,7 @@ export function ProductActions({ product }: { product: Product }) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label={`Actions pour ${product.name}`}>
+          <Button variant="ghost" size="icon" aria-label={t("actionsFor", { name: product.name })}>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -71,29 +73,29 @@ export function ProductActions({ product }: { product: Product }) {
           <DropdownMenuItem
             onSelect={() => {
               commerceStore.duplicateProduct(product.id, [product.storeId]);
-              toast.success("Produit dupliqué dans cette boutique.");
+              toast.success(t("productDuplicated"));
             }}
           >
             <Copy className="mr-2 h-4 w-4" />
-            Dupliquer ici
+            {t("duplicateHere")}
           </DropdownMenuItem>
           <DropdownMenuItem disabled={others.length === 0} onSelect={() => setMode("duplicate")}>
             <Copy className="mr-2 h-4 w-4" />
-            Dupliquer vers d'autres boutiques
+            {t("duplicateTo")}
           </DropdownMenuItem>
           <DropdownMenuItem disabled={others.length === 0} onSelect={() => setMode("move")}>
             <MoveRight className="mr-2 h-4 w-4" />
-            Transférer vers une boutique
+            {t("moveTo")}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
             onSelect={() => {
               commerceStore.deleteProduct(product.id);
-              toast.success("Produit supprimé.");
+              toast.success(t("productDeleted"));
             }}
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Supprimer
+            {t("deleteProduct")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -102,12 +104,12 @@ export function ProductActions({ product }: { product: Product }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {mode === "move" ? "Transférer le produit" : "Dupliquer le produit"}
+              {mode === "move" ? t("moveProductTitle") : t("duplicateProductTitle")}
             </DialogTitle>
             <DialogDescription>
               {mode === "move"
-                ? `« ${product.name} » quittera cette boutique pour la boutique choisie.`
-                : `Une copie de « ${product.name} » sera créée dans chaque boutique cochée.`}
+                ? t("moveProductHint")
+                : t("duplicateProductHint", { name: product.name })}
             </DialogDescription>
           </DialogHeader>
 
@@ -124,8 +126,8 @@ export function ProductActions({ product }: { product: Product }) {
 
           {mode === "move" && (
             <Select value={moveTarget} onValueChange={setMoveTarget}>
-              <SelectTrigger aria-label="Boutique de destination">
-                <SelectValue placeholder="Boutique de destination" />
+              <SelectTrigger aria-label={t("destinationStore")}>
+                <SelectValue placeholder={t("destinationStore")} />
               </SelectTrigger>
               <SelectContent>
                 {others.map((s) => (
@@ -139,9 +141,9 @@ export function ProductActions({ product }: { product: Product }) {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setMode(null)}>
-              Annuler
+              {t("cancel")}
             </Button>
-            <Button onClick={mode === "move" ? confirmMove : confirmDuplicate}>Confirmer</Button>
+            <Button onClick={mode === "move" ? confirmMove : confirmDuplicate}>{t("confirm")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

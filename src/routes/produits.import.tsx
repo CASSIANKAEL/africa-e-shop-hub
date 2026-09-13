@@ -6,20 +6,10 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { commerceStore, useStores } from "@/services/commerce.store";
-import { formatMoney } from "@/lib/format";
+import { commerceStore, useActiveStore, useActiveStoreId } from "@/services/commerce.store";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/produits/import")({
   head: () => ({
@@ -39,7 +29,8 @@ export const Route = createFileRoute("/produits/import")({
   component: ImportProductsPage,
 });
 
-const TEMPLATE = "nom,reference,categorie,prix,stock,description\nEnsemble pagne wax,WAX-050,Mode,24500,30,Tissu wax premium\nBeurre de karité 500g,KAR-120,Beauté,6500,80,100% naturel";
+const TEMPLATE =
+  "nom,reference,categorie,prix,stock,description\nEnsemble pagne wax,WAX-050,Mode,24500,30,Tissu wax premium\nBeurre de karité 500g,KAR-120,Beauté,6500,80,100% naturel";
 
 interface Row {
   name: string;
@@ -101,7 +92,10 @@ function parseCsv(text: string): Row[] {
         name: hasHeader ? get(iName) : (c[0] ?? ""),
         sku: hasHeader ? get(iSku) : (c[1] ?? ""),
         category: (hasHeader ? get(iCat) : c[2]) || "Autre",
-        price: Number((hasHeader ? get(iPrice) : c[3])?.replace(/[^\d.,-]/g, "").replace(",", ".")) || 0,
+        price:
+          Number(
+            (hasHeader ? get(iPrice) : c[3])?.replace(/[^\d.,-]/g, "").replace(",", "."),
+          ) || 0,
         stock: Number((hasHeader ? get(iStock) : c[4])?.replace(/[^\d-]/g, "")) || 0,
         description: stripHtml(hasHeader ? get(iDesc) : (c[5] ?? "")),
       };
@@ -110,18 +104,14 @@ function parseCsv(text: string): Row[] {
 }
 
 function ImportProductsPage() {
-  const stores = useStores();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+  const activeStoreId = useActiveStoreId();
+  const activeStore = useActiveStore();
   const fileRef = useRef<HTMLInputElement>(null);
   const [raw, setRaw] = useState("");
-  const [storeIds, setStoreIds] = useState<string[]>(stores[0] ? [stores[0].id] : []);
 
   const rows = parseCsv(raw);
-  const allSelected = storeIds.length === stores.length && stores.length > 0;
-
-  function toggleStore(id: string, checked: boolean) {
-    setStoreIds((prev) => (checked ? [...new Set([...prev, id])] : prev.filter((s) => s !== id)));
-  }
 
   async function handleFile(files: FileList | null) {
     const file = files?.[0];
@@ -140,157 +130,74 @@ function ImportProductsPage() {
   }
 
   function handleImport() {
-    if (rows.length === 0) {
-      toast.error("Aucune ligne valide à importer");
-      return;
-    }
-    if (storeIds.length === 0) {
-      toast.error("Choisissez au moins une boutique");
-      return;
-    }
+    if (rows.length === 0 || !activeStoreId) return;
     rows.forEach((r) => {
-      storeIds.forEach((storeId) => {
-        commerceStore.addProduct({
-          name: r.name,
-          sku: r.sku || `REF-${Math.floor(Math.random() * 9000 + 1000)}`,
-          price: r.price,
-          stock: r.stock,
-          trackStock: true,
-          storeId,
-          category: r.category,
-          ...(r.description ? { description: r.description } : {}),
-        });
+      commerceStore.addProduct({
+        name: r.name,
+        sku: r.sku || `REF-${Math.floor(Math.random() * 9000 + 1000)}`,
+        price: r.price,
+        stock: r.stock,
+        trackStock: true,
+        storeId: activeStoreId,
+        category: r.category,
+        ...(r.description ? { description: r.description } : {}),
       });
     });
-    toast.success(`${rows.length} produit(s) importé(s)`);
+    toast.success(t("importedCount", { n: rows.length }));
+    setRaw("");
     void navigate({ to: "/produits" });
   }
 
   return (
     <AppShell>
       <PageHeader
-        title="Importer des produits par CSV"
-        description="Chargez un fichier CSV pour créer plusieurs produits d'un coup."
+        title={t("importTitle")}
+        description={t("importDescription")}
         action={
           <Button variant="outline" asChild>
             <Link to="/produits">
-              <ArrowLeft className="mr-1 h-4 w-4" /> Retour au catalogue
+              <ArrowLeft className="mr-1 h-4 w-4" /> {t("backToCatalog")}
             </Link>
           </Button>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="grid gap-6 lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Fichier CSV</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <p className="text-sm text-muted-foreground">
-                Colonnes attendues : nom, reference, categorie, prix, stock, description.
-              </p>
-              <input
-                ref={fileRef}
-                type="file"
-                accept=".csv,text/csv"
-                className="hidden"
-                onChange={(e) => void handleFile(e.target.files)}
-              />
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" onClick={() => fileRef.current?.click()}>
-                  <FileUp className="mr-1 h-4 w-4" /> Choisir un fichier CSV
-                </Button>
-                <Button type="button" variant="outline" onClick={downloadTemplate}>
-                  <Download className="mr-1 h-4 w-4" /> Télécharger le modèle
-                </Button>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="csv-raw">Ou collez vos lignes ici</Label>
-                <Textarea
-                  id="csv-raw"
-                  value={raw}
-                  onChange={(e) => setRaw(e.target.value)}
-                  rows={8}
-                  placeholder={TEMPLATE}
-                  className="font-mono text-xs"
-                />
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader className="flex-row items-center justify-between space-y-0">
-              <CardTitle>Aperçu ({rows.length})</CardTitle>
-              <Button onClick={handleImport} disabled={rows.length === 0} size="sm">
-                Enregistrer
-              </Button>
-            </CardHeader>
-            <CardContent className="overflow-x-auto p-0">
-              {rows.length === 0 ? (
-                <p className="p-6 text-sm text-muted-foreground">
-                  Aucune ligne détectée pour l'instant.
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produit</TableHead>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Catégorie</TableHead>
-                      <TableHead>Prix</TableHead>
-                      <TableHead>Stock</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rows.map((r, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">{r.name}</TableCell>
-                        <TableCell className="text-muted-foreground">{r.sku || "—"}</TableCell>
-                        <TableCell className="text-muted-foreground">{r.category}</TableCell>
-                        <TableCell>{formatMoney(r.price)}</TableCell>
-                        <TableCell>{r.stock}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+      <Card>
+        <CardContent className="grid gap-4 p-4 sm:p-6">
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => void handleFile(e.target.files)}
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={() => fileRef.current?.click()}>
+              <FileUp className="mr-1 h-4 w-4" /> {t("chooseCsv")}
+            </Button>
+            <Button type="button" variant="outline" onClick={downloadTemplate}>
+              <Download className="mr-1 h-4 w-4" /> {t("downloadTemplate")}
+            </Button>
+          </div>
 
-        <div className="grid gap-6 self-start">
-          <Card>
-            <CardHeader className="flex-row items-center justify-between space-y-0">
-              <CardTitle>Boutiques</CardTitle>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setStoreIds(allSelected ? [] : stores.map((s) => s.id))}
-              >
-                {allSelected ? "Tout désélectionner" : "Toutes"}
-              </Button>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              {stores.map((s) => (
-                <label key={s.id} className="flex items-center gap-2 text-sm">
-                  <Checkbox
-                    checked={storeIds.includes(s.id)}
-                    onCheckedChange={(c) => toggleStore(s.id, c === true)}
-                  />
-                  {s.name}
-                </label>
-              ))}
-            </CardContent>
-          </Card>
-          <Button onClick={handleImport} disabled={rows.length === 0} className="w-full" size="lg">
-            Enregistrer {rows.length > 0 ? `${rows.length} produit(s)` : "les produits"}
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Les produits sont enregistrés directement dans la ou les boutiques cochées.
+          <Textarea
+            aria-label={t("pasteCsv")}
+            value={raw}
+            onChange={(e) => setRaw(e.target.value)}
+            rows={10}
+            placeholder={t("pasteCsv")}
+            className="font-mono text-xs"
+          />
+
+          <p className="text-sm text-muted-foreground">
+            {t("importInto", { store: activeStore?.name ?? "" })}
           </p>
-        </div>
-      </div>
+
+          <Button onClick={handleImport} disabled={rows.length === 0} size="lg" className="w-full">
+            {rows.length > 0 ? `${t("save")} (${rows.length})` : t("noRows")}
+          </Button>
+        </CardContent>
+      </Card>
     </AppShell>
   );
 }

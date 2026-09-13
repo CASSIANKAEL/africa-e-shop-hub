@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { paymentLabels } from "@/components/commerce/order-status-badge";
+import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { commerceService } from "@/services/commerce.service";
 import { commerceStore, useOrder, useStoreName } from "@/services/commerce.store";
 import { toast } from "sonner";
 import { formatDate, formatMoney } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/commandes/$orderId")({
   loader: ({ params }) => {
@@ -45,12 +46,14 @@ function OrderDetailPage() {
   const { order: loaded } = Route.useLoaderData();
   const order = useOrder(loaded.id) ?? loaded;
   const storeName = useStoreName(order.storeId);
+  const { t } = useLanguage();
+  const { payments: paymentLabels } = useOrderLabels();
 
   return (
     <AppShell>
       <Button variant="ghost" size="sm" className="mb-3" asChild>
         <Link to="/commandes">
-          <ArrowLeft className="mr-1 h-4 w-4" /> Retour aux commandes
+          <ArrowLeft className="mr-1 h-4 w-4" /> {t("backToOrders")}
         </Link>
       </Button>
 
@@ -61,7 +64,7 @@ function OrderDetailPage() {
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" asChild>
               <a href={`tel:${order.customer.phone.replace(/\s/g, "")}`}>
-                <PhoneCall className="mr-1 h-4 w-4" /> Appeler le client
+                <PhoneCall className="mr-1 h-4 w-4" /> {t("callCustomer")}
               </a>
             </Button>
             <OrderStatusSelect
@@ -75,18 +78,18 @@ function OrderDetailPage() {
               className="text-destructive"
               onClick={() => {
                 commerceStore.updateOrderStatus(order.id, "cancelled");
-                toast.success("Commande annulée");
+                toast.success(t("orderCancelled"));
               }}
             >
-              <XCircle className="mr-1 h-4 w-4" /> Annuler
+              <XCircle className="mr-1 h-4 w-4" /> {t("cancel")}
             </Button>
             <Button
               onClick={() => {
                 commerceStore.updateOrderStatus(order.id, "confirmed");
-                toast.success("Commande confirmée");
+                toast.success(t("orderConfirmed"));
               }}
             >
-              <CheckCircle2 className="mr-1 h-4 w-4" /> Confirmer
+              <CheckCircle2 className="mr-1 h-4 w-4" /> {t("confirm")}
             </Button>
           </div>
         }
@@ -95,7 +98,7 @@ function OrderDetailPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle className="text-base">Articles</CardTitle>
+            <CardTitle className="text-base">{t("items")}</CardTitle>
             <OrderStatusSelect
               orderId={order.id}
               status={order.status}
@@ -120,14 +123,14 @@ function OrderDetailPage() {
             </ul>
             <Separator className="my-4" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Total à encaisser</span>
+              <span className="text-sm text-muted-foreground">{t("totalToCollect")}</span>
               <span className="font-display text-xl font-semibold">
                 {formatMoney(order.total, order.currency)}
               </span>
             </div>
             {order.note && (
               <p className="mt-4 rounded-xl bg-muted p-3 text-sm text-muted-foreground">
-                Note : {order.note}
+                {t("note")} : {order.note}
               </p>
             )}
           </CardContent>
@@ -135,12 +138,12 @@ function OrderDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Client & livraison</CardTitle>
+            <CardTitle className="text-base">{t("customerInfo")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <Info label="Nom" value={order.customer.fullName} />
+            <Info label={t("name")} value={order.customer.fullName} />
             <div className="flex items-center justify-between gap-3">
-              <span className="text-muted-foreground">Téléphone</span>
+              <span className="text-muted-foreground">{t("phone")}</span>
               <a
                 href={`tel:${order.customer.phone.replace(/\s/g, "")}`}
                 className="font-medium text-primary"
@@ -148,18 +151,18 @@ function OrderDetailPage() {
                 {order.customer.phone}
               </a>
             </div>
-            <Info label="Ville" value={order.customer.city} />
-            <Info label="Paiement" value={paymentLabels[order.paymentMethod]} />
-            <Info label="Devise" value={order.currency} />
+            <Info label={t("city")} value={order.customer.city} />
+            <Info label={t("payment")} value={paymentLabels[order.paymentMethod]} />
+            <Info label={t("currency")} value={order.currency} />
             {order.followUpAt && (
-              <Info label="Rappel prévu" value={formatDate(order.followUpAt)} />
+              <Info label={t("scheduledReminder")} value={formatDate(order.followUpAt)} />
             )}
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle className="text-base">Commentaires</CardTitle>
+            <CardTitle className="text-base">{t("comments")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {order.comments?.length ? (
@@ -169,7 +172,7 @@ function OrderDetailPage() {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">Aucun commentaire pour le moment.</p>
+              <p className="text-sm text-muted-foreground">{t("noComments")}</p>
             )}
             <CommentForm orderId={order.id} />
           </CardContent>
@@ -186,6 +189,7 @@ function CommentItem({
   orderId: string;
   comment: { id: string; text: string; createdAt: string };
 }) {
+  const { t } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(comment.text);
 
@@ -201,10 +205,10 @@ function CommentItem({
               onClick={() => {
                 commerceStore.updateComment(orderId, comment.id, draft);
                 setEditing(false);
-                toast.success("Commentaire modifié");
+                toast.success(t("commentUpdated"));
               }}
             >
-              Enregistrer
+              {t("save")}
             </Button>
             <Button
               size="sm"
@@ -214,7 +218,7 @@ function CommentItem({
                 setEditing(false);
               }}
             >
-              Annuler
+              {t("cancel")}
             </Button>
           </div>
         </div>
@@ -228,7 +232,7 @@ function CommentItem({
             <Button
               size="icon"
               variant="ghost"
-              aria-label="Modifier le commentaire"
+              aria-label={t("editComment")}
               onClick={() => {
                 setDraft(comment.text);
                 setEditing(true);
@@ -239,11 +243,11 @@ function CommentItem({
             <Button
               size="icon"
               variant="ghost"
-              aria-label="Supprimer le commentaire"
+              aria-label={t("deleteComment")}
               className="text-destructive"
               onClick={() => {
                 commerceStore.deleteComment(orderId, comment.id);
-                toast.success("Commentaire supprimé");
+                toast.success(t("commentDeleted"));
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -256,6 +260,7 @@ function CommentItem({
 }
 
 function CommentForm({ orderId }: { orderId: string }) {
+  const { t } = useLanguage();
   const [text, setText] = useState("");
   return (
     <form
@@ -265,16 +270,16 @@ function CommentForm({ orderId }: { orderId: string }) {
         if (!text.trim()) return;
         commerceStore.addComment(orderId, text);
         setText("");
-        toast.success("Commentaire ajouté");
+        toast.success(t("commentAdded"));
       }}
     >
       <Textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Ajouter un commentaire (ex. : client à rappeler demain matin)."
+        placeholder={t("addCommentPlaceholder")}
       />
       <Button type="submit" size="sm" disabled={!text.trim()}>
-        Ajouter le commentaire
+        {t("addComment")}
       </Button>
     </form>
   );

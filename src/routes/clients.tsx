@@ -42,7 +42,7 @@ function CustomersPage() {
     <AppShell>
       <PageHeader
         title={t("customers")}
-        description="Historique d'achat et fiabilité de confirmation par client."
+        description={t("customersDescription")}
       />
       <div className="grid gap-3 md:hidden">
         {customers.map((c) => (
@@ -54,7 +54,7 @@ function CustomersPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Client</TableHead>
+                <TableHead>{t("customer")}</TableHead>
                  <TableHead>{t("phone")}</TableHead>
                  <TableHead>{t("city")}</TableHead>
                  <TableHead>{t("orders")}</TableHead>

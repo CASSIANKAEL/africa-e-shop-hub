@@ -38,7 +38,7 @@ function StoresPage() {
     <AppShell>
       <PageHeader
         title={t("stores")}
-        description="Chaque boutique possède son catalogue, sa devise et ses commandes."
+        description={t("storesDescription")}
         action={<NewStoreDialog />}
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -50,7 +50,7 @@ function StoresPage() {
                   <StoreIcon className="h-5 w-5" />
                 </span>
                 <Badge variant={store.status === "active" ? "default" : "secondary"}>
-                  {store.status === "active" ? "Active" : "En pause"}
+                  {store.status === "active" ? t("statusActive") : t("statusPaused")}
                 </Badge>
               </div>
               <h2 className="mt-4 text-lg font-semibold">{store.name}</h2>
@@ -63,7 +63,7 @@ function StoresPage() {
                   <dd className="font-semibold">{formatNumber(store.productsCount)}</dd>
                 </div>
                 <div className="rounded-lg bg-muted p-3">
-                  <dt className="text-xs text-muted-foreground">CA du mois</dt>
+                  <dt className="text-xs text-muted-foreground">{t("monthlyRevenue")}</dt>
                   <dd className="font-semibold">
                     {formatMoney(store.monthlyRevenue, store.currency)}
                   </dd>

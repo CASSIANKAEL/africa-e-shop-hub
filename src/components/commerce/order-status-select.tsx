@@ -69,7 +69,7 @@ export function OrderStatusSelect({
 
   function apply(next: OrderStatus) {
     commerceStore.updateOrderStatus(orderId, next, { followUpAt: null });
-    toast.success(`Commande mise à jour : ${orderStatusLabels[next]}`);
+    toast.success(t("orderUpdated", { status: orderStatusLabels[next] }));
   }
 
   return (
@@ -145,7 +145,7 @@ export function OrderStatusSelect({
                 toast.success(
                   when
                     ? `${orderStatusLabels[pending]} · ${new Date(when).toLocaleString(getActiveLocale(), { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
-                    : `Commande mise à jour : ${orderStatusLabels[pending]}`,
+                    : t("orderUpdated", { status: orderStatusLabels[pending] }),
                 );
                 setPending(null);
               }}

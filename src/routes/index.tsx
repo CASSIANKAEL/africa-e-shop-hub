@@ -99,7 +99,7 @@ function DashboardPage() {
   return (
     <AppShell>
       <PageHeader
-        title={activeStore?.name ?? "Tableau de bord"}
+        title={activeStore?.name ?? t("dashboard")}
         description={t("activeStoreData")}
         action={
           <div className="flex flex-wrap items-center gap-2">
@@ -136,7 +136,7 @@ function DashboardPage() {
         <MetricCard
           label={t("averageBasket")}
           value={formatMoney(m.averageBasket, currency)}
-          hint={`sur ${formatNumber(m.ordersVolume)} commandes`}
+          hint={t("onNOrders", { n: formatNumber(m.ordersVolume) })}
           icon={CheckCircle2}
         />
       </div>
@@ -153,19 +153,19 @@ function DashboardPage() {
           label={t("conversionRate")}
           value={formatPercent(m.conversionRate)}
           change={m.conversionChange}
-          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          hint={t("conversionHint", { orders: formatNumber(m.ordersVolume), visits: formatNumber(m.visits) })}
           icon={MousePointerClick}
         />
         <MetricCard
           label={t("deliveryRate")}
           value={formatPercent(m.deliveryRate)}
-          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          hint={t("deliveryHint", { delivered: formatNumber(m.delivered), confirmed: formatNumber(m.confirmed) })}
           icon={Truck}
         />
         <MetricCard
           label={t("returnRate")}
           value={formatPercent(m.returnRate)}
-          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit, currency)} par visite`}
+          hint={t("returnHint", { returned: formatNumber(m.returned), value: formatMoney(m.revenuePerVisit, currency) })}
           icon={Undo2}
         />
       </div>
@@ -219,7 +219,7 @@ function DashboardPage() {
               total={totalStatuses}
             />
             <div className="rounded-xl bg-muted p-4">
-              <p className="text-xs text-muted-foreground">Objectif de confirmation COD</p>
+              <p className="text-xs text-muted-foreground">{t("codGoal")}</p>
               <p className="mt-1 font-display text-xl font-semibold">
                 {formatPercent(m.codConfirmationRate)} / 85 %
               </p>

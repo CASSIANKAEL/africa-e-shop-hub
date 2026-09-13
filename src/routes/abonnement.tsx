@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { commerceService } from "@/services/commerce.service";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/abonnement")({
   head: () => ({
@@ -30,32 +31,33 @@ export const Route = createFileRoute("/abonnement")({
 
 function SubscriptionPage() {
   const plans = commerceService.getSubscriptionPlans();
+  const { t } = useLanguage();
 
   return (
     <AppShell>
       <PageHeader
-        title="Abonnement"
-        description="Payable par Mobile Money, carte ou virement, sans engagement."
+        title={t("subscription")}
+        description={t("subscriptionDescription")}
       />
       <div className="grid gap-4 md:grid-cols-3">
         {plans.map((plan) => (
           <Card key={plan.id} className={cn(plan.current && "border-primary shadow-md")}>
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">{plan.name}</h2>
-                {plan.current && <Badge>Formule actuelle</Badge>}
+                <h2 className="text-lg font-semibold">{t(plan.name)}</h2>
+                {plan.current && <Badge>{t("currentPlanBadge")}</Badge>}
               </div>
               <p className="mt-3 font-display text-2xl font-semibold">
-                {plan.price === 0 ? "Gratuit" : formatMoney(plan.price, plan.currency)}
+                {plan.price === 0 ? t("free") : formatMoney(plan.price, plan.currency)}
                 {plan.price > 0 && (
-                  <span className="text-sm font-normal text-muted-foreground"> /mois</span>
+                  <span className="text-sm font-normal text-muted-foreground"> {t("perMonth")}</span>
                 )}
               </p>
               <ul className="mt-4 space-y-2 text-sm">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Check className="mt-0.5 h-4 w-4 text-success" />
-                    {f}
+                    {t(f)}
                   </li>
                 ))}
               </ul>
@@ -64,7 +66,7 @@ function SubscriptionPage() {
                 variant={plan.current ? "outline" : "default"}
                 disabled={plan.current}
               >
-                {plan.current ? "Formule active" : "Choisir cette formule"}
+                {plan.current ? t("activePlan") : t("choosePlan")}
               </Button>
             </CardContent>
           </Card>
