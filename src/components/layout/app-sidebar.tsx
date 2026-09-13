@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
 import { commerceStore, useActiveStoreId, useStores } from "@/services/commerce.store";
+import { useLanguage } from "@/lib/i18n";
 
 const mainItems = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard, exact: true },
@@ -76,6 +77,22 @@ export function AppSidebar() {
   const stores = useStores();
   const activeStoreId = useActiveStoreId();
   const [newStoreOpen, setNewStoreOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const translatedMainItems = [
+    { ...mainItems[0], title: t("dashboard") },
+    { ...mainItems[1], title: t("overview") },
+    { ...mainItems[2], title: t("stores") },
+    { ...mainItems[3], title: t("products") },
+    { ...mainItems[4], title: t("orders") },
+    { ...mainItems[5], title: t("customers") },
+  ];
+  const translatedFormSubItems = [
+    { ...formsSubItems[0], title: t("orderForm") },
+    { ...formsSubItems[1], title: t("offers") },
+    { ...formsSubItems[2], title: t("pixels") },
+    { ...formsSubItems[3], title: t("integrations") },
+  ];
 
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(`${url}/`);
@@ -120,7 +137,7 @@ export function AppSidebar() {
                     onPointerDown={(e) => e.preventDefault()}
                     onClick={() => setNewStoreOpen(true)}
                   >
-                    <Plus className="h-4 w-4" /> Nouvelle boutique
+                    <Plus className="h-4 w-4" /> {t("newStore")}
                   </button>
                 </div>
               </SelectContent>
@@ -137,10 +154,10 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Pilotage</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("control")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
+              {translatedMainItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     asChild
@@ -159,16 +176,16 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   isActive={isActive(formsItem.url)}
-                  tooltip={formsItem.title}
+                  tooltip={t("forms")}
                 >
                   <Link to={formsItem.url} onClick={close} className="flex items-center gap-2">
                     <formsItem.icon className="h-4 w-4" />
-                    <span>{formsItem.title}</span>
+                    <span>{t("forms")}</span>
                   </Link>
                 </SidebarMenuButton>
                 {!collapsed && (
                   <SidebarMenuSub>
-                    {formsSubItems.map((sub) => (
+                    {translatedFormSubItems.map((sub) => (
                       <SidebarMenuSubItem key={sub.url}>
                         <SidebarMenuSubButton asChild isActive={pathname === sub.url}>
                           <Link to={sub.url} onClick={close}>
@@ -186,19 +203,22 @@ export function AppSidebar() {
 
 
         <SidebarGroup>
-          <SidebarGroupLabel>Compte</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("account")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {accountItems.map((item) => (
+              {accountItems.map((item, index) => {
+                const title = index === 0 ? t("subscription") : t("settings");
+                return (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={title}>
                     <Link to={item.url} onClick={close} className="flex items-center gap-2">
                       <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
+                      <span>{title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
