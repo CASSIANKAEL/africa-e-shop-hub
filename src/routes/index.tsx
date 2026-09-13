@@ -59,7 +59,7 @@ function DashboardPage() {
   return (
     <AppShell>
       <PageHeader
-        title="Bonjour Henoc 👋"
+        title="Bonjour Henoc"
         description="Voici la performance de vos boutiques sur les 30 derniers jours."
         action={
           <Button asChild>
