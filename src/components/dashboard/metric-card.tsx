@@ -1,3 +1,4 @@
+import { formatPercent } from "@/lib/format";
 import type { LucideIcon } from "lucide-react";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
@@ -41,7 +42,7 @@ export function MetricCard({
               ) : (
                 <ArrowDownRight className="h-3 w-3" />
               )}
-              {Math.abs(change).toFixed(1).replace(".", ",")} %
+              {formatPercent(Math.abs(change))}
             </span>
           )}
           {hint && <span className="text-muted-foreground">{hint}</span>}
