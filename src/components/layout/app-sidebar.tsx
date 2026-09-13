@@ -80,21 +80,39 @@ export function AppSidebar() {
           )}
         </Link>
         {!collapsed && (
-          <Select
-            value={activeStoreId}
-            onValueChange={(v) => commerceStore.setActiveStore(v)}
-          >
-            <SelectTrigger className="mt-3 h-9 w-full" aria-label="Changer de boutique">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {stores.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <>
+            <Select
+              value={activeStoreId}
+              onValueChange={(v) => commerceStore.setActiveStore(v)}
+            >
+              <SelectTrigger className="mt-3 h-9 w-full" aria-label="Changer de boutique">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {stores.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+                <div className="mt-1 border-t pt-1">
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-primary hover:bg-accent"
+                    onPointerDown={(e) => e.preventDefault()}
+                    onClick={() => setNewStoreOpen(true)}
+                  >
+                    <Plus className="h-4 w-4" /> Nouvelle boutique
+                  </button>
+                </div>
+              </SelectContent>
+            </Select>
+            <NewStoreDialog
+              trigger={null}
+              open={newStoreOpen}
+              onOpenChange={setNewStoreOpen}
+              switchOnCreate
+            />
+          </>
         )}
       </SidebarHeader>
 
