@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
+import { CourierAssign } from "@/components/commerce/courier-assign";
 import { commerceService } from "@/services/commerce.service";
 import { commerceStore, useOrder, useStoreName } from "@/services/commerce.store";
 import { toast } from "sonner";
@@ -97,13 +98,20 @@ function OrderDetailPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader className="flex-row items-center justify-between">
+          <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-base">{t("items")}</CardTitle>
-            <OrderStatusSelect
-              orderId={order.id}
-              status={order.status}
-              {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
-            />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <OrderStatusSelect
+                orderId={order.id}
+                status={order.status}
+                {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+              />
+              <CourierAssign
+                orderId={order.id}
+                status={order.status}
+                {...(order.courierId ? { courierId: order.courierId } : {})}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
