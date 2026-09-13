@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2, PhoneCall, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Pencil, PhoneCall, Trash2, XCircle } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
