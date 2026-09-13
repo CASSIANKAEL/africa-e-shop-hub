@@ -32,13 +32,35 @@ const fieldTypeLabels: Record<OrderFormFieldType, string> = {
   select: "Liste déroulante",
 };
 
+export type FormSection = "champs" | "produits" | "offres" | "apparence" | "options";
+
+const sectionLabels: Record<FormSection, string> = {
+  champs: "Champs",
+  produits: "Produits",
+  offres: "Offres quantité",
+  apparence: "Apparence",
+  options: "Options",
+};
+
+const allSections: FormSection[] = ["champs", "produits", "offres", "apparence", "options"];
+
 interface FormBuilderProps {
   initial: OrderForm;
   onSave: (form: OrderForm) => void;
   saveLabel?: string;
+  /** Sous-sections affichées (toutes par défaut). */
+  sections?: FormSection[];
+  /** Masque la carte nom + boutique (boutique imposée). */
+  hideIdentity?: boolean;
 }
 
-export function FormBuilder({ initial, onSave, saveLabel = "Enregistrer" }: FormBuilderProps) {
+export function FormBuilder({
+  initial,
+  onSave,
+  saveLabel = "Enregistrer",
+  sections = allSections,
+  hideIdentity = false,
+}: FormBuilderProps) {
   const [form, setForm] = useState<OrderForm>(initial);
   const stores = useStores();
   const products = useProducts();
