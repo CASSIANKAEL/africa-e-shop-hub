@@ -14,6 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import { languageNames, useLanguage, type AppLanguage } from "@/lib/i18n";
+import { commerceStore, useActiveStore } from "@/services/commerce.store";
+
 
 export const Route = createFileRoute("/parametres")({
   head: () => ({
@@ -34,10 +38,64 @@ export const Route = createFileRoute("/parametres")({
 });
 
 function SettingsPage() {
+  const { language, setLanguage, t } = useLanguage();
+  const store = useActiveStore();
+
   return (
     <AppShell>
       <PageHeader title="Paramètres" description="Préférences du compte et de la facturation." />
       <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base">Langues</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="admin-language">{t("adminLanguage")}</Label>
+              <Select value={language} onValueChange={(v) => setLanguage(v as AppLanguage)}>
+                <SelectTrigger id="admin-language">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.entries(languageNames) as [AppLanguage, string][]).map(([code, label]) => (
+                    <SelectItem key={code} value={code}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">{t("adminLanguageHint")}</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="store-language">
+                {t("storeLanguage")}
+                {store ? ` — ${store.name}` : ""}
+              </Label>
+              <Select
+                value={store?.language ?? "fr"}
+                onValueChange={(v) => {
+                  if (!store) return;
+                  commerceStore.updateStore(store.id, { language: v as AppLanguage });
+                  toast.success("Langue de la boutique mise à jour");
+                }}
+                disabled={!store}
+              >
+                <SelectTrigger id="store-language">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.entries(languageNames) as [AppLanguage, string][]).map(([code, label]) => (
+                    <SelectItem key={code} value={code}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">{t("storeLanguageHint")}</p>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Profil commerçant</CardTitle>

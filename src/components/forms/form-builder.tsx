@@ -77,7 +77,7 @@ export function FormBuilder({
   const currency = stores.find((s) => s.id === form.storeId)?.currency ?? "XOF";
   const design = form.design;
   const display = form.display ?? defaultDisplay;
-  const previewTab: "form" | "thanks" = thanksOpen ? "thanks" : "form";
+  const [previewTab, setPreviewTab] = useState<"form" | "thanks">("form");
 
   const patch = (p: Partial<OrderForm>) => setForm((f) => ({ ...f, ...p }));
   const patchDesign = (p: Partial<OrderForm["design"]>) =>
@@ -541,7 +541,7 @@ export function FormBuilder({
         className="mx-auto flex h-12 w-12 items-center justify-center rounded-full text-xl"
         style={{ backgroundColor: design.primaryColor, color: design.buttonTextColor ?? "#fff" }}
       >
-        ✓
+        {form.thankYou.emoji || "✓"}
       </div>
       <h3 className="mt-3 font-display text-lg font-semibold">
         {form.thankYou.title || "Commande confirmée"}
@@ -566,8 +566,28 @@ export function FormBuilder({
           </div>
         </div>
       )}
+      {form.thankYou.ctaLabel && (
+        <div
+          className="mt-4 rounded-xl px-4 py-2.5 text-sm font-semibold"
+          style={{
+            backgroundColor: design.primaryColor,
+            color: design.buttonTextColor ?? "#fff",
+          }}
+        >
+          {form.thankYou.ctaLabel}
+        </div>
+      )}
+      {form.thankYou.supportNote && (
+        <p className="mt-3 text-xs text-muted-foreground">{form.thankYou.supportNote}</p>
+      )}
+      {form.thankYou.redirectUrl && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Redirection vers {form.thankYou.redirectUrl}
+        </p>
+      )}
     </div>
   );
+
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
@@ -976,7 +996,12 @@ export function FormBuilder({
           <button
             type="button"
             className="flex w-full items-center justify-between gap-2 p-5 text-left"
-            onClick={() => setThanksOpen((v) => !v)}
+            onClick={() =>
+              setThanksOpen((v) => {
+                if (!v) setPreviewTab("thanks");
+                return !v;
+              })
+            }
           >
             <span>
               <span className="font-display text-base font-semibold">Page de remerciement</span>
@@ -990,6 +1015,16 @@ export function FormBuilder({
           </button>
           {thanksOpen && (
             <CardContent className="grid gap-4 border-t pt-5 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreviewTab("thanks")}
+                >
+                  Prévisualiser la page de remerciement
+                </Button>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="ty-title">Titre de confirmation</Label>
                 <Input
@@ -1015,6 +1050,43 @@ export function FormBuilder({
                   onChange={(e) => patchThanks({ message: e.target.value })}
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="ty-emoji">Icône (emoji)</Label>
+                <Input
+                  id="ty-emoji"
+                  maxLength={4}
+                  placeholder="✓"
+                  value={form.thankYou.emoji ?? ""}
+                  onChange={(e) => patchThanks({ emoji: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ty-note">Note d'assistance (optionnel)</Label>
+                <Input
+                  id="ty-note"
+                  placeholder="Besoin d'aide ? WhatsApp +229…"
+                  value={form.thankYou.supportNote ?? ""}
+                  onChange={(e) => patchThanks({ supportNote: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ty-cta">Texte du bouton (optionnel)</Label>
+                <Input
+                  id="ty-cta"
+                  placeholder="Continuer mes achats"
+                  value={form.thankYou.ctaLabel ?? ""}
+                  onChange={(e) => patchThanks({ ctaLabel: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ty-cta-url">Lien du bouton (optionnel)</Label>
+                <Input
+                  id="ty-cta-url"
+                  placeholder="https://…"
+                  value={form.thankYou.ctaUrl ?? ""}
+                  onChange={(e) => patchThanks({ ctaUrl: e.target.value })}
+                />
+              </div>
               <label className="flex items-center gap-2 text-sm">
                 <Switch
                   checked={form.thankYou.showOrderNumber !== false}
@@ -1031,6 +1103,7 @@ export function FormBuilder({
               </label>
             </CardContent>
           )}
+
         </Card>
 
         {/* 4. Options de commande */}
@@ -1121,23 +1194,28 @@ export function FormBuilder({
         <Card>
           <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
             <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs">
-              <span
+              <button
+                type="button"
+                onClick={() => setPreviewTab("form")}
                 className={cn(
                   "rounded-md px-2 py-1",
                   previewTab === "form" && "bg-background font-medium shadow-sm",
                 )}
               >
-                Formulaire
-              </span>
-              <span
+                {t("previewForm")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewTab("thanks")}
                 className={cn(
                   "rounded-md px-2 py-1",
                   previewTab === "thanks" && "bg-background font-medium shadow-sm",
                 )}
               >
-                Remerciement
-              </span>
+                {t("previewThanks")}
+              </button>
             </div>
+
             <div className="flex gap-1">
               <Button
                 type="button"
