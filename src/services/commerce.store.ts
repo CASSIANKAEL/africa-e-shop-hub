@@ -11,12 +11,15 @@ interface CommerceState {
   stores: Store[];
   products: Product[];
   orders: Order[];
+  /** Boutique actuellement sélectionnée (null = toutes). */
+  activeStoreId: string | null;
 }
 
 let state: CommerceState = {
   stores: initialStores,
   products: initialProducts,
   orders: initialOrders,
+  activeStoreId: null,
 };
 
 const listeners = new Set<() => void>();
@@ -55,6 +58,10 @@ export function useOrder(id: string): Order | undefined {
   return useCommerceState().orders.find((o) => o.id === id || o.reference === id);
 }
 
+export function useActiveStoreId(): string | null {
+  return useCommerceState().activeStoreId;
+}
+
 export function useStoreName(storeId: string): string {
   return useCommerceState().stores.find((s) => s.id === storeId)?.name ?? "Boutique";
 }
@@ -63,6 +70,9 @@ export type NewProductInput = Omit<Product, "id">;
 export type NewStoreInput = Omit<Store, "id" | "productsCount" | "monthlyRevenue">;
 
 export const commerceStore = {
+  setActiveStore(storeId: string | null) {
+    setState({ activeStoreId: storeId });
+  },
   addProduct(input: NewProductInput): Product {
     const product: Product = { ...input, id: `p-${Date.now()}` };
     setState({
