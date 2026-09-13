@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Store as StoreIcon } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ExternalLink, Store as StoreIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
@@ -65,6 +67,11 @@ function StoresPage() {
                   </dd>
                 </div>
               </dl>
+              <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+                <Link to="/vitrine/$storeId" params={{ storeId: store.id }} target="_blank">
+                  <ExternalLink className="mr-2 h-4 w-4" /> Voir la boutique en ligne
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         ))}
