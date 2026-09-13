@@ -78,6 +78,7 @@ function OrdersPage() {
             : t("ordersDescription")
         }
       />
+      <OrderStats orders={orders} />
       <div className="grid gap-3 md:hidden">
         {sorted.map((order) => {
           const lastComment = order.comments?.[order.comments.length - 1];
