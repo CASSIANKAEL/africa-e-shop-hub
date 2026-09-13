@@ -29,7 +29,10 @@ export interface Store {
   status: "active" | "paused";
   productsCount: number;
   monthlyRevenue: number;
+  /** Langue affichée aux clients sur la boutique et le formulaire. */
+  language?: "fr" | "en" | "es" | "de" | "pt" | "it" | "ar";
 }
+
 
 export interface Product {
   id: string;

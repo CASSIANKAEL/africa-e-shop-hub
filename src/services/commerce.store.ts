@@ -93,6 +93,12 @@ export const commerceStore = {
     setState({ stores: [...state.stores, store] });
     return store;
   },
+  updateStore(storeId: string, patch: Partial<Store>) {
+    setState({
+      stores: state.stores.map((s) => (s.id === storeId ? { ...s, ...patch } : s)),
+    });
+  },
+
   /** Copie un produit vers une ou plusieurs autres boutiques. */
   duplicateProduct(productId: string, targetStoreIds: string[]): Product[] {
     const source = state.products.find((p) => p.id === productId);
