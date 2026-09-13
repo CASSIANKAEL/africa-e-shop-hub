@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Banknote,
@@ -15,12 +16,14 @@ import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { OrdersChart, RevenueChart } from "@/components/dashboard/sales-chart";
+import { PeriodFilter, type PeriodValue } from "@/components/dashboard/period-filter";
 import { OrderStatusBadge } from "@/components/commerce/order-status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { commerceService } from "@/services/commerce.service";
 import { useActiveStore, useActiveStoreId, useOrders } from "@/services/commerce.store";
+import { allOrders, buildSeries, computeMetrics, resolveRange } from "@/services/analytics";
 import { formatDate, formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -30,13 +33,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Suivez chiffre d'affaires en FCFA, commandes à confirmer et taux de confirmation du paiement à la livraison depuis un seul tableau de bord.",
+          "Suivez chiffre d'affaires en FCFA, commandes à confirmer et taux de confirmation du paiement à la livraison pour la boutique active.",
       },
       { property: "og:title", content: "Tableau de bord — Sooko" },
       {
         property: "og:description",
         content:
-          "Pilotez vos boutiques, vos commandes COD et vos ventes en FCFA depuis un tableau de bord pensé pour les commerçants africains.",
+          "Pilotez la boutique active, ses commandes COD et ses ventes en FCFA sur la période de votre choix.",
       },
     ],
   }),
@@ -51,34 +54,48 @@ const activityIcons = {
 } as const;
 
 function DashboardPage() {
-  const m = commerceService.getDashboardMetrics();
-  const sales = commerceService.getSalesSeries();
-  const activity = commerceService.getRecentActivity();
   const activeStoreId = useActiveStoreId();
   const activeStore = useActiveStore();
-  const orders = useOrders()
-    .filter((o) => o.storeId === activeStoreId)
-    .slice(0, 5);
+  const liveOrders = useOrders();
+  const activity = commerceService.getRecentActivity();
+  const [period, setPeriod] = useState<PeriodValue>({ period: "30d" });
+
+  const storeOrders = useMemo(
+    () => allOrders(liveOrders).filter((o) => o.storeId === activeStoreId),
+    [liveOrders, activeStoreId],
+  );
+  const range = useMemo(
+    () => resolveRange(period.period, { ...(period.from ? { from: period.from } : {}), ...(period.to ? { to: period.to } : {}) }),
+    [period],
+  );
+  const m = useMemo(() => computeMetrics(storeOrders, range), [storeOrders, range]);
+  const sales = useMemo(() => buildSeries(storeOrders, range), [storeOrders, range]);
+
+  const recent = liveOrders.filter((o) => o.storeId === activeStoreId).slice(0, 5);
   const totalStatuses = m.pending + m.confirmed + m.cancelled;
+  const currency = activeStore?.currency ?? "XOF";
 
   return (
     <AppShell>
       <PageHeader
-        title="Bonjour Henoc"
-        description={`Performance de ${activeStore?.name ?? "votre boutique"} sur les 30 derniers jours.`}
+        title={activeStore?.name ?? "Tableau de bord"}
+        description="Données de la boutique active uniquement."
         action={
-          <Button asChild>
-            <Link to="/commandes">Voir les commandes</Link>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <PeriodFilter value={period} onChange={setPeriod} />
+            <Button variant="outline" asChild>
+              <Link to="/vue-ensemble">Vue d'ensemble</Link>
+            </Button>
+          </div>
         }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Chiffre d'affaires"
-          value={formatMoney(m.revenue, m.currency)}
+          value={formatMoney(m.revenue, currency)}
           change={m.revenueChange}
-          hint="vs mois dernier"
+          hint="vs période précédente"
           icon={Banknote}
         />
         <MetricCard
@@ -97,8 +114,8 @@ function DashboardPage() {
         />
         <MetricCard
           label="Panier moyen"
-          value={formatMoney(m.averageBasket, m.currency)}
-          hint="sur 428 commandes"
+          value={formatMoney(m.averageBasket, currency)}
+          hint={`sur ${formatNumber(m.ordersVolume)} commandes`}
           icon={CheckCircle2}
         />
       </div>
@@ -106,7 +123,7 @@ function DashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Ventes de la semaine</CardTitle>
+            <CardTitle className="text-base">Ventes de la période</CardTitle>
           </CardHeader>
           <CardContent>
             <RevenueChart data={sales} />
@@ -156,7 +173,7 @@ function DashboardPage() {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
-            {orders.map((order) => (
+            {recent.map((order) => (
               <Link
                 key={order.id}
                 to="/commandes/$orderId"
@@ -177,39 +194,44 @@ function DashboardPage() {
                 </div>
               </Link>
             ))}
+            {recent.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                Aucune commande récente pour cette boutique.
+              </p>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Activité récente</CardTitle>
+            <CardTitle className="text-base">Volume de commandes</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {activity.map((event) => {
-              const Icon = activityIcons[event.type];
-              return (
-                <div key={event.id} className="flex gap-3">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">{event.label}</p>
-                    <p className="text-xs text-muted-foreground">{event.detail}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground/70">{event.time}</p>
-                  </div>
-                </div>
-              );
-            })}
+          <CardContent>
+            <OrdersChart data={sales} />
           </CardContent>
         </Card>
       </div>
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-base">Volume de commandes par jour</CardTitle>
+          <CardTitle className="text-base">Activité récente</CardTitle>
         </CardHeader>
-        <CardContent>
-          <OrdersChart data={sales} />
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          {activity.map((event) => {
+            const Icon = activityIcons[event.type];
+            return (
+              <div key={event.id} className="flex gap-3">
+                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{event.label}</p>
+                  <p className="text-xs text-muted-foreground">{event.detail}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground/70">{event.time}</p>
+                </div>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
     </AppShell>
