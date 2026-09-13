@@ -48,6 +48,9 @@ function AiProductsPage() {
   const [prompt, setPrompt] = useState("");
   const [pageLanguage, setPageLanguage] = useState<AppLanguage>(language);
   const [images, setImages] = useState<string[]>([]);
+  const [sourceUrl, setSourceUrl] = useState("");
+  const hasMedia = images.length > 0 || sourceUrl.trim().length > 3;
+
   const fileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<GeneratedProduct[]>([]);
@@ -70,7 +73,7 @@ function AiProductsPage() {
   }
 
   async function handleGenerate() {
-    if (prompt.trim().length < 3 || loading) return;
+    if (prompt.trim().length < 3 || loading || !hasMedia) return;
     setLoading(true);
     try {
       const products = await generateProductsWithAi({
@@ -79,8 +82,10 @@ function AiProductsPage() {
           currency: activeStore?.currency ?? "XOF",
           language: pageLanguage,
           images,
+          sourceUrl: sourceUrl.trim(),
         },
       });
+
       if (products.length === 0) {
         toast.error(t("aiError"));
       } else {
@@ -133,17 +138,6 @@ function AiProductsPage() {
         }
       />
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/nouveau">{t("addProductManually")}</Link>
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/import">{t("importCsv")}</Link>
-        </Button>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/produits/ia">{t("addProductAi")}</Link>
-        </Button>
-      </div>
 
       <Card>
         <CardContent className="grid gap-4 p-4 sm:p-6">
@@ -200,9 +194,25 @@ function AiProductsPage() {
                 </Button>
               )}
             </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="ai-source-url">{t("aiSourceUrlLabel")}</Label>
+              <Input
+                id="ai-source-url"
+                type="url"
+                inputMode="url"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder={t("aiSourceUrlPlaceholder")}
+              />
+            </div>
+            {!hasMedia && <p className="text-sm text-muted-foreground">{t("aiMediaHint")}</p>}
           </div>
 
-          <Button onClick={() => void handleGenerate()} disabled={loading || prompt.trim().length < 3} size="lg">
+          <Button
+            onClick={() => void handleGenerate()}
+            disabled={loading || prompt.trim().length < 3 || !hasMedia}
+            size="lg"
+          >
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -210,6 +220,7 @@ function AiProductsPage() {
             )}
             {loading ? t("aiGenerating") : t("aiGenerate")}
           </Button>
+
         </CardContent>
       </Card>
 
