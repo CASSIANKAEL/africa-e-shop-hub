@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, FileUp, Plus } from "lucide-react";
+import { ChevronDown, FileUp, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
