@@ -90,6 +90,8 @@ export function AppSidebar() {
     { ...mainItems[3], title: t("products") },
     { ...mainItems[4], title: t("orders") },
     { ...mainItems[5], title: t("customers") },
+    { ...mainItems[6], title: t("team") },
+    { ...mainItems[7], title: t("deliveries") },
   ];
   const translatedFormSubItems = [
     { ...formsSubItems[0], title: t("orderForm") },
