@@ -154,8 +154,16 @@ function TeamPage() {
               <Button onClick={() => submit("invited")}>{t("sendInvitation")}</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
-      </PageHeader>
+    </Dialog>
+  );
+
+  return (
+    <AppShell>
+      <PageHeader
+        title={t("team")}
+        description={t("teamDescription", { store: store?.name ?? "" })}
+        action={addDialog}
+      />
 
       <div className="grid gap-4 lg:grid-cols-3">
         {roleOrder.map((r) => {
