@@ -40,6 +40,10 @@ export interface Product {
   storeId: string;
   category: string;
   image?: string;
+  /** Suivi de stock activé (false = stock illimité / non suivi). */
+  trackStock?: boolean;
+  description?: string;
+  images?: string[];
 }
 
 export interface Customer {
