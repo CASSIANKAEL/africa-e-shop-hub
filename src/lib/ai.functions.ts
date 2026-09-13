@@ -26,7 +26,7 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
-    const gateway = createLovableAiGatewayProvider(key);
+    const gateway = createLovableAiGatewayProvider(key, { structuredOutputs: true });
     const schema = z.object({ products: z.array(ProductIdea) });
 
     try {
