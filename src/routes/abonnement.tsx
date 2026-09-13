@@ -57,7 +57,7 @@ function SubscriptionPage() {
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Check className="mt-0.5 h-4 w-4 text-success" />
-                    {f}
+                    {t(f)}
                   </li>
                 ))}
               </ul>
