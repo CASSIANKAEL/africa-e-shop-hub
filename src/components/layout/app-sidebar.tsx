@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Store,
+  Globe,
   Package,
   ShoppingCart,
   Users,
@@ -34,6 +35,7 @@ import { commerceStore, useActiveStoreId, useStores } from "@/services/commerce.
 
 const mainItems = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard, exact: true },
+  { title: "Vue d'ensemble", url: "/vue-ensemble", icon: Globe },
   { title: "Boutiques", url: "/boutiques", icon: Store },
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
