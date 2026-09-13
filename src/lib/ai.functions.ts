@@ -14,6 +14,8 @@ const GenerateInput = z.object({
   currency: z.string().default("XOF"),
   language: z.string().default("fr"),
   images: z.array(z.string()).max(5).default([]),
+  sourceUrl: z.string().default(""),
+
 });
 
 export type GeneratedProduct = z.infer<typeof ProductIdea>;
