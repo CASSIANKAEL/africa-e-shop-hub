@@ -26,8 +26,28 @@ import type { Currency, Store } from "@/types";
 
 const currencies: Currency[] = ["XOF", "XAF", "GHS", "NGN"];
 
-export function NewStoreDialog() {
-  const [open, setOpen] = useState(false);
+interface NewStoreDialogProps {
+  /** Déclencheur personnalisé (bouton par défaut). */
+  trigger?: React.ReactNode;
+  /** Ouverture contrôlée. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Bascule sur la boutique créée. */
+  switchOnCreate?: boolean;
+}
+
+export function NewStoreDialog({
+  trigger,
+  open: openProp,
+  onOpenChange,
+  switchOnCreate = false,
+}: NewStoreDialogProps = {}) {
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    onOpenChange?.(v);
+  };
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
