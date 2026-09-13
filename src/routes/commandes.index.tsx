@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
+import { CourierAssign } from "@/components/commerce/courier-assign";
 import { isFollowUpDue, useActiveStoreId, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n";
@@ -95,6 +96,7 @@ function OrdersPage() {
                 <p className="flex items-start gap-2 rounded-lg bg-muted p-2 text-xs text-muted-foreground"><MessageSquare className="mt-0.5 h-3.5 w-3.5 shrink-0" /><span className="min-w-0">{lastComment.text}</span></p>
               )}
               <OrderStatusSelect orderId={order.id} status={order.status} {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})} />
+              <CourierAssign orderId={order.id} status={order.status} {...(order.courierId ? { courierId: order.courierId } : {})} />
             </CardContent>
           </Card>
           );
