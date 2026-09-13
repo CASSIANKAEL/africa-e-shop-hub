@@ -56,13 +56,16 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
     }
 
     try {
+      console.log("[ai] reading body");
       const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
       const content = json.choices?.[0]?.message?.content ?? "";
       const parsed = z
         .object({ products: z.array(ProductIdea) })
         .parse(JSON.parse(content));
+      console.log("[ai] parsed", parsed.products.length);
       return parsed.products.slice(0, 5);
-    } catch {
+    } catch (e) {
+      console.log("[ai] parse failed", (e as Error).message);
       return [];
     }
   });
