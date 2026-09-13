@@ -7,7 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+
 import { commerceStore, useActiveStore, useActiveStoreId } from "@/services/commerce.store";
 import { useLanguage } from "@/lib/i18n";
 
@@ -28,9 +28,6 @@ export const Route = createFileRoute("/produits/import")({
   }),
   component: ImportProductsPage,
 });
-
-const TEMPLATE =
-  "nom,reference,categorie,prix,stock,description\nEnsemble pagne wax,WAX-050,Mode,24500,30,Tissu wax premium\nBeurre de karité 500g,KAR-120,Beauté,6500,80,100% naturel";
 
 interface Row {
   name: string;
@@ -118,15 +115,6 @@ function ImportProductsPage() {
     if (!file) return;
     setRaw(await file.text());
     if (fileRef.current) fileRef.current.value = "";
-  }
-
-  function downloadTemplate() {
-    const url = URL.createObjectURL(new Blob([TEMPLATE], { type: "text/csv;charset=utf-8" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "modele-produits.csv";
-    a.click();
-    URL.revokeObjectURL(url);
   }
 
   function handleImport() {
