@@ -133,17 +133,6 @@ function AiProductsPage() {
         }
       />
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/nouveau">{t("addProductManually")}</Link>
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/import">{t("importCsv")}</Link>
-        </Button>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/produits/ia">{t("addProductAi")}</Link>
-        </Button>
-      </div>
 
       <Card>
         <CardContent className="grid gap-4 p-4 sm:p-6">
