@@ -17,6 +17,8 @@ import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
+import { Route as ProduitsImportRouteImport } from './routes/produits.import'
+import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +60,16 @@ const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
   path: '/produits/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProduitsImportRoute = ProduitsImportRouteImport.update({
+  id: '/produits/import',
+  path: '/produits/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProduitsNouveauRoute = ProduitsNouveauRouteImport.update({
+  id: '/produits/nouveau',
+  path: '/produits/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +78,8 @@ export interface FileRoutesByFullPath {
   '/clients': typeof ClientsRoute
   '/parametres': typeof ParametresRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/produits/import': typeof ProduitsImportRoute
+  '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
 }
@@ -76,6 +90,8 @@ export interface FileRoutesByTo {
   '/clients': typeof ClientsRoute
   '/parametres': typeof ParametresRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/produits/import': typeof ProduitsImportRoute
+  '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
   '/produits': typeof ProduitsIndexRoute
 }
@@ -87,6 +103,8 @@ export interface FileRoutesById {
   '/clients': typeof ClientsRoute
   '/parametres': typeof ParametresRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/produits/import': typeof ProduitsImportRoute
+  '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
 }
@@ -99,6 +117,8 @@ export interface FileRouteTypes {
     | '/clients'
     | '/parametres'
     | '/commandes/$orderId'
+    | '/produits/import'
+    | '/produits/nouveau'
     | '/commandes/'
     | '/produits/'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +129,8 @@ export interface FileRouteTypes {
     | '/clients'
     | '/parametres'
     | '/commandes/$orderId'
+    | '/produits/import'
+    | '/produits/nouveau'
     | '/commandes'
     | '/produits'
   id:
@@ -119,6 +141,8 @@ export interface FileRouteTypes {
     | '/clients'
     | '/parametres'
     | '/commandes/$orderId'
+    | '/produits/import'
+    | '/produits/nouveau'
     | '/commandes/'
     | '/produits/'
   fileRoutesById: FileRoutesById
@@ -130,6 +154,8 @@ export interface RootRouteChildren {
   ClientsRoute: typeof ClientsRoute
   ParametresRoute: typeof ParametresRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
+  ProduitsImportRoute: typeof ProduitsImportRoute
+  ProduitsNouveauRoute: typeof ProduitsNouveauRoute
   CommandesIndexRoute: typeof CommandesIndexRoute
   ProduitsIndexRoute: typeof ProduitsIndexRoute
 }
@@ -192,6 +218,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProduitsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produits/import': {
+      id: '/produits/import'
+      path: '/produits/import'
+      fullPath: '/produits/import'
+      preLoaderRoute: typeof ProduitsImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produits/nouveau': {
+      id: '/produits/nouveau'
+      path: '/produits/nouveau'
+      fullPath: '/produits/nouveau'
+      preLoaderRoute: typeof ProduitsNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -202,6 +242,8 @@ const rootRouteChildren: RootRouteChildren = {
   ClientsRoute: ClientsRoute,
   ParametresRoute: ParametresRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
+  ProduitsImportRoute: ProduitsImportRoute,
+  ProduitsNouveauRoute: ProduitsNouveauRoute,
   CommandesIndexRoute: CommandesIndexRoute,
   ProduitsIndexRoute: ProduitsIndexRoute,
 }
