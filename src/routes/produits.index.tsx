@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { NewProductDialog } from "@/components/commerce/new-product-dialog";
+import { AddProductButton } from "@/components/commerce/add-product-button";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -16,7 +16,7 @@ import {
 import { useActiveStoreId, useProducts, useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
 
-export const Route = createFileRoute("/produits")({
+export const Route = createFileRoute("/produits/")({
   head: () => ({
     meta: [
       { title: "Produits — Sooko" },
@@ -48,7 +48,7 @@ function ProductsPage() {
       <PageHeader
         title="Produits"
         description="Catalogue partagé entre toutes vos boutiques."
-        action={<NewProductDialog />}
+        action={<AddProductButton />}
       />
       <Card>
         <CardContent className="overflow-x-auto p-0">
