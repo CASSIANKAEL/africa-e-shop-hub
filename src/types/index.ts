@@ -162,6 +162,25 @@ export interface OrderFormDesign {
   showProductSummary: boolean;
   showQuantitySelector: boolean;
   showCountdown: boolean;
+  /** Style du bouton de commande. */
+  buttonTextColor?: string;
+  buttonRadius?: number;
+  buttonFontSize?: number;
+  buttonHeight?: number;
+  buttonBold?: boolean;
+  /** Bloc badges de confiance. */
+  showTrustBadges?: boolean;
+  trustBadges?: string[];
+  showHeadline?: boolean;
+  showSubheadline?: boolean;
+}
+
+/** Où et comment le formulaire s'affiche sur la page produit. */
+export interface OrderFormDisplay {
+  mode: "popup" | "embedded";
+  popupTrigger: "buy_now" | "add_to_cart" | "custom";
+  autoOpen: "never" | "10s" | "30s";
+  position: "below_price" | "below_description" | "replace_cart";
 }
 
 export interface OrderFormSettings {
@@ -174,18 +193,28 @@ export interface OrderFormSettings {
   freeShippingThreshold: number;
 }
 
+export interface OrderFormThankYou {
+  title?: string;
+  message: string;
+  showOrderNumber?: boolean;
+  showSummary?: boolean;
+  redirectUrl?: string;
+}
+
 export interface OrderForm {
   id: string;
   name: string;
   storeId: string;
+  /** Historique : le formulaire s'applique désormais à tous les produits de la boutique. */
   productIds: string[];
   status: "active" | "draft";
   fields: OrderFormField[];
   offers: QuantityOffer[];
   upsells: OrderFormUpsell[];
   design: OrderFormDesign;
+  display?: OrderFormDisplay;
   settings: OrderFormSettings;
-  thankYou: { message: string; redirectUrl?: string };
+  thankYou: OrderFormThankYou;
   createdAt: string;
   views: number;
   submissions: number;

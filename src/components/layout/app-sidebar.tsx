@@ -33,6 +33,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
@@ -45,7 +48,19 @@ const mainItems = [
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
-  { title: "Formulaires & intégrations", url: "/formulaires", icon: FileText },
+] as const;
+
+const formsItem = {
+  title: "Formulaires & intégrations",
+  url: "/formulaires",
+  icon: FileText,
+} as const;
+
+const formsSubItems = [
+  { title: "Formulaire de commande", url: "/formulaires/commande" },
+  { title: "Offres de quantité", url: "/formulaires/offres" },
+  { title: "Pixels publicitaires", url: "/formulaires/pixels" },
+  { title: "Intégrations", url: "/formulaires/integrations" },
 ] as const;
 
 
@@ -139,6 +154,32 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(formsItem.url)}
+                  tooltip={formsItem.title}
+                >
+                  <Link to={formsItem.url} onClick={close} className="flex items-center gap-2">
+                    <formsItem.icon className="h-4 w-4" />
+                    <span>{formsItem.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+                {!collapsed && (
+                  <SidebarMenuSub>
+                    {formsSubItems.map((sub) => (
+                      <SidebarMenuSubItem key={sub.url}>
+                        <SidebarMenuSubButton asChild isActive={pathname === sub.url}>
+                          <Link to={sub.url} onClick={close}>
+                            <span>{sub.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                )}
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

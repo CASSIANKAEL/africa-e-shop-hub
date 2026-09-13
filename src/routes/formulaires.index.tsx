@@ -43,7 +43,7 @@ function FormsHubPage() {
       to: "/formulaires/commande" as const,
       icon: FileText,
       title: "Formulaire de commande",
-      text: "Champs, produits liés, apparence et options de confirmation. Un seul formulaire par boutique.",
+      text: "Affichage pop-up ou intégré, blocs, bouton et page de remerciement. Un seul formulaire par boutique, valable pour tous ses produits.",
       status: form
         ? form.status === "active"
           ? "Actif"

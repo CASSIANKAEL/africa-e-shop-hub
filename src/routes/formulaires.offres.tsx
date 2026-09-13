@@ -53,8 +53,7 @@ function OffersPage() {
       <FormBuilder
         key={form.id}
         initial={form}
-        hideIdentity
-        sections={["offres"]}
+        mode="offers"
         saveLabel="Enregistrer les offres"
         onSave={(f) => {
           formsStore.saveForm({ ...f, storeId });

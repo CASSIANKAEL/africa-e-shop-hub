@@ -53,7 +53,6 @@ function OrderFormPage() {
       <FormBuilder
         key={form.id}
         initial={form}
-        sections={["champs", "produits", "apparence", "options"]}
         saveLabel={existing ? "Enregistrer" : "Créer le formulaire"}
         onSave={(f) => {
           formsStore.saveForm({ ...f, storeId });
