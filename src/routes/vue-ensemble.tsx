@@ -128,6 +128,44 @@ function OverviewPage() {
         />
       </div>
 
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="Visites"
+          value={formatNumber(m.visits)}
+          change={m.visitsChange}
+          hint="toutes boutiques"
+          icon={Eye}
+        />
+        <MetricCard
+          label="Taux de conversion"
+          value={formatPercent(m.conversionRate)}
+          change={m.conversionChange}
+          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          icon={MousePointerClick}
+        />
+        <MetricCard
+          label="Taux de livraison"
+          value={formatPercent(m.deliveryRate)}
+          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          icon={Truck}
+        />
+        <MetricCard
+          label="Taux de retour"
+          value={formatPercent(m.returnRate)}
+          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit)} par visite`}
+          icon={Undo2}
+        />
+      </div>
+
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle className="text-base">Visites & taux de conversion</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TrafficChart data={traffic} />
+        </CardContent>
+      </Card>
+
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
