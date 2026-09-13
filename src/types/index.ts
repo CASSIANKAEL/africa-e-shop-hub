@@ -2,11 +2,20 @@ export type Currency = "XOF" | "XAF" | "GHS" | "NGN";
 
 export type OrderStatus =
   | "pending"
+  | "unreachable"
+  | "scheduled"
   | "confirmed"
   | "shipped"
   | "delivered"
+  | "rejected"
   | "cancelled"
   | "returned";
+
+export interface OrderComment {
+  id: string;
+  text: string;
+  createdAt: string;
+}
 
 export type PaymentMethod = "cod" | "mobile_money" | "card" | "transfer";
 
@@ -61,6 +70,9 @@ export interface Order {
   paymentMethod: PaymentMethod;
   createdAt: string;
   note?: string;
+  /** Date/heure de rappel pour les commandes injoignables ou programmées. */
+  followUpAt?: string;
+  comments?: OrderComment[];
 }
 
 export interface DashboardMetrics {
