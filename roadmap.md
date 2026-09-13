@@ -12,5 +12,5 @@
 - [x] Aperçu de la page de remerciement cliquable et personnalisable, langues supplémentaires (de, pt, it, ar) et langue par boutique
 - [x] Expérience mobile prioritaire, traduction globale et catalogue étendu de devises
 - [x] Import CSV simplifié (boutique active) et traduction complète de l'interface
-- [ ] Création de produits par IA (page /produits/ia) — test flux SSE en cours
-- [ ] Boutons directs « Importer CSV » et « Créer avec l'IA » à côté d'« Ajouter un produit »
+- [x] Création de produits par IA (page /produits/ia, testée)
+- [x] Boutons directs « Importer CSV » et « Créer avec l'IA » à côté d'« Ajouter un produit »
