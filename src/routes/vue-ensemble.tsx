@@ -195,10 +195,14 @@ function OverviewPage() {
               <TableRow>
                 <TableHead>Boutique</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead>Visites</TableHead>
+                <TableHead>Conversion</TableHead>
                 <TableHead>Chiffre d'affaires</TableHead>
                 <TableHead>Commandes</TableHead>
                 <TableHead>À confirmer</TableHead>
                 <TableHead>Confirmation COD</TableHead>
+                <TableHead>Livraison</TableHead>
+                <TableHead>Retours</TableHead>
                 <TableHead>Panier moyen</TableHead>
               </TableRow>
             </TableHeader>
