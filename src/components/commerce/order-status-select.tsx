@@ -27,6 +27,7 @@ const statuses: OrderStatus[] = [
   "pending",
   "unreachable",
   "scheduled",
+  "callback",
   "confirmed",
   "shipped",
   "delivered",
@@ -103,13 +104,13 @@ export function OrderStatusSelect({
               {pending ? orderStatusLabels[pending] : ""} — planifier le rappel
             </DialogTitle>
             <DialogDescription>
-              Choisissez la date et l'heure auxquelles rappeler le client. La commande remontera en
-              haut de la liste à ce moment-là.
+              Vous pouvez choisir la date et l'heure auxquelles rappeler le client (optionnel). Si
+              vous en mettez une, la commande remontera en haut de la liste à ce moment-là.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="follow-up-at">Date et heure du rappel</Label>
+              <Label htmlFor="follow-up-at">Date et heure du rappel (optionnel)</Label>
               <Input
                 id="follow-up-at"
                 type="datetime-local"
@@ -134,16 +135,14 @@ export function OrderStatusSelect({
             <Button
               onClick={() => {
                 if (!pending) return;
-                if (!when) {
-                  toast.error("Choisissez une date et une heure de rappel.");
-                  return;
-                }
                 commerceStore.updateOrderStatus(orderId, pending, {
-                  followUpAt: new Date(when).toISOString(),
+                  followUpAt: when ? new Date(when).toISOString() : null,
                   comment,
                 });
                 toast.success(
-                  `${orderStatusLabels[pending]} · rappel le ${new Date(when).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`,
+                  when
+                    ? `${orderStatusLabels[pending]} · rappel le ${new Date(when).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                    : `Commande mise à jour : ${orderStatusLabels[pending]}`,
                 );
                 setPending(null);
               }}

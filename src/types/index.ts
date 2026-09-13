@@ -4,6 +4,7 @@ export type OrderStatus =
   | "pending"
   | "unreachable"
   | "scheduled"
+  | "callback"
   | "confirmed"
   | "shipped"
   | "delivered"
