@@ -219,8 +219,11 @@ function ImportProductsPage() {
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex-row items-center justify-between space-y-0">
               <CardTitle>Aperçu ({rows.length})</CardTitle>
+              <Button onClick={handleImport} disabled={rows.length === 0} size="sm">
+                Enregistrer
+              </Button>
             </CardHeader>
             <CardContent className="overflow-x-auto p-0">
               {rows.length === 0 ? (
@@ -280,9 +283,12 @@ function ImportProductsPage() {
               ))}
             </CardContent>
           </Card>
-          <Button onClick={handleImport} disabled={rows.length === 0}>
-            Importer {rows.length > 0 ? `${rows.length} produit(s)` : ""}
+          <Button onClick={handleImport} disabled={rows.length === 0} className="w-full" size="lg">
+            Enregistrer {rows.length > 0 ? `${rows.length} produit(s)` : "les produits"}
           </Button>
+          <p className="text-xs text-muted-foreground">
+            Les produits sont enregistrés directement dans la ou les boutiques cochées.
+          </p>
         </div>
       </div>
     </AppShell>
