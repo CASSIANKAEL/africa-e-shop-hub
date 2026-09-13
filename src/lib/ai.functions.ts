@@ -20,6 +20,7 @@ export type GeneratedProduct = z.infer<typeof ProductIdea>;
 export const generateProductsWithAi = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => GenerateInput.parse(input))
   .handler(async ({ data }): Promise<GeneratedProduct[]> => {
+    console.log("[ai] handler start");
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
