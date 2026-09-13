@@ -85,6 +85,8 @@ export interface Order {
   comments?: OrderComment[];
   /** Livreur à qui la commande confirmée est attribuée. */
   courierId?: string;
+  /** Consigne visible par le livreur dans son espace. */
+  courierNote?: string;
 }
 
 /* ---------- Équipe ---------- */
