@@ -1,11 +1,20 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Banknote, CheckCircle2, PhoneCall, ShoppingBag } from "lucide-react";
+import {
+  Banknote,
+  CheckCircle2,
+  Eye,
+  MousePointerClick,
+  PhoneCall,
+  ShoppingBag,
+  Truck,
+  Undo2,
+} from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { OrdersChart, RevenueChart } from "@/components/dashboard/sales-chart";
+import { OrdersChart, RevenueChart, TrafficChart } from "@/components/dashboard/sales-chart";
 import { PeriodFilter, type PeriodValue } from "@/components/dashboard/period-filter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +27,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useOrders, useStores } from "@/services/commerce.store";
-import { allOrders, buildSeries, computeMetrics, resolveRange } from "@/services/analytics";
+import {
+  allOrders,
+  buildSeries,
+  buildTrafficSeries,
+  computeMetrics,
+  resolveRange,
+} from "@/services/analytics";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/vue-ensemble")({
@@ -55,8 +70,13 @@ function OverviewPage() {
     [period],
   );
 
-  const m = useMemo(() => computeMetrics(orders, range), [orders, range]);
+  const storeIds = useMemo(() => stores.map((s) => s.id), [stores]);
+  const m = useMemo(() => computeMetrics(orders, range, storeIds), [orders, range, storeIds]);
   const sales = useMemo(() => buildSeries(orders, range), [orders, range]);
+  const traffic = useMemo(
+    () => buildTrafficSeries(orders, range, storeIds),
+    [orders, range, storeIds],
+  );
   const perStore = useMemo(
     () =>
       stores.map((s) => ({
@@ -64,6 +84,7 @@ function OverviewPage() {
         metrics: computeMetrics(
           orders.filter((o) => o.storeId === s.id),
           range,
+          [s.id],
         ),
       })),
     [stores, orders, range],
