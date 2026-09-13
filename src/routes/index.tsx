@@ -19,6 +19,7 @@ import {
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
+import { LivePanel } from "@/components/dashboard/live-panel";
 import { OrdersChart, RevenueChart, TrafficChart } from "@/components/dashboard/sales-chart";
 import { PeriodFilter, type PeriodValue } from "@/components/dashboard/period-filter";
 import { OrderStatusBadge } from "@/components/commerce/order-status-badge";
@@ -166,6 +167,12 @@ function DashboardPage() {
           icon={Undo2}
         />
       </div>
+
+      <LivePanel
+        storeId={activeStoreId}
+        currency={currency}
+        title={`Temps réel — ${activeStore?.name ?? "boutique"}`}
+      />
 
       <Card className="mt-4">
         <CardHeader>
