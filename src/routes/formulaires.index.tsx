@@ -1,23 +1,13 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Copy, ExternalLink, FileText, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { FileText, Layers, Plug, Target } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatDate, formatNumber, formatPercent } from "@/lib/format";
-import { useActiveStoreId, useStores } from "@/services/commerce.store";
-import { formsStore, useForms } from "@/services/forms.store";
+import { formatNumber, formatPercent } from "@/lib/format";
+import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
+import { useAppIntegrations, useForms, usePixels } from "@/services/forms.store";
 
 export const Route = createFileRoute("/formulaires/")({
   head: () => ({
@@ -26,149 +16,97 @@ export const Route = createFileRoute("/formulaires/")({
       {
         name: "description",
         content:
-          "Créez vos formulaires de commande paiement à la livraison et connectez vos pixels publicitaires.",
+          "Un formulaire de commande par boutique, des pixels publicitaires et des offres par quantité, réunis au même endroit.",
       },
       { property: "og:title", content: "Formulaires & intégrations — Sooko" },
       {
         property: "og:description",
         content:
-          "Formulaires de commande personnalisables, offres quantité, upsells et pixels TikTok ou Facebook.",
+          "Configurez le formulaire de commande, les pixels et les offres quantité de chaque boutique.",
       },
     ],
   }),
-  component: FormsPage,
+  component: FormsHubPage,
 });
 
-function FormsPage() {
+function FormsHubPage() {
   const activeStoreId = useActiveStoreId();
+  const activeStore = useActiveStore();
   const forms = useForms(activeStoreId);
-  const stores = useStores();
-  const navigate = useNavigate();
-  const activeStore = stores.find((s) => s.id === activeStoreId);
+  const pixels = usePixels(activeStoreId);
+  const integrations = useAppIntegrations(activeStoreId);
+  const form = forms[0];
+  const connected = integrations.filter((i) => i.connected).length;
 
-  const storeName = (id: string) => stores.find((s) => s.id === id)?.name ?? "Boutique";
+  const sections = [
+    {
+      to: "/formulaires/commande" as const,
+      icon: FileText,
+      title: "Formulaire de commande",
+      text: "Champs, produits liés, apparence et options de confirmation. Un seul formulaire par boutique.",
+      status: form
+        ? form.status === "active"
+          ? "Actif"
+          : "Brouillon"
+        : "À créer",
+      detail: form
+        ? `${formatNumber(form.views)} vues · ${formatPercent(form.views ? (form.submissions / form.views) * 100 : 0)} de conversion`
+        : "Aucun formulaire configuré",
+    },
+    {
+      to: "/formulaires/offres" as const,
+      icon: Layers,
+      title: "Offres de quantité",
+      text: "Remises par lot, livraison offerte et ventes additionnelles proposées dans le formulaire.",
+      status: `${form?.offers.length ?? 0} offre(s)`,
+      detail: `${form?.upsells.length ?? 0} vente(s) additionnelle(s)`,
+    },
+    {
+      to: "/formulaires/pixels" as const,
+      icon: Target,
+      title: "Pixels publicitaires",
+      text: "Meta, TikTok, Snapchat, Google Ads ou Pinterest pour suivre vos campagnes.",
+      status: `${pixels.length} pixel(s)`,
+      detail: `${pixels.filter((p) => p.enabled).length} actif(s)`,
+    },
+    {
+      to: "/formulaires/integrations" as const,
+      icon: Plug,
+      title: "Intégrations",
+      text: "Google Sheets, WhatsApp, SMS, transporteur ou webhook pour automatiser vos commandes.",
+      status: `${connected} connectée(s)`,
+      detail: `${integrations.length} disponibles`,
+    },
+  ];
 
   return (
     <AppShell>
       <PageHeader
         title="Formulaires & intégrations"
-        description={`Formulaires de ${activeStore?.name ?? "la boutique active"} — chaque boutique a les siens.`}
-        action={
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
-              <Link to="/formulaires/integrations">Intégrations</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/formulaires/nouveau">
-                <Plus className="mr-2 h-4 w-4" /> Créer un formulaire
-              </Link>
-            </Button>
-          </div>
-        }
+        description={`Réglages propres à ${activeStore?.name ?? "la boutique active"}. Changez de boutique dans le menu de gauche.`}
       />
 
-      {forms.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 p-10 text-center">
-            <FileText className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              Aucun formulaire pour le moment. Créez votre premier formulaire de commande.
-            </p>
-            <Button asChild>
-              <Link to="/formulaires/nouveau">Créer un formulaire</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Formulaire</TableHead>
-                  <TableHead>Boutique</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="text-right">Vues</TableHead>
-                  <TableHead className="text-right">Commandes</TableHead>
-                  <TableHead className="text-right">Conversion</TableHead>
-                  <TableHead>Créé le</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {forms.map((form) => (
-                  <TableRow key={form.id}>
-                    <TableCell className="font-medium">
-                      <Link
-                        to="/formulaires/$formId"
-                        params={{ formId: form.id }}
-                        className="hover:underline"
-                      >
-                        {form.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {storeName(form.storeId)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={form.status === "active" ? "default" : "secondary"}>
-                        {form.status === "active" ? "Actif" : "Brouillon"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">{formatNumber(form.views)}</TableCell>
-                    <TableCell className="text-right">{formatNumber(form.submissions)}</TableCell>
-                    <TableCell className="text-right">
-                      {formatPercent(form.views ? (form.submissions / form.views) * 100 : 0)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {formatDate(form.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Dupliquer"
-                          onClick={() => {
-                            formsStore.duplicateForm(form.id);
-                            toast.success("Formulaire dupliqué");
-                          }}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Ouvrir"
-                          onClick={() =>
-                            navigate({
-                              to: "/formulaires/$formId",
-                              params: { formId: form.id },
-                            })
-                          }
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Supprimer"
-                          onClick={() => {
-                            formsStore.deleteForm(form.id);
-                            toast.success("Formulaire supprimé");
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid gap-4 md:grid-cols-2">
+        {sections.map((s) => (
+          <Link key={s.to} to={s.to} className="group">
+            <Card className="h-full transition-colors group-hover:border-primary">
+              <CardContent className="flex h-full flex-col gap-3 p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+                    <s.icon className="h-5 w-5" />
+                  </span>
+                  <Badge variant="secondary">{s.status}</Badge>
+                </div>
+                <div>
+                  <p className="font-display text-base font-semibold">{s.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{s.text}</p>
+                </div>
+                <p className="mt-auto text-xs text-muted-foreground">{s.detail}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </AppShell>
   );
 }

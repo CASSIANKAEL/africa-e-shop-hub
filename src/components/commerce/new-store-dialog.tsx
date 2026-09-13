@@ -26,8 +26,28 @@ import type { Currency, Store } from "@/types";
 
 const currencies: Currency[] = ["XOF", "XAF", "GHS", "NGN"];
 
-export function NewStoreDialog() {
-  const [open, setOpen] = useState(false);
+interface NewStoreDialogProps {
+  /** Déclencheur personnalisé (bouton par défaut). */
+  trigger?: React.ReactNode;
+  /** Ouverture contrôlée. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Bascule sur la boutique créée. */
+  switchOnCreate?: boolean;
+}
+
+export function NewStoreDialog({
+  trigger,
+  open: openProp,
+  onOpenChange,
+  switchOnCreate = false,
+}: NewStoreDialogProps = {}) {
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    onOpenChange?.(v);
+  };
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
@@ -37,13 +57,14 @@ export function NewStoreDialog() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
-    commerceStore.addStore({
+    const store = commerceStore.addStore({
       name: name.trim(),
       city: city.trim() || "—",
       country: country.trim() || "—",
       currency,
       status,
     });
+    if (switchOnCreate) commerceStore.setActiveStore(store.id);
     toast.success("Boutique créée");
     setName("");
     setCity("");
@@ -53,11 +74,15 @@ export function NewStoreDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
-        </Button>
-      </DialogTrigger>
+      {trigger === undefined ? (
+        <DialogTrigger asChild>
+          <Button>
+            <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
+          </Button>
+        </DialogTrigger>
+      ) : trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : null}
       <DialogContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>

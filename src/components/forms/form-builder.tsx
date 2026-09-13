@@ -32,13 +32,35 @@ const fieldTypeLabels: Record<OrderFormFieldType, string> = {
   select: "Liste déroulante",
 };
 
+export type FormSection = "champs" | "produits" | "offres" | "apparence" | "options";
+
+const sectionLabels: Record<FormSection, string> = {
+  champs: "Champs",
+  produits: "Produits",
+  offres: "Offres quantité",
+  apparence: "Apparence",
+  options: "Options",
+};
+
+const allSections: FormSection[] = ["champs", "produits", "offres", "apparence", "options"];
+
 interface FormBuilderProps {
   initial: OrderForm;
   onSave: (form: OrderForm) => void;
   saveLabel?: string;
+  /** Sous-sections affichées (toutes par défaut). */
+  sections?: FormSection[];
+  /** Masque la carte nom + boutique (boutique imposée). */
+  hideIdentity?: boolean;
 }
 
-export function FormBuilder({ initial, onSave, saveLabel = "Enregistrer" }: FormBuilderProps) {
+export function FormBuilder({
+  initial,
+  onSave,
+  saveLabel = "Enregistrer",
+  sections = allSections,
+  hideIdentity = false,
+}: FormBuilderProps) {
   const [form, setForm] = useState<OrderForm>(initial);
   const stores = useStores();
   const products = useProducts();
@@ -96,45 +118,49 @@ export function FormBuilder({ initial, onSave, saveLabel = "Enregistrer" }: Form
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="space-y-4">
-        <Card>
-          <CardContent className="grid gap-4 p-5 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="form-name">Nom du formulaire</Label>
-              <Input
-                id="form-name"
-                value={form.name}
-                onChange={(e) => patch({ name: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Boutique</Label>
-              <Select
-                value={form.storeId}
-                onValueChange={(v) => patch({ storeId: v, productIds: [] })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {stores.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+        {!hideIdentity && (
+          <Card>
+            <CardContent className="grid gap-4 p-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="form-name">Nom du formulaire</Label>
+                <Input
+                  id="form-name"
+                  value={form.name}
+                  onChange={(e) => patch({ name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Boutique</Label>
+                <Select
+                  value={form.storeId}
+                  onValueChange={(v) => patch({ storeId: v, productIds: [] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stores.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-        <Tabs defaultValue="champs">
-          <TabsList className="flex-wrap">
-            <TabsTrigger value="champs">Champs</TabsTrigger>
-            <TabsTrigger value="produits">Produits</TabsTrigger>
-            <TabsTrigger value="offres">Offres quantité</TabsTrigger>
-            <TabsTrigger value="apparence">Apparence</TabsTrigger>
-            <TabsTrigger value="options">Options</TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue={sections[0] ?? "champs"}>
+          {sections.length > 1 && (
+            <TabsList className="flex-wrap">
+              {sections.map((s) => (
+                <TabsTrigger key={s} value={s}>
+                  {sectionLabels[s]}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          )}
 
           <TabsContent value="champs" className="space-y-3 pt-4">
             {form.fields.map((field, index) => (

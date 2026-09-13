@@ -18,9 +18,10 @@ import { Route as VueEnsembleRouteImport } from './routes/vue-ensemble'
 import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 import { Route as FormulairesIndexRouteImport } from './routes/formulaires.index'
-import { Route as FormulairesFormIdRouteImport } from './routes/formulaires.$formId'
+import { Route as FormulairesCommandeRouteImport } from './routes/formulaires.commande'
 import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaires.integrations'
-import { Route as FormulairesNouveauRouteImport } from './routes/formulaires.nouveau'
+import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
+import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
 import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
@@ -72,9 +73,9 @@ const FormulairesIndexRoute = FormulairesIndexRouteImport.update({
   path: '/formulaires/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FormulairesFormIdRoute = FormulairesFormIdRouteImport.update({
-  id: '/formulaires/$formId',
-  path: '/formulaires/$formId',
+const FormulairesCommandeRoute = FormulairesCommandeRouteImport.update({
+  id: '/formulaires/commande',
+  path: '/formulaires/commande',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
@@ -82,9 +83,14 @@ const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
   path: '/formulaires/integrations',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FormulairesNouveauRoute = FormulairesNouveauRouteImport.update({
-  id: '/formulaires/nouveau',
-  path: '/formulaires/nouveau',
+const FormulairesOffresRoute = FormulairesOffresRouteImport.update({
+  id: '/formulaires/offres',
+  path: '/formulaires/offres',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormulairesPixelsRoute = FormulairesPixelsRouteImport.update({
+  id: '/formulaires/pixels',
+  path: '/formulaires/pixels',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
@@ -121,9 +127,10 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
-  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
-  '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
+  '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -140,9 +147,10 @@ export interface FileRoutesByTo {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
-  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
-  '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
+  '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
@@ -160,9 +168,10 @@ export interface FileRoutesById {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
-  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
-  '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
+  '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -181,9 +190,10 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
-    | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
-    | '/formulaires/nouveau'
+    | '/formulaires/offres'
+    | '/formulaires/pixels'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -200,9 +210,10 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
-    | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
-    | '/formulaires/nouveau'
+    | '/formulaires/offres'
+    | '/formulaires/pixels'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes'
@@ -219,9 +230,10 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
-    | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
-    | '/formulaires/nouveau'
+    | '/formulaires/offres'
+    | '/formulaires/pixels'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -239,9 +251,10 @@ export interface RootRouteChildren {
   ParametresRoute: typeof ParametresRoute
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
-  FormulairesFormIdRoute: typeof FormulairesFormIdRoute
+  FormulairesCommandeRoute: typeof FormulairesCommandeRoute
   FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
-  FormulairesNouveauRoute: typeof FormulairesNouveauRoute
+  FormulairesOffresRoute: typeof FormulairesOffresRoute
+  FormulairesPixelsRoute: typeof FormulairesPixelsRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
   CommandesIndexRoute: typeof CommandesIndexRoute
@@ -316,11 +329,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/formulaires/$formId': {
-      id: '/formulaires/$formId'
-      path: '/formulaires/$formId'
-      fullPath: '/formulaires/$formId'
-      preLoaderRoute: typeof FormulairesFormIdRouteImport
+    '/formulaires/commande': {
+      id: '/formulaires/commande'
+      path: '/formulaires/commande'
+      fullPath: '/formulaires/commande'
+      preLoaderRoute: typeof FormulairesCommandeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/formulaires/integrations': {
@@ -330,11 +343,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesIntegrationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/formulaires/nouveau': {
-      id: '/formulaires/nouveau'
-      path: '/formulaires/nouveau'
-      fullPath: '/formulaires/nouveau'
-      preLoaderRoute: typeof FormulairesNouveauRouteImport
+    '/formulaires/offres': {
+      id: '/formulaires/offres'
+      path: '/formulaires/offres'
+      fullPath: '/formulaires/offres'
+      preLoaderRoute: typeof FormulairesOffresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formulaires/pixels': {
+      id: '/formulaires/pixels'
+      path: '/formulaires/pixels'
+      fullPath: '/formulaires/pixels'
+      preLoaderRoute: typeof FormulairesPixelsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produits/': {
@@ -383,9 +403,10 @@ const rootRouteChildren: RootRouteChildren = {
   ParametresRoute: ParametresRoute,
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
-  FormulairesFormIdRoute: FormulairesFormIdRoute,
+  FormulairesCommandeRoute: FormulairesCommandeRoute,
   FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
-  FormulairesNouveauRoute: FormulairesNouveauRoute,
+  FormulairesOffresRoute: FormulairesOffresRoute,
+  FormulairesPixelsRoute: FormulairesPixelsRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,
   CommandesIndexRoute: CommandesIndexRoute,
