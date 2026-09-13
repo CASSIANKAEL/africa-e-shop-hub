@@ -1,48 +1,65 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type AppLanguage = "fr" | "en" | "es";
+export type AppLanguage = "fr" | "en" | "es" | "de" | "pt" | "it" | "ar";
 
 const languageNames: Record<AppLanguage, string> = {
   fr: "Français",
   en: "English",
   es: "Español",
+  de: "Deutsch",
+  pt: "Português",
+  it: "Italiano",
+  ar: "العربية",
 };
 
-const messages = {
-  fr: {
-    search: "Rechercher une commande, un client…",
-    notifications: "Notifications",
-    language: "Langue",
-    dashboard: "Tableau de bord",
-    overview: "Vue d'ensemble",
-    stores: "Boutiques",
-    products: "Produits",
-    orders: "Commandes",
-    customers: "Clients",
-    forms: "Formulaires & intégrations",
-    orderForm: "Formulaire de commande",
-    offers: "Offres de quantité",
-    pixels: "Pixels publicitaires",
-    integrations: "Intégrations",
-    subscription: "Abonnement",
-    settings: "Paramètres",
-    control: "Pilotage",
-    account: "Compte",
-    newStore: "Nouvelle boutique",
-    dragHint: "Maintenez la poignée puis glissez ce champ vers le haut ou le bas.",
-    animation: "Animation du bouton",
-    none: "Aucune",
-    pulse: "Pulsation",
-    bounce: "Rebond doux",
-    shake: "Secousse",
-    float: "Flottement",
-    shine: "Brillance",
-    orderFormTitle: "Formulaire de commande",
-    orderFormDescription: "Le formulaire unique de la boutique active.",
-    back: "Retour",
-    save: "Enregistrer",
-    createForm: "Créer le formulaire",
-  },
+const rtlLanguages: AppLanguage[] = ["ar"];
+
+const fr = {
+  search: "Rechercher une commande, un client…",
+  notifications: "Notifications",
+  language: "Langue",
+  dashboard: "Tableau de bord",
+  overview: "Vue d'ensemble",
+  stores: "Boutiques",
+  products: "Produits",
+  orders: "Commandes",
+  customers: "Clients",
+  forms: "Formulaires & intégrations",
+  orderForm: "Formulaire de commande",
+  offers: "Offres de quantité",
+  pixels: "Pixels publicitaires",
+  integrations: "Intégrations",
+  subscription: "Abonnement",
+  settings: "Paramètres",
+  control: "Pilotage",
+  account: "Compte",
+  newStore: "Nouvelle boutique",
+  dragHint: "Maintenez la poignée puis glissez ce champ vers le haut ou le bas.",
+  animation: "Animation du bouton",
+  none: "Aucune",
+  pulse: "Pulsation",
+  bounce: "Rebond doux",
+  shake: "Secousse",
+  float: "Flottement",
+  shine: "Brillance",
+  orderFormTitle: "Formulaire de commande",
+  orderFormDescription: "Le formulaire unique de la boutique active.",
+  back: "Retour",
+  save: "Enregistrer",
+  createForm: "Créer le formulaire",
+  adminLanguage: "Langue de l'espace admin",
+  adminLanguageHint: "La langue utilisée par les menus et les écrans d'administration.",
+  storeLanguage: "Langue de la boutique",
+  storeLanguageHint: "La langue affichée aux clients sur la boutique et le formulaire de commande.",
+  previewForm: "Formulaire",
+  previewThanks: "Remerciement",
+};
+
+type Dict = typeof fr;
+type MessageKey = keyof Dict;
+
+const messages: Record<AppLanguage, Partial<Dict>> = {
+  fr,
   en: {
     search: "Search orders, customers…",
     notifications: "Notifications",
@@ -76,6 +93,12 @@ const messages = {
     back: "Back",
     save: "Save",
     createForm: "Create form",
+    adminLanguage: "Admin language",
+    adminLanguageHint: "Language used by the admin menus and screens.",
+    storeLanguage: "Store language",
+    storeLanguageHint: "Language shown to customers on the storefront and order form.",
+    previewForm: "Form",
+    previewThanks: "Thank you",
   },
   es: {
     search: "Buscar pedidos, clientes…",
@@ -110,10 +133,174 @@ const messages = {
     back: "Volver",
     save: "Guardar",
     createForm: "Crear formulario",
+    adminLanguage: "Idioma del panel",
+    adminLanguageHint: "Idioma de los menús y pantallas de administración.",
+    storeLanguage: "Idioma de la tienda",
+    storeLanguageHint: "Idioma mostrado a los clientes en la tienda y el formulario.",
+    previewForm: "Formulario",
+    previewThanks: "Agradecimiento",
   },
-} as const;
-
-type MessageKey = keyof (typeof messages)["fr"];
+  de: {
+    search: "Bestellungen, Kunden suchen…",
+    notifications: "Benachrichtigungen",
+    language: "Sprache",
+    dashboard: "Dashboard",
+    overview: "Gesamtübersicht",
+    stores: "Shops",
+    products: "Produkte",
+    orders: "Bestellungen",
+    customers: "Kunden",
+    forms: "Formulare & Integrationen",
+    orderForm: "Bestellformular",
+    offers: "Mengenangebote",
+    pixels: "Werbe-Pixel",
+    integrations: "Integrationen",
+    subscription: "Abonnement",
+    settings: "Einstellungen",
+    control: "Steuerung",
+    account: "Konto",
+    newStore: "Neuer Shop",
+    dragHint: "Griff halten und das Feld nach oben oder unten ziehen.",
+    animation: "Button-Animation",
+    none: "Keine",
+    pulse: "Pulsieren",
+    bounce: "Sanftes Hüpfen",
+    shake: "Wackeln",
+    float: "Schweben",
+    shine: "Glanz",
+    orderFormTitle: "Bestellformular",
+    orderFormDescription: "Das einzige Formular des aktiven Shops.",
+    back: "Zurück",
+    save: "Speichern",
+    createForm: "Formular erstellen",
+    adminLanguage: "Sprache der Verwaltung",
+    adminLanguageHint: "Sprache der Menüs und Verwaltungsseiten.",
+    storeLanguage: "Sprache des Shops",
+    storeLanguageHint: "Sprache für Kunden im Shop und im Bestellformular.",
+    previewForm: "Formular",
+    previewThanks: "Danke-Seite",
+  },
+  pt: {
+    search: "Procurar pedidos, clientes…",
+    notifications: "Notificações",
+    language: "Idioma",
+    dashboard: "Painel",
+    overview: "Visão geral",
+    stores: "Lojas",
+    products: "Produtos",
+    orders: "Pedidos",
+    customers: "Clientes",
+    forms: "Formulários e integrações",
+    orderForm: "Formulário de pedido",
+    offers: "Ofertas por quantidade",
+    pixels: "Pixels publicitários",
+    integrations: "Integrações",
+    subscription: "Assinatura",
+    settings: "Configurações",
+    control: "Gestão",
+    account: "Conta",
+    newStore: "Nova loja",
+    dragHint: "Segure a alça e arraste este campo para cima ou para baixo.",
+    animation: "Animação do botão",
+    none: "Nenhuma",
+    pulse: "Pulsação",
+    bounce: "Salto suave",
+    shake: "Tremor",
+    float: "Flutuação",
+    shine: "Brilho",
+    orderFormTitle: "Formulário de pedido",
+    orderFormDescription: "O formulário único da loja ativa.",
+    back: "Voltar",
+    save: "Guardar",
+    createForm: "Criar formulário",
+    adminLanguage: "Idioma da administração",
+    adminLanguageHint: "Idioma dos menus e das telas de administração.",
+    storeLanguage: "Idioma da loja",
+    storeLanguageHint: "Idioma mostrado aos clientes na loja e no formulário.",
+    previewForm: "Formulário",
+    previewThanks: "Agradecimento",
+  },
+  it: {
+    search: "Cerca ordini, clienti…",
+    notifications: "Notifiche",
+    language: "Lingua",
+    dashboard: "Cruscotto",
+    overview: "Panoramica",
+    stores: "Negozi",
+    products: "Prodotti",
+    orders: "Ordini",
+    customers: "Clienti",
+    forms: "Moduli e integrazioni",
+    orderForm: "Modulo d'ordine",
+    offers: "Offerte per quantità",
+    pixels: "Pixel pubblicitari",
+    integrations: "Integrazioni",
+    subscription: "Abbonamento",
+    settings: "Impostazioni",
+    control: "Gestione",
+    account: "Account",
+    newStore: "Nuovo negozio",
+    dragHint: "Tieni premuta la maniglia e trascina il campo su o giù.",
+    animation: "Animazione del pulsante",
+    none: "Nessuna",
+    pulse: "Pulsazione",
+    bounce: "Rimbalzo leggero",
+    shake: "Scossa",
+    float: "Fluttuazione",
+    shine: "Brillantezza",
+    orderFormTitle: "Modulo d'ordine",
+    orderFormDescription: "Il modulo unico del negozio attivo.",
+    back: "Indietro",
+    save: "Salva",
+    createForm: "Crea modulo",
+    adminLanguage: "Lingua dell'amministrazione",
+    adminLanguageHint: "Lingua dei menu e delle schermate di amministrazione.",
+    storeLanguage: "Lingua del negozio",
+    storeLanguageHint: "Lingua mostrata ai clienti nel negozio e nel modulo.",
+    previewForm: "Modulo",
+    previewThanks: "Ringraziamento",
+  },
+  ar: {
+    search: "ابحث عن طلب أو عميل…",
+    notifications: "الإشعارات",
+    language: "اللغة",
+    dashboard: "لوحة التحكم",
+    overview: "نظرة عامة",
+    stores: "المتاجر",
+    products: "المنتجات",
+    orders: "الطلبات",
+    customers: "العملاء",
+    forms: "النماذج والتكاملات",
+    orderForm: "نموذج الطلب",
+    offers: "عروض الكمية",
+    pixels: "بيكسل الإعلانات",
+    integrations: "التكاملات",
+    subscription: "الاشتراك",
+    settings: "الإعدادات",
+    control: "الإدارة",
+    account: "الحساب",
+    newStore: "متجر جديد",
+    dragHint: "اضغط على المقبض واسحب الحقل للأعلى أو للأسفل.",
+    animation: "حركة الزر",
+    none: "بدون",
+    pulse: "نبض",
+    bounce: "ارتداد خفيف",
+    shake: "اهتزاز",
+    float: "طفو",
+    shine: "لمعان",
+    orderFormTitle: "نموذج الطلب",
+    orderFormDescription: "النموذج الوحيد للمتجر الحالي.",
+    back: "رجوع",
+    save: "حفظ",
+    createForm: "إنشاء النموذج",
+    adminLanguage: "لغة لوحة الإدارة",
+    adminLanguageHint: "اللغة المستعملة في القوائم وشاشات الإدارة.",
+    storeLanguage: "لغة المتجر",
+    storeLanguageHint: "اللغة المعروضة للعملاء في المتجر ونموذج الطلب.",
+    previewForm: "النموذج",
+    previewThanks: "صفحة الشكر",
+  },
+};
 
 interface LanguageContextValue {
   language: AppLanguage;
@@ -121,28 +308,36 @@ interface LanguageContextValue {
   t: (key: MessageKey) => string;
 }
 
+const translate = (language: AppLanguage, key: MessageKey) =>
+  messages[language]?.[key] ?? fr[key];
+
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+
+const isLanguage = (value: string | null): value is AppLanguage =>
+  !!value && value in languageNames;
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<AppLanguage>("fr");
 
   useEffect(() => {
     const saved = window.localStorage.getItem("sooko-language");
-    if (saved === "fr" || saved === "en" || saved === "es") setLanguageState(saved);
+    if (isLanguage(saved)) setLanguageState(saved);
   }, []);
 
   const setLanguage = (next: AppLanguage) => {
     setLanguageState(next);
     window.localStorage.setItem("sooko-language", next);
-    document.documentElement.lang = next;
   };
 
   useEffect(() => {
     document.documentElement.lang = language;
+    document.documentElement.dir = rtlLanguages.includes(language) ? "rtl" : "ltr";
   }, [language]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t: (key) => messages[language][key] }}>
+    <LanguageContext.Provider
+      value={{ language, setLanguage, t: (key) => translate(language, key) }}
+    >
       {children}
     </LanguageContext.Provider>
   );
@@ -151,11 +346,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 const fallbackContext: LanguageContextValue = {
   language: "fr",
   setLanguage: () => {},
-  t: (key) => messages.fr[key],
+  t: (key) => fr[key],
 };
 
 export function useLanguage() {
   return useContext(LanguageContext) ?? fallbackContext;
 }
 
-export { languageNames };
+export { languageNames, translate };
