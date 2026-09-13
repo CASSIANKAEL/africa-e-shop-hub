@@ -116,3 +116,107 @@ export interface SubscriptionPlan {
   features: string[];
   current?: boolean;
 }
+
+/* ---------- Formulaires & intégrations ---------- */
+
+export type OrderFormFieldType =
+  | "text"
+  | "phone"
+  | "email"
+  | "city"
+  | "address"
+  | "note"
+  | "select";
+
+export interface OrderFormField {
+  id: string;
+  label: string;
+  type: OrderFormFieldType;
+  placeholder?: string;
+  required: boolean;
+  enabled: boolean;
+  options?: string[];
+}
+
+export interface QuantityOffer {
+  id: string;
+  quantity: number;
+  label: string;
+  discountPercent: number;
+  freeShipping: boolean;
+}
+
+export interface OrderFormUpsell {
+  id: string;
+  title: string;
+  price: number;
+  enabled: boolean;
+}
+
+export interface OrderFormDesign {
+  primaryColor: string;
+  buttonText: string;
+  headline: string;
+  subheadline: string;
+  layout: "single" | "two-columns";
+  showProductSummary: boolean;
+  showQuantitySelector: boolean;
+  showCountdown: boolean;
+}
+
+export interface OrderFormSettings {
+  blockDuplicates: boolean;
+  requireOtp: boolean;
+  abandonedTracking: boolean;
+  whatsappConfirm: boolean;
+  googleSheetSync: boolean;
+  shippingFee: number;
+  freeShippingThreshold: number;
+}
+
+export interface OrderForm {
+  id: string;
+  name: string;
+  storeId: string;
+  productIds: string[];
+  status: "active" | "draft";
+  fields: OrderFormField[];
+  offers: QuantityOffer[];
+  upsells: OrderFormUpsell[];
+  design: OrderFormDesign;
+  settings: OrderFormSettings;
+  thankYou: { message: string; redirectUrl?: string };
+  createdAt: string;
+  views: number;
+  submissions: number;
+}
+
+export type PixelProvider = "facebook" | "tiktok" | "snapchat" | "google" | "pinterest";
+
+export interface PixelIntegration {
+  id: string;
+  provider: PixelProvider;
+  label: string;
+  pixelId: string;
+  accessToken?: string;
+  storeId: string;
+  events: string[];
+  enabled: boolean;
+}
+
+export type AppIntegrationKey =
+  | "google_sheets"
+  | "whatsapp"
+  | "sms"
+  | "shipping"
+  | "webhook";
+
+export interface AppIntegration {
+  key: AppIntegrationKey;
+  name: string;
+  description: string;
+  connected: boolean;
+  value: string;
+  valueLabel: string;
+  placeholder: string;
+}
