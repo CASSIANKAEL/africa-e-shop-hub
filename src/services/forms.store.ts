@@ -36,20 +36,30 @@ function useFormsState(): FormsState {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
-export function useForms(): OrderForm[] {
-  return useFormsState().forms;
+/** Formulaires, filtrés sur une boutique si `storeId` est fourni. */
+export function useForms(storeId?: string): OrderForm[] {
+  const forms = useFormsState().forms;
+  return storeId ? forms.filter((f) => f.storeId === storeId) : forms;
 }
 
 export function useOrderForm(id: string): OrderForm | undefined {
   return useFormsState().forms.find((f) => f.id === id);
 }
 
-export function usePixels(): PixelIntegration[] {
-  return useFormsState().pixels;
+/** Pixels, filtrés sur une boutique si `storeId` est fourni. */
+export function usePixels(storeId?: string): PixelIntegration[] {
+  const pixels = useFormsState().pixels;
+  return storeId ? pixels.filter((p) => p.storeId === storeId) : pixels;
 }
 
-export function useAppIntegrations(): AppIntegration[] {
-  return useFormsState().integrations;
+function integrationsFor(storeId: string): AppIntegration[] {
+  return state.integrations[storeId] ?? initialAppIntegrations;
+}
+
+/** Intégrations propres à la boutique donnée. */
+export function useAppIntegrations(storeId: string): AppIntegration[] {
+  const map = useFormsState().integrations;
+  return map[storeId] ?? initialAppIntegrations;
 }
 
 export type NewPixelInput = Omit<PixelIntegration, "id">;
