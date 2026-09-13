@@ -282,4 +282,20 @@ export const dictionary: Record<string, readonly [string, string, string, string
   deviceDesktop: ["Ordinateur", "Desktop", "Ordenador", "Computer", "Computador", "Computer", "الحاسوب"],
   secondsAgo: ["il y a {n} s", "{n}s ago", "hace {n} s", "vor {n} s", "há {n} s", "{n} s fa", "قبل {n} ثانية"],
   minutesAgo: ["il y a {n} min", "{n} min ago", "hace {n} min", "vor {n} Min.", "há {n} min", "{n} min fa", "قبل {n} دقيقة"],
+
+  // Formules d'abonnement (clés = libellé source)
+  "Démarrage": ["Démarrage", "Starter", "Inicio", "Start", "Início", "Avvio", "البداية"],
+  "Croissance": ["Croissance", "Growth", "Crecimiento", "Wachstum", "Crescimento", "Crescita", "النمو"],
+  "Pro": ["Pro", "Pro", "Pro", "Pro", "Pro", "Pro", "احترافي"],
+  "1 boutique": ["1 boutique", "1 store", "1 tienda", "1 Shop", "1 loja", "1 negozio", "متجر واحد"],
+  "3 boutiques": ["3 boutiques", "3 stores", "3 tiendas", "3 Shops", "3 lojas", "3 negozi", "3 متاجر"],
+  "50 commandes / mois": ["50 commandes / mois", "50 orders / month", "50 pedidos / mes", "50 Bestellungen / Monat", "50 pedidos / mês", "50 ordini / mese", "50 طلبًا شهريًا"],
+  "Commandes illimitées": ["Commandes illimitées", "Unlimited orders", "Pedidos ilimitados", "Unbegrenzte Bestellungen", "Pedidos ilimitados", "Ordini illimitati", "طلبات غير محدودة"],
+  "Boutiques illimitées": ["Boutiques illimitées", "Unlimited stores", "Tiendas ilimitadas", "Unbegrenzte Shops", "Lojas ilimitadas", "Negozi illimitati", "متاجر غير محدودة"],
+  "Support communautaire": ["Support communautaire", "Community support", "Soporte comunitario", "Community-Support", "Suporte da comunidade", "Supporto della community", "دعم المجتمع"],
+  "Suivi COD avancé": ["Suivi COD avancé", "Advanced COD tracking", "Seguimiento COD avanzado", "Erweitertes COD-Tracking", "Acompanhamento COD avançado", "Monitoraggio COD avanzato", "تتبع الدفع عند الاستلام المتقدم"],
+  "Support WhatsApp": ["Support WhatsApp", "WhatsApp support", "Soporte WhatsApp", "WhatsApp-Support", "Suporte WhatsApp", "Supporto WhatsApp", "دعم واتساب"],
+  "Multi-agents": ["Multi-agents", "Multiple agents", "Multiagente", "Mehrere Agenten", "Multiagentes", "Multi-agente", "وكلاء متعددون"],
+  "Rapports exportables": ["Rapports exportables", "Exportable reports", "Informes exportables", "Exportierbare Berichte", "Relatórios exportáveis", "Report esportabili", "تقارير قابلة للتصدير"],
+  "Account manager": ["Account manager", "Account manager", "Gestor de cuenta", "Kundenbetreuer", "Gestor de conta", "Account manager", "مدير حساب"],
 };

@@ -44,7 +44,7 @@ function SubscriptionPage() {
           <Card key={plan.id} className={cn(plan.current && "border-primary shadow-md")}>
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">{plan.name}</h2>
+                <h2 className="text-lg font-semibold">{t(plan.name)}</h2>
                 {plan.current && <Badge>{t("currentPlanBadge")}</Badge>}
               </div>
               <p className="mt-3 font-display text-2xl font-semibold">
