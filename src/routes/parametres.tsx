@@ -17,6 +17,8 @@ import {
 import { toast } from "sonner";
 import { languageNames, useLanguage, type AppLanguage } from "@/lib/i18n";
 import { commerceStore, useActiveStore } from "@/services/commerce.store";
+import { currencies, currencyNames } from "@/lib/currencies";
+import type { Currency } from "@/types";
 
 
 export const Route = createFileRoute("/parametres")({
@@ -43,11 +45,11 @@ function SettingsPage() {
 
   return (
     <AppShell>
-      <PageHeader title="Paramètres" description="Préférences du compte et de la facturation." />
+      <PageHeader title={t("settings")} description={t("profilePreferences")} />
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Langues</CardTitle>
+            <CardTitle className="text-base">{t("languages")}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -98,32 +100,25 @@ function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Profil commerçant</CardTitle>
+            <CardTitle className="text-base">{t("merchantProfile")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nom complet</Label>
+              <Label htmlFor="name">{t("fullName")}</Label>
               <Input id="name" defaultValue="Henoc ODJI" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone WhatsApp</Label>
+              <Label htmlFor="phone">{t("whatsappPhone")}</Label>
               <Input id="phone" defaultValue="+229 97 00 12 34" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currency">Devise par défaut</Label>
-              <Select defaultValue="XOF">
-                <SelectTrigger id="currency">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="XOF">FCFA (XOF)</SelectItem>
-                  <SelectItem value="XAF">FCFA (XAF)</SelectItem>
-                  <SelectItem value="GHS">Cedi (GHS)</SelectItem>
-                  <SelectItem value="NGN">Naira (NGN)</SelectItem>
-                </SelectContent>
+              <Label htmlFor="currency">{t("defaultCurrency")}</Label>
+              <Select value={store?.currency ?? "XOF"} onValueChange={(value) => { if (store) { commerceStore.updateStore(store.id, { currency: value as Currency }); toast.success(t("saved")); } }} disabled={!store}>
+                <SelectTrigger id="currency"><SelectValue /></SelectTrigger>
+                <SelectContent>{currencies.map((code) => <SelectItem key={code} value={code}>{currencyNames[code]}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <Button>Enregistrer</Button>
+            <Button onClick={() => toast.success(t("saved"))}>{t("save")}</Button>
           </CardContent>
         </Card>
 

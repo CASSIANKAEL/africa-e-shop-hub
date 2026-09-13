@@ -1,36 +1,32 @@
+import { getActiveLocale } from "@/lib/i18n";
 import type { Currency } from "@/types";
 
-const SUFFIX: Record<Currency, string> = {
-  XOF: "FCFA",
-  XAF: "FCFA",
-  GHS: "GHS",
-  NGN: "NGN",
-};
+const zeroDecimalCurrencies = new Set<Currency>(["XOF", "XAF", "GNF", "RWF", "UGX"]);
 
 export function formatMoney(value: number, currency: Currency = "XOF"): string {
-  return `${new Intl.NumberFormat("fr-FR").format(Math.round(value))} ${SUFFIX[currency]}`;
+  return new Intl.NumberFormat(getActiveLocale(), {
+    style: "currency",
+    currency,
+    maximumFractionDigits: zeroDecimalCurrencies.has(currency) ? 0 : 2,
+  }).format(value);
 }
 
 export function formatCompactMoney(value: number, currency: Currency = "XOF"): string {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M ${SUFFIX[currency]}`;
-  if (value >= 1_000) return `${Math.round(value / 1_000)}K ${SUFFIX[currency]}`;
-  return formatMoney(value, currency);
+  return new Intl.NumberFormat(getActiveLocale(), {
+    style: "currency", currency, notation: "compact", maximumFractionDigits: 1,
+  }).format(value);
 }
 
 export function formatNumber(value: number): string {
-  return new Intl.NumberFormat("fr-FR").format(value);
+  return new Intl.NumberFormat(getActiveLocale()).format(value);
 }
 
 export function formatPercent(value: number): string {
-  return `${value.toFixed(1).replace(".", ",")} %`;
+  return new Intl.NumberFormat(getActiveLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(value) + " %";
 }
 
 export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
-    timeZone: "UTC",
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
+  return new Intl.DateTimeFormat(getActiveLocale(), {
+    timeZone: "UTC", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
   }).format(new Date(iso));
 }

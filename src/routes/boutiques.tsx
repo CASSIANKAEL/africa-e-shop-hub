@@ -10,6 +10,7 @@ import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/boutiques")({
   head: () => ({
@@ -31,11 +32,12 @@ export const Route = createFileRoute("/boutiques")({
 
 function StoresPage() {
   const stores = useStores();
+  const { t } = useLanguage();
 
   return (
     <AppShell>
       <PageHeader
-        title="Boutiques"
+        title={t("stores")}
         description="Chaque boutique possède son catalogue, sa devise et ses commandes."
         action={<NewStoreDialog />}
       />
@@ -57,7 +59,7 @@ function StoresPage() {
               </p>
               <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-lg bg-muted p-3">
-                  <dt className="text-xs text-muted-foreground">Produits</dt>
+                     <dt className="text-xs text-muted-foreground">{t("products")}</dt>
                   <dd className="font-semibold">{formatNumber(store.productsCount)}</dd>
                 </div>
                 <div className="rounded-lg bg-muted p-3">
@@ -69,7 +71,7 @@ function StoresPage() {
               </dl>
               <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
                 <Link to="/vitrine/$storeId" params={{ storeId: store.id }} target="_blank">
-                  <ExternalLink className="mr-2 h-4 w-4" /> Voir la boutique en ligne
+                   <ExternalLink className="mr-2 h-4 w-4" /> {t("viewStore")}
                 </Link>
               </Button>
             </CardContent>

@@ -111,7 +111,7 @@ export function AppSidebar() {
           {!collapsed && (
             <span className="flex flex-col leading-tight">
               <span className="font-display text-sm font-semibold">Sooko</span>
-              <span className="text-xs text-sidebar-foreground/60">Commerce africain</span>
+              <span className="text-xs text-sidebar-foreground/60">{t("africanCommerce")}</span>
             </span>
           )}
         </Link>
@@ -121,7 +121,7 @@ export function AppSidebar() {
               value={activeStoreId}
               onValueChange={(v) => commerceStore.setActiveStore(v)}
             >
-              <SelectTrigger className="mt-3 h-9 w-full" aria-label="Changer de boutique">
+              <SelectTrigger className="mt-3 h-11 w-full md:h-9" aria-label={t("switchStore")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -227,9 +227,9 @@ export function AppSidebar() {
       {!collapsed && (
         <SidebarFooter className="border-t border-sidebar-border p-3">
           <div className="rounded-xl bg-sidebar-accent p-3">
-            <p className="text-xs font-medium text-sidebar-accent-foreground">Plan Croissance</p>
+            <p className="text-xs font-medium text-sidebar-accent-foreground">{t("growthPlan")}</p>
             <p className="mt-1 text-xs text-sidebar-foreground/60">
-              Renouvellement le 30 sept. 2026
+              {t("renewal")}
             </p>
           </div>
         </SidebarFooter>

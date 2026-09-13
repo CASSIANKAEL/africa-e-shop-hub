@@ -10,3 +10,4 @@
 - [x] Aperçu en ligne : bouton « Voir la boutique en ligne » et « Voir le produit en ligne » ouvrant un nouvel onglet (vitrine publique)
 - [x] Réorganisation des champs par glisser-déposer, animations du bouton et langues d'administration
 - [x] Aperçu de la page de remerciement cliquable et personnalisable, langues supplémentaires (de, pt, it, ar) et langue par boutique
+- [x] Expérience mobile prioritaire, traduction globale et catalogue étendu de devises

@@ -36,6 +36,7 @@ import {
   resolveRange,
 } from "@/services/analytics";
 import { formatDate, formatMoney, formatNumber, formatPercent } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,6 +67,7 @@ const activityIcons = {
 
 function DashboardPage() {
   const activeStoreId = useActiveStoreId();
+  const { t } = useLanguage();
   const activeStore = useActiveStore();
   const liveOrders = useOrders();
   const activity = commerceService.getRecentActivity();
@@ -98,70 +100,70 @@ function DashboardPage() {
     <AppShell>
       <PageHeader
         title={activeStore?.name ?? "Tableau de bord"}
-        description="Données de la boutique active uniquement."
+        description={t("activeStoreData")}
         action={
           <div className="flex flex-wrap items-center gap-2">
             <PeriodFilter value={period} onChange={setPeriod} />
             <Button variant="outline" asChild>
-              <Link to="/vue-ensemble">Vue d'ensemble</Link>
+              <Link to="/vue-ensemble">{t("overviewAction")}</Link>
             </Button>
           </div>
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Chiffre d'affaires"
+          label={t("revenue")}
           value={formatMoney(m.revenue, currency)}
           change={m.revenueChange}
-          hint="vs période précédente"
+          hint={t("previousPeriod")}
           icon={Banknote}
         />
         <MetricCard
-          label="Volume de commandes"
+          label={t("orderVolume")}
           value={formatNumber(m.ordersVolume)}
           change={m.ordersChange}
-          hint="commandes reçues"
+          hint={t("ordersReceived")}
           icon={ShoppingBag}
         />
         <MetricCard
-          label="Taux de confirmation COD"
+          label={t("codRate")}
           value={formatPercent(m.codConfirmationRate)}
           change={m.codChange}
-          hint="paiement à la livraison"
+          hint={t("cashOnDelivery")}
           icon={PhoneCall}
         />
         <MetricCard
-          label="Panier moyen"
+          label={t("averageBasket")}
           value={formatMoney(m.averageBasket, currency)}
           hint={`sur ${formatNumber(m.ordersVolume)} commandes`}
           icon={CheckCircle2}
         />
       </div>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:mt-4 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Visites"
+          label={t("visits")}
           value={formatNumber(m.visits)}
           change={m.visitsChange}
-          hint="visiteurs de la boutique"
+          hint={t("storeVisitors")}
           icon={Eye}
         />
         <MetricCard
-          label="Taux de conversion"
+          label={t("conversionRate")}
           value={formatPercent(m.conversionRate)}
           change={m.conversionChange}
           hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
           icon={MousePointerClick}
         />
         <MetricCard
-          label="Taux de livraison"
+          label={t("deliveryRate")}
           value={formatPercent(m.deliveryRate)}
           hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
           icon={Truck}
         />
         <MetricCard
-          label="Taux de retour"
+          label={t("returnRate")}
           value={formatPercent(m.returnRate)}
           hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit, currency)} par visite`}
           icon={Undo2}
@@ -171,12 +173,12 @@ function DashboardPage() {
       <LivePanel
         storeId={activeStoreId}
         currency={currency}
-        title={`Temps réel — ${activeStore?.name ?? "boutique"}`}
+        title={`${t("live")} — ${activeStore?.name ?? t("stores")}`}
       />
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-base">Visites & taux de conversion</CardTitle>
+          <CardTitle className="text-base">{t("trafficConversion")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TrafficChart data={traffic} />
@@ -186,7 +188,7 @@ function DashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Ventes de la période</CardTitle>
+            <CardTitle className="text-base">{t("periodSales")}</CardTitle>
           </CardHeader>
           <CardContent>
             <RevenueChart data={sales} />
@@ -195,24 +197,24 @@ function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Statut des commandes</CardTitle>
+            <CardTitle className="text-base">{t("orderStatus")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             <StatusRow
               icon={<Clock className="h-4 w-4 text-warning" />}
-              label="À confirmer"
+              label={t("toConfirm")}
               value={m.pending}
               total={totalStatuses}
             />
             <StatusRow
               icon={<CheckCircle2 className="h-4 w-4 text-success" />}
-              label="Confirmées"
+              label={t("confirmed")}
               value={m.confirmed}
               total={totalStatuses}
             />
             <StatusRow
               icon={<XCircle className="h-4 w-4 text-destructive" />}
-              label="Annulées"
+              label={t("cancelled")}
               value={m.cancelled}
               total={totalStatuses}
             />
@@ -230,9 +232,9 @@ function DashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
-            <CardTitle className="text-base">Dernières commandes</CardTitle>
+            <CardTitle className="text-base">{t("recentOrders")}</CardTitle>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/commandes">Tout voir</Link>
+              <Link to="/commandes">{t("seeAll")}</Link>
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -259,7 +261,7 @@ function DashboardPage() {
             ))}
             {recent.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                Aucune commande récente pour cette boutique.
+                {t("noRecentOrders")}
               </p>
             )}
           </CardContent>
@@ -267,7 +269,7 @@ function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Volume de commandes</CardTitle>
+            <CardTitle className="text-base">{t("orderVolume")}</CardTitle>
           </CardHeader>
           <CardContent>
             <OrdersChart data={sales} />
@@ -277,7 +279,7 @@ function DashboardPage() {
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-base">Activité récente</CardTitle>
+          <CardTitle className="text-base">{t("recentActivity")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           {activity.map((event) => {

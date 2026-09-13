@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { commerceService } from "@/services/commerce.service";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/clients")({
   head: () => ({
@@ -35,24 +36,30 @@ export const Route = createFileRoute("/clients")({
 
 function CustomersPage() {
   const customers = commerceService.getCustomers();
+  const { t } = useLanguage();
 
   return (
     <AppShell>
       <PageHeader
-        title="Clients"
+        title={t("customers")}
         description="Historique d'achat et fiabilité de confirmation par client."
       />
-      <Card>
+      <div className="grid gap-3 md:hidden">
+        {customers.map((c) => (
+          <Card key={c.id}><CardContent className="p-4"><div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3"><div className="min-w-0"><p className="truncate font-medium">{c.fullName}</p><p className="text-xs text-muted-foreground">{c.phone} · {c.city}</p></div><span className="font-semibold">{formatMoney(c.totalSpent)}</span></div><dl className="mt-3 grid grid-cols-2 gap-2 border-t pt-3 text-sm"><div><dt className="text-xs text-muted-foreground">{t("orders")}</dt><dd>{formatNumber(c.ordersCount)}</dd></div><div><dt className="text-xs text-muted-foreground">{t("confirmation")}</dt><dd>{formatPercent(c.confirmationRate)}</dd></div></dl></CardContent></Card>
+        ))}
+      </div>
+      <Card className="hidden md:block">
         <CardContent className="overflow-x-auto p-0">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Client</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Ville</TableHead>
-                <TableHead>Commandes</TableHead>
-                <TableHead>Dépenses</TableHead>
-                <TableHead>Confirmation</TableHead>
+                 <TableHead>{t("phone")}</TableHead>
+                 <TableHead>{t("city")}</TableHead>
+                 <TableHead>{t("orders")}</TableHead>
+                 <TableHead>{t("spending")}</TableHead>
+                 <TableHead>{t("confirmation")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
