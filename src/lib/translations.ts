@@ -29,7 +29,7 @@ export const dictionary: Record<string, readonly [string, string, string, string
   newStore: ["Nouvelle boutique", "New store", "Nueva tienda", "Neuer Shop", "Nova loja", "Nuovo negozio", "متجر جديد"],
   switchStore: ["Changer de boutique", "Switch store", "Cambiar de tienda", "Shop wechseln", "Mudar de loja", "Cambia negozio", "تغيير المتجر"],
   store: ["Boutique", "Store", "Tienda", "Shop", "Loja", "Negozio", "المتجر"],
-  africanCommerce: ["Commerce africain", "African commerce", "Comercio africano", "Afrikanischer Handel", "Comércio africano", "Commercio africano", "التجارة الأفريقية"],
+  africanCommerce: ["\n", "\n", "\n", "\n", "\n", "\n", "\n"],
   growthPlan: ["Plan Croissance", "Growth plan", "Plan Crecimiento", "Wachstumsplan", "Plano Crescimento", "Piano Crescita", "خطة النمو"],
   renewal: ["Renouvellement le 30 sept. 2026", "Renews Sep 30, 2026", "Renovación el 30 sept. 2026", "Verlängerung am 30. Sept. 2026", "Renovação em 30 set. 2026", "Rinnovo il 30 set. 2026", "التجديد في 30 سبتمبر 2026"],
   mobileHome: ["Accueil", "Home", "Inicio", "Start", "Início", "Home", "الرئيسية"],
