@@ -94,7 +94,11 @@ function OrderDetailPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Articles</CardTitle>
-            <OrderStatusSelect orderId={order.id} status={order.status} />
+            <OrderStatusSelect
+              orderId={order.id}
+              status={order.status}
+              {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+            />
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
@@ -137,6 +141,30 @@ function OrderDetailPage() {
             <Info label="Ville" value={order.customer.city} />
             <Info label="Paiement" value={paymentLabels[order.paymentMethod]} />
             <Info label="Devise" value={order.currency} />
+            {order.followUpAt && (
+              <Info label="Rappel prévu" value={formatDate(order.followUpAt)} />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-base">Commentaires</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {order.comments?.length ? (
+              <ul className="space-y-2">
+                {order.comments.map((c) => (
+                  <li key={c.id} className="rounded-xl bg-muted p-3 text-sm">
+                    <p>{c.text}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{formatDate(c.createdAt)}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">Aucun commentaire pour le moment.</p>
+            )}
+            <CommentForm orderId={order.id} />
           </CardContent>
         </Card>
       </div>
