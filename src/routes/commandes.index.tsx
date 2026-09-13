@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { paymentLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
-import { useOrders } from "@/services/commerce.store";
+import { isFollowUpDue, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/commandes/")({
@@ -40,6 +40,23 @@ export const Route = createFileRoute("/commandes/")({
 
 function OrdersPage() {
   const orders = useOrders();
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const sorted = useMemo(() => {
+    return [...orders].sort((a, b) => {
+      const da = isFollowUpDue(a, now) ? 0 : 1;
+      const db = isFollowUpDue(b, now) ? 0 : 1;
+      if (da !== db) return da - db;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [orders, now]);
+
+  const dueCount = sorted.filter((o) => isFollowUpDue(o, now)).length;
 
   return (
     <AppShell>
