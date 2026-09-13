@@ -299,7 +299,20 @@ export const commerceStore = {
           if (next.status === "confirmed") next.status = "shipped";
         } else {
           delete next.courierId;
+          delete next.courierNote;
         }
+        return next;
+      }),
+    });
+  },
+  /** Consigne destinée au livreur attribué. */
+  setCourierNote(orderId: string, note: string | null) {
+    setState({
+      orders: state.orders.map((o) => {
+        if (o.id !== orderId) return o;
+        const next: Order = { ...o };
+        if (note && note.trim()) next.courierNote = note.trim();
+        else delete next.courierNote;
         return next;
       }),
     });
