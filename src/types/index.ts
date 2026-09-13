@@ -200,7 +200,12 @@ export interface OrderFormThankYou {
   showOrderNumber?: boolean;
   showSummary?: boolean;
   redirectUrl?: string;
+  emoji?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  supportNote?: string;
 }
+
 
 export interface OrderForm {
   id: string;
