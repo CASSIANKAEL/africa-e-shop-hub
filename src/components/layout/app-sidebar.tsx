@@ -42,12 +42,9 @@ const mainItems = [
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
+  { title: "Formulaires & intégrations", url: "/formulaires", icon: FileText },
 ] as const;
 
-const formItems = [
-  { title: "Formulaires", url: "/formulaires", icon: FileText },
-  { title: "Intégrations & pixels", url: "/formulaires/integrations", icon: Plug },
-] as const;
 
 const accountItems = [
   { title: "Abonnement", url: "/abonnement", icon: CreditCard },
