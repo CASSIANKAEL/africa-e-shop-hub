@@ -125,6 +125,34 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
+          <SidebarGroupLabel>Formulaires & intégrations</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {formItems.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={
+                      item.url === "/formulaires"
+                        ? pathname === "/formulaires" ||
+                          (pathname.startsWith("/formulaires/") &&
+                            pathname !== "/formulaires/integrations")
+                        : isActive(item.url)
+                    }
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url} onClick={close} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
           <SidebarGroupLabel>Compte</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
