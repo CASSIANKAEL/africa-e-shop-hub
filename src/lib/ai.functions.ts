@@ -57,7 +57,9 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
 
     try {
       console.log("[ai] reading body");
-      const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+      const raw = await res.text();
+      console.log("[ai] body length", raw.length);
+      const json = JSON.parse(raw) as { choices?: { message?: { content?: string } }[] };
       const content = json.choices?.[0]?.message?.content ?? "";
       const parsed = z
         .object({ products: z.array(ProductIdea) })
