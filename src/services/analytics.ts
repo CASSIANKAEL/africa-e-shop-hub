@@ -73,6 +73,21 @@ export interface PeriodMetrics {
   codConfirmationRate: number;
   codChange: number;
   averageBasket: number;
+  /** Visites du ou des sites sur la période. */
+  visits: number;
+  visitsChange: number;
+  /** Commandes / visites. */
+  conversionRate: number;
+  conversionChange: number;
+  /** Commandes livrées (retirées par le client). */
+  delivered: number;
+  /** Livrées / confirmées — taux de retrait. */
+  deliveryRate: number;
+  returned: number;
+  /** Retours / (livrées + retours). */
+  returnRate: number;
+  /** Chiffre d'affaires par visite. */
+  revenuePerVisit: number;
 }
 
 const confirmedStatuses = ["confirmed", "shipped", "delivered"];
