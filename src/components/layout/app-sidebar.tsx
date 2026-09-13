@@ -11,6 +11,13 @@ import {
 } from "lucide-react";
 
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -23,6 +30,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { commerceStore, useActiveStoreId, useStores } from "@/services/commerce.store";
 
 const mainItems = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard, exact: true },
@@ -41,6 +49,8 @@ export function AppSidebar() {
   const { state, setOpenMobile, isMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const stores = useStores();
+  const activeStoreId = useActiveStoreId();
 
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(`${url}/`);
@@ -63,6 +73,24 @@ export function AppSidebar() {
             </span>
           )}
         </Link>
+        {!collapsed && (
+          <Select
+            value={activeStoreId ?? "all"}
+            onValueChange={(v) => commerceStore.setActiveStore(v === "all" ? null : v)}
+          >
+            <SelectTrigger className="mt-3 h-9 w-full" aria-label="Changer de boutique">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes les boutiques</SelectItem>
+              {stores.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
