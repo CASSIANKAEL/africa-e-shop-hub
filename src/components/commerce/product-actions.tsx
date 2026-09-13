@@ -86,7 +86,7 @@ export function ProductActions({ product }: { product: Product }) {
             Transférer vers une boutique
           </DropdownMenuItem>
           <DropdownMenuItem
-            variant="destructive"
+            className="text-destructive focus:text-destructive"
             onSelect={() => {
               commerceStore.deleteProduct(product.id);
               toast.success("Produit supprimé.");
