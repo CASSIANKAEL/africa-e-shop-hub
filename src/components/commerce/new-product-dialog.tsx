@@ -106,9 +106,8 @@ export function NewProductDialog() {
         trackStock,
         storeId,
         category,
-        description: description.trim() || undefined,
-        images: images.length ? images : undefined,
-        image: images[0],
+        ...(description.trim() ? { description: description.trim() } : {}),
+        ...(images.length ? { images, image: images[0]! } : {}),
       });
     });
     toast.success(
