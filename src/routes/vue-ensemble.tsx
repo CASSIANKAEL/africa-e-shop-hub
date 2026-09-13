@@ -197,16 +197,16 @@ function OverviewPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Boutique</TableHead>
-                <TableHead className="hidden lg:table-cell">Statut</TableHead>
+                <TableHead>{t("store")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("status")}</TableHead>
                 <TableHead>{t("visits")}</TableHead>
-                <TableHead className="hidden lg:table-cell">Conversion</TableHead>
-                <TableHead>Chiffre d'affaires</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("conversionRate")}</TableHead>
+                <TableHead>{t("revenue")}</TableHead>
                 <TableHead>{t("orders")}</TableHead>
-                <TableHead className="hidden lg:table-cell">À confirmer</TableHead>
-                <TableHead className="hidden lg:table-cell">Confirmation COD</TableHead>
-                <TableHead className="hidden lg:table-cell">Livraison</TableHead>
-                <TableHead className="hidden lg:table-cell">Retours</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("toConfirm")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("codRate")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("delivery")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("returns")}</TableHead>
                 <TableHead>{t("averageBasket")}</TableHead>
               </TableRow>
             </TableHeader>
