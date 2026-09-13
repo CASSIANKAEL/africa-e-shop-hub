@@ -16,7 +16,7 @@ import {
 import { useActiveStoreId, useProducts, useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
 
-export const Route = createFileRoute("/produits")({
+export const Route = createFileRoute("/produits/")({
   head: () => ({
     meta: [
       { title: "Produits — Sooko" },
