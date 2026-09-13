@@ -35,6 +35,7 @@ import {
   resolveRange,
 } from "@/services/analytics";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/format";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/vue-ensemble")({
   head: () => ({
@@ -57,6 +58,7 @@ export const Route = createFileRoute("/vue-ensemble")({
 
 function OverviewPage() {
   const stores = useStores();
+  const { t } = useLanguage();
   const liveOrders = useOrders();
   const [period, setPeriod] = useState<PeriodValue>({ period: "30d" });
 
@@ -93,12 +95,12 @@ function OverviewPage() {
   return (
     <AppShell>
       <PageHeader
-        title="Vue d'ensemble"
-        description="Données de toutes vos boutiques combinées."
+        title={t("overview")}
+        description={t("allStoresData")}
         action={<PeriodFilter value={period} onChange={setPeriod} />}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <MetricCard
           label="Chiffre d'affaires total"
           value={formatMoney(m.revenue)}
@@ -128,7 +130,7 @@ function OverviewPage() {
         />
       </div>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:mt-4 sm:gap-4 xl:grid-cols-4">
         <MetricCard
           label="Visites"
           value={formatNumber(m.visits)}
@@ -159,7 +161,7 @@ function OverviewPage() {
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-base">Visites & taux de conversion</CardTitle>
+          <CardTitle className="text-base">{t("trafficConversion")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TrafficChart data={traffic} />
@@ -169,7 +171,7 @@ function OverviewPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Ventes cumulées</CardTitle>
+            <CardTitle className="text-base">{t("cumulativeSales")}</CardTitle>
           </CardHeader>
           <CardContent>
             <RevenueChart data={sales} />
@@ -177,7 +179,7 @@ function OverviewPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Volume de commandes</CardTitle>
+            <CardTitle className="text-base">{t("orderVolume")}</CardTitle>
           </CardHeader>
           <CardContent>
             <OrdersChart data={sales} />
@@ -187,23 +189,23 @@ function OverviewPage() {
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle className="text-base">Performance par boutique</CardTitle>
+          <CardTitle className="text-base">{t("storePerformance")}</CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Boutique</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Visites</TableHead>
-                <TableHead>Conversion</TableHead>
+                <TableHead className="hidden lg:table-cell">Statut</TableHead>
+                <TableHead>{t("visits")}</TableHead>
+                <TableHead className="hidden lg:table-cell">Conversion</TableHead>
                 <TableHead>Chiffre d'affaires</TableHead>
-                <TableHead>Commandes</TableHead>
-                <TableHead>À confirmer</TableHead>
-                <TableHead>Confirmation COD</TableHead>
-                <TableHead>Livraison</TableHead>
-                <TableHead>Retours</TableHead>
-                <TableHead>Panier moyen</TableHead>
+                <TableHead>{t("orders")}</TableHead>
+                <TableHead className="hidden lg:table-cell">À confirmer</TableHead>
+                <TableHead className="hidden lg:table-cell">Confirmation COD</TableHead>
+                <TableHead className="hidden lg:table-cell">Livraison</TableHead>
+                <TableHead className="hidden lg:table-cell">Retours</TableHead>
+                <TableHead>{t("averageBasket")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -220,16 +222,16 @@ function OverviewPage() {
                       {store.status === "active" ? "Active" : "En pause"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{formatNumber(metrics.visits)}</TableCell>
-                  <TableCell>{formatPercent(metrics.conversionRate)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatNumber(metrics.visits)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatPercent(metrics.conversionRate)}</TableCell>
                   <TableCell className="font-medium">
                     {formatMoney(metrics.revenue, store.currency)}
                   </TableCell>
                   <TableCell>{formatNumber(metrics.ordersVolume)}</TableCell>
-                  <TableCell>{formatNumber(metrics.pending)}</TableCell>
-                  <TableCell>{formatPercent(metrics.codConfirmationRate)}</TableCell>
-                  <TableCell>{formatPercent(metrics.deliveryRate)}</TableCell>
-                  <TableCell>{formatPercent(metrics.returnRate)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatNumber(metrics.pending)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatPercent(metrics.codConfirmationRate)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatPercent(metrics.deliveryRate)}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{formatPercent(metrics.returnRate)}</TableCell>
                   <TableCell>{formatMoney(metrics.averageBasket, store.currency)}</TableCell>
                 </TableRow>
               ))}
