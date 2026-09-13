@@ -6,13 +6,14 @@ import { emptyForm, initialAppIntegrations, initialForms, initialPixels } from "
 interface FormsState {
   forms: OrderForm[];
   pixels: PixelIntegration[];
-  integrations: AppIntegration[];
+  /** Intégrations propres à chaque boutique. */
+  integrations: Record<string, AppIntegration[]>;
 }
 
 let state: FormsState = {
   forms: initialForms,
   pixels: initialPixels,
-  integrations: initialAppIntegrations,
+  integrations: {},
 };
 
 const listeners = new Set<() => void>();
