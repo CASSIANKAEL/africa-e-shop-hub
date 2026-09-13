@@ -66,8 +66,24 @@ function ProductsPage() {
               {products.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell>
-                    <span className="font-medium">{p.name}</span>
-                    <span className="block text-xs text-muted-foreground">{p.category}</span>
+                    <div className="flex items-center gap-3">
+                      {p.image && (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="h-10 w-10 rounded-md object-cover"
+                        />
+                      )}
+                      <div>
+                        <span className="font-medium">{p.name}</span>
+                        <span className="block text-xs text-muted-foreground">{p.category}</span>
+                        {p.description && (
+                          <span className="block max-w-xs truncate text-xs text-muted-foreground">
+                            {p.description}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.sku}</TableCell>
                   <TableCell className="text-muted-foreground">
