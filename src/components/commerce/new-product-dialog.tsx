@@ -33,14 +33,14 @@ export function NewProductDialog() {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [storeId, setStoreId] = useState(stores[0]?.id ?? "");
-  const [category, setCategory] = useState(categories[0]);
+  const [category, setCategory] = useState<string>("Mode");
 
   function reset() {
     setName("");
     setSku("");
     setPrice("");
     setStock("");
-    setCategory(categories[0]);
+    setCategory("Mode");
   }
 
   function handleSubmit(e: React.FormEvent) {
