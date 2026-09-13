@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BellRing } from "lucide-react";
+import { BellRing, MapPin, MessageSquare, Phone } from "lucide-react";
 
 
 import { AppShell } from "@/components/layout/app-shell";
