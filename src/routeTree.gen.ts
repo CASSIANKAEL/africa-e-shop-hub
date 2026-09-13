@@ -17,6 +17,9 @@ import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as VueEnsembleRouteImport } from './routes/vue-ensemble'
 import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
+import { Route as FormulairesIndexRouteImport } from './routes/formulaires.index'
+import { Route as FormulairesFormIdRouteImport } from './routes/formulaires.$formId'
+import { Route as FormulairesNouveauRouteImport } from './routes/formulaires.nouveau'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
 import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
@@ -61,6 +64,21 @@ const CommandesOrderIdRoute = CommandesOrderIdRouteImport.update({
   path: '/commandes/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormulairesIndexRoute = FormulairesIndexRouteImport.update({
+  id: '/formulaires/',
+  path: '/formulaires/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormulairesFormIdRoute = FormulairesFormIdRouteImport.update({
+  id: '/formulaires/$formId',
+  path: '/formulaires/$formId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormulairesNouveauRoute = FormulairesNouveauRouteImport.update({
+  id: '/formulaires/nouveau',
+  path: '/formulaires/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
   id: '/produits/',
   path: '/produits/',
@@ -85,9 +103,12 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
+  '/formulaires/': typeof FormulairesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -98,9 +119,12 @@ export interface FileRoutesByTo {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
+  '/formulaires': typeof FormulairesIndexRoute
   '/produits': typeof ProduitsIndexRoute
 }
 export interface FileRoutesById {
@@ -112,9 +136,12 @@ export interface FileRoutesById {
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
+  '/formulaires/': typeof FormulairesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
 }
 export interface FileRouteTypes {
@@ -127,9 +154,12 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
+    | '/formulaires/$formId'
+    | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
+    | '/formulaires/'
     | '/produits/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -140,9 +170,12 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
+    | '/formulaires/$formId'
+    | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes'
+    | '/formulaires'
     | '/produits'
   id:
     | '__root__'
@@ -153,9 +186,12 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
+    | '/formulaires/$formId'
+    | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
+    | '/formulaires/'
     | '/produits/'
   fileRoutesById: FileRoutesById
 }
@@ -167,9 +203,12 @@ export interface RootRouteChildren {
   ParametresRoute: typeof ParametresRoute
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
+  FormulairesFormIdRoute: typeof FormulairesFormIdRoute
+  FormulairesNouveauRoute: typeof FormulairesNouveauRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
   CommandesIndexRoute: typeof CommandesIndexRoute
+  FormulairesIndexRoute: typeof FormulairesIndexRoute
   ProduitsIndexRoute: typeof ProduitsIndexRoute
 }
 
@@ -231,6 +270,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandesOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formulaires/': {
+      id: '/formulaires/'
+      path: '/formulaires'
+      fullPath: '/formulaires/'
+      preLoaderRoute: typeof FormulairesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formulaires/$formId': {
+      id: '/formulaires/$formId'
+      path: '/formulaires/$formId'
+      fullPath: '/formulaires/$formId'
+      preLoaderRoute: typeof FormulairesFormIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formulaires/nouveau': {
+      id: '/formulaires/nouveau'
+      path: '/formulaires/nouveau'
+      fullPath: '/formulaires/nouveau'
+      preLoaderRoute: typeof FormulairesNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produits/': {
       id: '/produits/'
       path: '/produits'
@@ -263,9 +323,12 @@ const rootRouteChildren: RootRouteChildren = {
   ParametresRoute: ParametresRoute,
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
+  FormulairesFormIdRoute: FormulairesFormIdRoute,
+  FormulairesNouveauRoute: FormulairesNouveauRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,
   CommandesIndexRoute: CommandesIndexRoute,
+  FormulairesIndexRoute: FormulairesIndexRoute,
   ProduitsIndexRoute: ProduitsIndexRoute,
 }
 export const routeTree = rootRouteImport
