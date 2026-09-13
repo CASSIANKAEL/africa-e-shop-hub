@@ -183,23 +183,15 @@ function ImportProductsPage() {
             className="hidden"
             onChange={(e) => void handleFile(e.target.files)}
           />
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={() => fileRef.current?.click()}>
-              <FileUp className="mr-1 h-4 w-4" /> {t("chooseCsv")}
-            </Button>
-            <Button type="button" variant="outline" onClick={downloadTemplate}>
-              <Download className="mr-1 h-4 w-4" /> {t("downloadTemplate")}
-            </Button>
-          </div>
+          <Button type="button" onClick={() => fileRef.current?.click()} size="lg" className="w-full">
+            <FileUp className="mr-2 h-5 w-5" /> {t("chooseCsv")}
+          </Button>
 
-          <Textarea
-            aria-label={t("pasteCsv")}
-            value={raw}
-            onChange={(e) => setRaw(e.target.value)}
-            rows={10}
-            placeholder={t("pasteCsv")}
-            className="font-mono text-xs"
-          />
+          {rows.length > 0 && (
+            <p className="text-sm font-medium">
+              {rows.length} · {rows[0]?.name}
+            </p>
+          )}
 
           <p className="text-sm text-muted-foreground">
             {t("importInto", { store: activeStore?.name ?? "" })}
