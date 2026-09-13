@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  Plus,
   LayoutDashboard,
   Store,
   Globe,
@@ -33,6 +35,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
 import { commerceStore, useActiveStoreId, useStores } from "@/services/commerce.store";
 
 const mainItems = [
