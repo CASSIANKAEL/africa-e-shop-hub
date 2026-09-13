@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { commerceService } from "@/services/commerce.service";
+import { useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -53,7 +54,7 @@ function DashboardPage() {
   const m = commerceService.getDashboardMetrics();
   const sales = commerceService.getSalesSeries();
   const activity = commerceService.getRecentActivity();
-  const orders = commerceService.getOrders().slice(0, 5);
+  const orders = useOrders().slice(0, 5);
   const totalStatuses = m.pending + m.confirmed + m.cancelled;
 
   return (
