@@ -91,7 +91,9 @@ function ProductsPage() {
                   </TableCell>
                   <TableCell className="font-medium">{formatMoney(p.price)}</TableCell>
                   <TableCell>
-                    {p.stock === 0 ? (
+                    {p.trackStock === false ? (
+                      <Badge variant="outline">Non suivi</Badge>
+                    ) : p.stock === 0 ? (
                       <Badge variant="destructive">Rupture</Badge>
                     ) : p.stock < 10 ? (
                       <Badge variant="secondary">{formatNumber(p.stock)} · faible</Badge>
