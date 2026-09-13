@@ -1,11 +1,20 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Banknote, CheckCircle2, PhoneCall, ShoppingBag } from "lucide-react";
+import {
+  Banknote,
+  CheckCircle2,
+  Eye,
+  MousePointerClick,
+  PhoneCall,
+  ShoppingBag,
+  Truck,
+  Undo2,
+} from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { OrdersChart, RevenueChart } from "@/components/dashboard/sales-chart";
+import { OrdersChart, RevenueChart, TrafficChart } from "@/components/dashboard/sales-chart";
 import { PeriodFilter, type PeriodValue } from "@/components/dashboard/period-filter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +27,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useOrders, useStores } from "@/services/commerce.store";
-import { allOrders, buildSeries, computeMetrics, resolveRange } from "@/services/analytics";
+import {
+  allOrders,
+  buildSeries,
+  buildTrafficSeries,
+  computeMetrics,
+  resolveRange,
+} from "@/services/analytics";
 import { formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/vue-ensemble")({
@@ -55,8 +70,13 @@ function OverviewPage() {
     [period],
   );
 
-  const m = useMemo(() => computeMetrics(orders, range), [orders, range]);
+  const storeIds = useMemo(() => stores.map((s) => s.id), [stores]);
+  const m = useMemo(() => computeMetrics(orders, range, storeIds), [orders, range, storeIds]);
   const sales = useMemo(() => buildSeries(orders, range), [orders, range]);
+  const traffic = useMemo(
+    () => buildTrafficSeries(orders, range, storeIds),
+    [orders, range, storeIds],
+  );
   const perStore = useMemo(
     () =>
       stores.map((s) => ({
@@ -64,6 +84,7 @@ function OverviewPage() {
         metrics: computeMetrics(
           orders.filter((o) => o.storeId === s.id),
           range,
+          [s.id],
         ),
       })),
     [stores, orders, range],
@@ -107,6 +128,44 @@ function OverviewPage() {
         />
       </div>
 
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="Visites"
+          value={formatNumber(m.visits)}
+          change={m.visitsChange}
+          hint="toutes boutiques"
+          icon={Eye}
+        />
+        <MetricCard
+          label="Taux de conversion"
+          value={formatPercent(m.conversionRate)}
+          change={m.conversionChange}
+          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          icon={MousePointerClick}
+        />
+        <MetricCard
+          label="Taux de livraison"
+          value={formatPercent(m.deliveryRate)}
+          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          icon={Truck}
+        />
+        <MetricCard
+          label="Taux de retour"
+          value={formatPercent(m.returnRate)}
+          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit)} par visite`}
+          icon={Undo2}
+        />
+      </div>
+
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle className="text-base">Visites & taux de conversion</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TrafficChart data={traffic} />
+        </CardContent>
+      </Card>
+
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
@@ -136,10 +195,14 @@ function OverviewPage() {
               <TableRow>
                 <TableHead>Boutique</TableHead>
                 <TableHead>Statut</TableHead>
+                <TableHead>Visites</TableHead>
+                <TableHead>Conversion</TableHead>
                 <TableHead>Chiffre d'affaires</TableHead>
                 <TableHead>Commandes</TableHead>
                 <TableHead>À confirmer</TableHead>
                 <TableHead>Confirmation COD</TableHead>
+                <TableHead>Livraison</TableHead>
+                <TableHead>Retours</TableHead>
                 <TableHead>Panier moyen</TableHead>
               </TableRow>
             </TableHeader>
@@ -157,12 +220,16 @@ function OverviewPage() {
                       {store.status === "active" ? "Active" : "En pause"}
                     </Badge>
                   </TableCell>
+                  <TableCell>{formatNumber(metrics.visits)}</TableCell>
+                  <TableCell>{formatPercent(metrics.conversionRate)}</TableCell>
                   <TableCell className="font-medium">
                     {formatMoney(metrics.revenue, store.currency)}
                   </TableCell>
                   <TableCell>{formatNumber(metrics.ordersVolume)}</TableCell>
                   <TableCell>{formatNumber(metrics.pending)}</TableCell>
                   <TableCell>{formatPercent(metrics.codConfirmationRate)}</TableCell>
+                  <TableCell>{formatPercent(metrics.deliveryRate)}</TableCell>
+                  <TableCell>{formatPercent(metrics.returnRate)}</TableCell>
                   <TableCell>{formatMoney(metrics.averageBasket, store.currency)}</TableCell>
                 </TableRow>
               ))}

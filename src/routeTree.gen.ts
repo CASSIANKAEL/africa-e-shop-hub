@@ -19,6 +19,7 @@ import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 import { Route as FormulairesIndexRouteImport } from './routes/formulaires.index'
 import { Route as FormulairesFormIdRouteImport } from './routes/formulaires.$formId'
+import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaires.integrations'
 import { Route as FormulairesNouveauRouteImport } from './routes/formulaires.nouveau'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
@@ -74,6 +75,11 @@ const FormulairesFormIdRoute = FormulairesFormIdRouteImport.update({
   path: '/formulaires/$formId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
+  id: '/formulaires/integrations',
+  path: '/formulaires/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FormulairesNouveauRoute = FormulairesNouveauRouteImport.update({
   id: '/formulaires/nouveau',
   path: '/formulaires/nouveau',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/integrations'
     | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/integrations'
     | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/integrations'
     | '/formulaires/nouveau'
     | '/produits/import'
     | '/produits/nouveau'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
   FormulairesFormIdRoute: typeof FormulairesFormIdRoute
+  FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
   FormulairesNouveauRoute: typeof FormulairesNouveauRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesFormIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formulaires/integrations': {
+      id: '/formulaires/integrations'
+      path: '/formulaires/integrations'
+      fullPath: '/formulaires/integrations'
+      preLoaderRoute: typeof FormulairesIntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/formulaires/nouveau': {
       id: '/formulaires/nouveau'
       path: '/formulaires/nouveau'
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
   FormulairesFormIdRoute: FormulairesFormIdRoute,
+  FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
   FormulairesNouveauRoute: FormulairesNouveauRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,

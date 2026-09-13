@@ -9,6 +9,8 @@ import {
   CreditCard,
   Settings,
   Sparkles,
+  FileText,
+  Plug,
 } from "lucide-react";
 
 import {
@@ -40,6 +42,11 @@ const mainItems = [
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
+] as const;
+
+const formItems = [
+  { title: "Formulaires", url: "/formulaires", icon: FileText },
+  { title: "Intégrations & pixels", url: "/formulaires/integrations", icon: Plug },
 ] as const;
 
 const accountItems = [
@@ -104,6 +111,34 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url, "exact" in item ? item.exact : false)}
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url} onClick={close} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Formulaires & intégrations</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {formItems.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={
+                      item.url === "/formulaires"
+                        ? pathname === "/formulaires" ||
+                          (pathname.startsWith("/formulaires/") &&
+                            pathname !== "/formulaires/integrations")
+                        : isActive(item.url)
+                    }
                     tooltip={item.title}
                   >
                     <Link to={item.url} onClick={close} className="flex items-center gap-2">
