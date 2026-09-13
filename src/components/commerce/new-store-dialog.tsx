@@ -23,8 +23,8 @@ import {
 } from "@/components/ui/select";
 import { commerceStore } from "@/services/commerce.store";
 import type { Currency, Store } from "@/types";
+import { currencies, currencyNames } from "@/lib/currencies";
 
-const currencies: Currency[] = ["XOF", "XAF", "GHS", "NGN"];
 
 interface NewStoreDialogProps {
   /** Déclencheur personnalisé (bouton par défaut). */
@@ -132,7 +132,7 @@ export function NewStoreDialog({
                   <SelectContent>
                     {currencies.map((c) => (
                       <SelectItem key={c} value={c}>
-                        {c}
+                        {currencyNames[c]}
                       </SelectItem>
                     ))}
                   </SelectContent>

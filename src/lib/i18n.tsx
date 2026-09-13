@@ -53,12 +53,100 @@ const fr = {
   storeLanguageHint: "La langue affichée aux clients sur la boutique et le formulaire de commande.",
   previewForm: "Formulaire",
   previewThanks: "Remerciement",
+  mobileHome: "Accueil",
+  mobileMenu: "Menu",
+  addProduct: "Ajouter un produit",
+  africanCommerce: "Commerce africain",
+  growthPlan: "Plan Croissance",
+  renewal: "Renouvellement le 30 sept. 2026",
+  switchStore: "Changer de boutique",
+  revenue: "Chiffre d’affaires",
+  orderVolume: "Volume de commandes",
+  codRate: "Taux de confirmation COD",
+  averageBasket: "Panier moyen",
+  visits: "Visites",
+  conversionRate: "Taux de conversion",
+  deliveryRate: "Taux de livraison",
+  returnRate: "Taux de retour",
+  activeStoreData: "Données de la boutique active uniquement.",
+  previousPeriod: "vs période précédente",
+  ordersReceived: "commandes reçues",
+  cashOnDelivery: "paiement à la livraison",
+  storeVisitors: "visiteurs de la boutique",
+  overviewAction: "Vue d’ensemble",
+  live: "Temps réel",
+  last30Minutes: "30 dernières minutes",
+  activeVisitors: "Visiteurs actifs (5 min)",
+  liveSales: "Ventes en direct",
+  triggeredEvents: "Évènements déclenchés",
+  trafficSources: "Sources de trafic",
+  liveLog: "Registre en direct",
+  time: "Heure",
+  event: "Évènement",
+  source: "Source",
+  city: "Ville",
+  page: "Page",
+  value: "Valeur",
+  noTraffic: "En attente de trafic…",
+  connectingLive: "Connexion au flux en direct…",
+  trafficConversion: "Visites & taux de conversion",
+  periodSales: "Ventes de la période",
+  orderStatus: "Statut des commandes",
+  toConfirm: "À confirmer",
+  confirmed: "Confirmées",
+  cancelled: "Annulées",
+  recentOrders: "Dernières commandes",
+  seeAll: "Tout voir",
+  recentActivity: "Activité récente",
+  noRecentOrders: "Aucune commande récente pour cette boutique.",
+  today: "Aujourd’hui",
+  yesterday: "Hier",
+  last7Days: "7 derniers jours",
+  last30Days: "30 derniers jours",
+  last90Days: "90 derniers jours",
+  customPeriod: "Période personnalisée",
+  startDate: "Date de début",
+  endDate: "Date de fin",
+  until: "au",
+  product: "Produit",
+  reference: "Référence",
+  price: "Prix",
+  stock: "Stock",
+  actions: "Actions",
+  viewStore: "Voir la boutique en ligne",
+  viewProduct: "Voir le produit en ligne",
+  notTracked: "Non suivi",
+  outOfStock: "Rupture",
+  lowStock: "faible",
+  payment: "Paiement",
+  date: "Date",
+  reminder: "Rappel",
+  amount: "Montant",
+  status: "Statut",
+  phone: "Téléphone",
+  spending: "Dépenses",
+  confirmation: "Confirmation",
+  allStoresData: "Données de toutes vos boutiques combinées.",
+  totalRevenue: "Chiffre d’affaires total",
+  allStores: "toutes boutiques",
+  cumulativeSales: "Ventes cumulées",
+  storePerformance: "Performance par boutique",
+  delivery: "Livraison",
+  returns: "Retours",
+  languages: "Langues",
+  merchantProfile: "Profil commerçant",
+  fullName: "Nom complet",
+  whatsappPhone: "Téléphone WhatsApp",
+  defaultCurrency: "Devise par défaut",
+  currency: "Devise",
+  profilePreferences: "Préférences du compte et de la facturation.",
+  saved: "Enregistré",
 };
 
-type Dict = typeof fr;
-type MessageKey = keyof Dict;
+type Dict = Record<string, string>;
+type MessageKey = string;
 
-const messages: Record<AppLanguage, Partial<Dict>> = {
+const messages: Record<AppLanguage, Dict> = {
   fr,
   en: {
     search: "Search orders, customers…",
@@ -99,6 +187,7 @@ const messages: Record<AppLanguage, Partial<Dict>> = {
     storeLanguageHint: "Language shown to customers on the storefront and order form.",
     previewForm: "Form",
     previewThanks: "Thank you",
+    mobileHome: "Home", mobileMenu: "Menu", addProduct: "Add product", africanCommerce: "African commerce", growthPlan: "Growth plan", renewal: "Renews Sep 30, 2026", switchStore: "Switch store", revenue: "Revenue", orderVolume: "Order volume", codRate: "COD confirmation rate", averageBasket: "Average order value", visits: "Visits", conversionRate: "Conversion rate", deliveryRate: "Delivery rate", returnRate: "Return rate", activeStoreData: "Data for the active store only.", previousPeriod: "vs previous period", ordersReceived: "orders received", cashOnDelivery: "cash on delivery", storeVisitors: "store visitors", overviewAction: "Overview", live: "Live", last30Minutes: "Last 30 minutes", activeVisitors: "Active visitors (5 min)", liveSales: "Live sales", triggeredEvents: "Triggered events", trafficSources: "Traffic sources", liveLog: "Live activity log", time: "Time", event: "Event", source: "Source", city: "City", page: "Page", value: "Value", noTraffic: "Waiting for traffic…", connectingLive: "Connecting to live feed…", trafficConversion: "Visits & conversion rate", periodSales: "Sales for the period", orderStatus: "Order status", toConfirm: "To confirm", confirmed: "Confirmed", cancelled: "Cancelled", recentOrders: "Recent orders", seeAll: "View all", recentActivity: "Recent activity", noRecentOrders: "No recent orders for this store.", today: "Today", yesterday: "Yesterday", last7Days: "Last 7 days", last30Days: "Last 30 days", last90Days: "Last 90 days", customPeriod: "Custom period", startDate: "Start date", endDate: "End date", until: "to", product: "Product", reference: "Reference", price: "Price", stock: "Stock", actions: "Actions", viewStore: "View online store", viewProduct: "View product online", notTracked: "Not tracked", outOfStock: "Out of stock", lowStock: "low", payment: "Payment", date: "Date", reminder: "Reminder", amount: "Amount", status: "Status", phone: "Phone", spending: "Spending", confirmation: "Confirmation", allStoresData: "Combined data for all your stores.", totalRevenue: "Total revenue", allStores: "all stores", cumulativeSales: "Cumulative sales", storePerformance: "Performance by store", delivery: "Delivery", returns: "Returns", languages: "Languages", merchantProfile: "Merchant profile", fullName: "Full name", whatsappPhone: "WhatsApp phone", defaultCurrency: "Default currency", currency: "Currency", profilePreferences: "Account and billing preferences.", saved: "Saved",
   },
   es: {
     search: "Buscar pedidos, clientes…",
@@ -308,8 +397,12 @@ interface LanguageContextValue {
   t: (key: MessageKey) => string;
 }
 
+const localeByLanguage: Record<AppLanguage, string> = { fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE", pt: "pt-PT", it: "it-IT", ar: "ar" };
+let activeLanguage: AppLanguage = "fr";
+export const getActiveLanguage = () => activeLanguage;
+export const getActiveLocale = () => localeByLanguage[activeLanguage];
 const translate = (language: AppLanguage, key: MessageKey) =>
-  messages[language]?.[key] ?? fr[key];
+  messages[language]?.[key] ?? fr[key] ?? key;
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
@@ -321,10 +414,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("sooko-language");
-    if (isLanguage(saved)) setLanguageState(saved);
+    if (isLanguage(saved)) { activeLanguage = saved; setLanguageState(saved); }
   }, []);
 
   const setLanguage = (next: AppLanguage) => {
+    activeLanguage = next;
     setLanguageState(next);
     window.localStorage.setItem("sooko-language", next);
   };

@@ -1,4 +1,6 @@
-export type Currency = "XOF" | "XAF" | "GHS" | "NGN";
+export type Currency =
+  | "XOF" | "XAF" | "GHS" | "NGN" | "USD" | "EUR" | "GBP" | "MAD" | "DZD"
+  | "TND" | "EGP" | "KES" | "UGX" | "TZS" | "RWF" | "ZAR" | "CDF" | "GNF" | "SLE";
 
 export type OrderStatus =
   | "pending"
