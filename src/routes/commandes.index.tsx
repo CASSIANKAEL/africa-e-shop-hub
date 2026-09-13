@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BellRing } from "lucide-react";
+import { BellRing, MapPin, MessageSquare, Phone } from "lucide-react";
 
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -78,19 +78,27 @@ function OrdersPage() {
         }
       />
       <div className="grid gap-3 md:hidden">
-        {sorted.map((order) => (
+        {sorted.map((order) => {
+          const lastComment = order.comments?.[order.comments.length - 1];
+          return (
           <Card key={order.id} className={isFollowUpDue(order, now) ? "border-warning bg-warning/10" : undefined}>
             <CardHeader className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 p-4 pb-2">
               <div className="min-w-0"><CardTitle className="truncate text-base"><Link to="/commandes/$orderId" params={{ orderId: order.id }}>{order.customer.fullName}</Link></CardTitle><p className="mt-1 text-xs text-muted-foreground">{order.reference} · {formatDate(order.createdAt)}</p></div>
               <span className="font-semibold">{formatMoney(order.total, order.currency)}</span>
             </CardHeader>
-            <CardContent className="space-y-3 p-4 pt-1">
-              <div className="flex items-center justify-between gap-3 text-sm"><span className="text-muted-foreground">{paymentLabels[order.paymentMethod]}</span><span>{order.customer.city}</span></div>
+            <CardContent className="space-y-2 p-4 pt-1">
+              <a href={`tel:${order.customer.phone.replace(/\s/g, "")}`} className="flex items-center gap-2 text-sm font-medium text-primary"><Phone className="h-4 w-4" />{order.customer.phone}</a>
+              <p className="flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{order.customer.city}</p>
+              <p className="text-sm text-muted-foreground">{paymentLabels[order.paymentMethod]}</p>
               {order.followUpAt && <p className="flex items-center gap-1 text-xs text-warning-foreground"><BellRing className="h-3.5 w-3.5" /> {formatDate(order.followUpAt)}</p>}
+              {lastComment && (
+                <p className="flex items-start gap-2 rounded-lg bg-muted p-2 text-xs text-muted-foreground"><MessageSquare className="mt-0.5 h-3.5 w-3.5 shrink-0" /><span className="min-w-0">{lastComment.text}</span></p>
+              )}
               <OrderStatusSelect orderId={order.id} status={order.status} {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})} />
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
       </div>
       <Card className="hidden md:block">
         <CardContent className="overflow-x-auto p-0">
@@ -99,15 +107,19 @@ function OrdersPage() {
               <TableRow>
                 <TableHead>{t("reference")}</TableHead>
                 <TableHead>{t("customers")}</TableHead>
+                <TableHead>{t("phone")}</TableHead>
                 <TableHead>{t("payment")}</TableHead>
                 <TableHead>{t("date")}</TableHead>
                 <TableHead>{t("reminder")}</TableHead>
+                <TableHead>{t("lastComment")}</TableHead>
                 <TableHead>{t("amount")}</TableHead>
                 <TableHead>{t("status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sorted.map((order) => (
+              {sorted.map((order) => {
+                const lastComment = order.comments?.[order.comments.length - 1];
+                return (
                 <TableRow
                   key={order.id}
                   className={isFollowUpDue(order, now) ? "bg-warning/10" : undefined}
@@ -122,6 +134,11 @@ function OrdersPage() {
                     <span className="block text-xs text-muted-foreground">
                       {order.customer.city}
                     </span>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <a href={`tel:${order.customer.phone.replace(/\s/g, "")}`} className="text-primary">
+                      {order.customer.phone}
+                    </a>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {paymentLabels[order.paymentMethod]}
@@ -145,6 +162,13 @@ function OrdersPage() {
                       <span className="text-muted-foreground">—</span>
                     )}
                   </TableCell>
+                  <TableCell className="max-w-[220px] text-xs text-muted-foreground">
+                    {lastComment ? (
+                      <span className="line-clamp-2">{lastComment.text}</span>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">
                     {formatMoney(order.total, order.currency)}
                   </TableCell>
@@ -156,7 +180,8 @@ function OrdersPage() {
                     />
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

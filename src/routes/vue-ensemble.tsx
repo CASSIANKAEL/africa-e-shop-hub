@@ -102,61 +102,63 @@ function OverviewPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Chiffre d'affaires total"
+          label={t("totalRevenue")}
           value={formatMoney(m.revenue)}
           change={m.revenueChange}
-          hint="toutes boutiques"
+          hint={t("allStores")}
           icon={Banknote}
         />
         <MetricCard
-          label="Commandes"
+          label={t("orders")}
           value={formatNumber(m.ordersVolume)}
           change={m.ordersChange}
-          hint="vs période précédente"
+          hint={t("previousPeriod")}
           icon={ShoppingBag}
         />
         <MetricCard
-          label="Taux de confirmation COD"
+          label={t("codRate")}
           value={formatPercent(m.codConfirmationRate)}
           change={m.codChange}
-          hint="paiement à la livraison"
+          hint={t("cashOnDelivery")}
           icon={PhoneCall}
         />
         <MetricCard
-          label="Panier moyen"
+          label={t("averageBasket")}
           value={formatMoney(m.averageBasket)}
-          hint={`sur ${formatNumber(m.ordersVolume)} commandes`}
+          hint={`${formatNumber(m.ordersVolume)} ${t("ordersReceived")}`}
           icon={CheckCircle2}
         />
+
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3 sm:mt-4 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Visites"
+          label={t("visits")}
           value={formatNumber(m.visits)}
           change={m.visitsChange}
-          hint="toutes boutiques"
+          hint={t("allStores")}
           icon={Eye}
         />
         <MetricCard
-          label="Taux de conversion"
+          label={t("conversionRate")}
           value={formatPercent(m.conversionRate)}
           change={m.conversionChange}
-          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          hint={`${formatNumber(m.ordersVolume)} ${t("orders")} / ${formatNumber(m.visits)} ${t("visits")}`}
           icon={MousePointerClick}
         />
         <MetricCard
-          label="Taux de livraison"
+          label={t("deliveryRate")}
           value={formatPercent(m.deliveryRate)}
-          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          hint={`${formatNumber(m.delivered)} / ${formatNumber(m.confirmed)} ${t("confirmed")}`}
           icon={Truck}
         />
         <MetricCard
-          label="Taux de retour"
+          label={t("returnRate")}
           value={formatPercent(m.returnRate)}
-          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit)} par visite`}
+          hint={`${formatNumber(m.returned)} ${t("returns")} · ${formatMoney(m.revenuePerVisit)}`}
           icon={Undo2}
         />
+
       </div>
 
       <Card className="mt-4">
@@ -195,16 +197,16 @@ function OverviewPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Boutique</TableHead>
-                <TableHead className="hidden lg:table-cell">Statut</TableHead>
+                <TableHead>{t("store")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("status")}</TableHead>
                 <TableHead>{t("visits")}</TableHead>
-                <TableHead className="hidden lg:table-cell">Conversion</TableHead>
-                <TableHead>Chiffre d'affaires</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("conversionRate")}</TableHead>
+                <TableHead>{t("revenue")}</TableHead>
                 <TableHead>{t("orders")}</TableHead>
-                <TableHead className="hidden lg:table-cell">À confirmer</TableHead>
-                <TableHead className="hidden lg:table-cell">Confirmation COD</TableHead>
-                <TableHead className="hidden lg:table-cell">Livraison</TableHead>
-                <TableHead className="hidden lg:table-cell">Retours</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("toConfirm")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("codRate")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("delivery")}</TableHead>
+                <TableHead className="hidden lg:table-cell">{t("returns")}</TableHead>
                 <TableHead>{t("averageBasket")}</TableHead>
               </TableRow>
             </TableHeader>

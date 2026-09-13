@@ -8,13 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/lib/i18n";
 
 export function AddProductButton() {
+  const { t } = useLanguage();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button>
-          <Plus className="mr-1 h-4 w-4" /> Ajouter un produit
+          <Plus className="mr-1 h-4 w-4" /> {t("addProduct")}
           <ChevronDown className="ml-1 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -22,13 +24,13 @@ export function AddProductButton() {
         <DropdownMenuItem asChild>
           <Link to="/produits/nouveau">
             <Plus className="mr-2 h-4 w-4" />
-            Ajouter un produit manuellement
+            {t("addProductManually")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/produits/import">
             <FileUp className="mr-2 h-4 w-4" />
-            Importer par CSV
+            {t("importCsv")}
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
