@@ -62,7 +62,11 @@ function OrdersPage() {
     <AppShell>
       <PageHeader
         title="Commandes"
-        description="Confirmez, suivez et clôturez les commandes de vos boutiques."
+        description={
+          dueCount > 0
+            ? `${dueCount} commande(s) à rappeler maintenant.`
+            : "Confirmez, suivez et clôturez les commandes de vos boutiques."
+        }
       />
       <Card>
         <CardContent className="overflow-x-auto p-0">
@@ -73,13 +77,17 @@ function OrdersPage() {
                 <TableHead>Client</TableHead>
                 <TableHead>Paiement</TableHead>
                 <TableHead>Date</TableHead>
+                <TableHead>Rappel</TableHead>
                 <TableHead>Montant</TableHead>
                 <TableHead>Statut</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id}>
+              {sorted.map((order) => (
+                <TableRow
+                  key={order.id}
+                  className={isFollowUpDue(order, now) ? "bg-warning/10" : undefined}
+                >
                   <TableCell className="font-medium">
                     <Link to="/commandes/$orderId" params={{ orderId: order.id }}>
                       {order.reference}
