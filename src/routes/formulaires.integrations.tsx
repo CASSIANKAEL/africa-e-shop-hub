@@ -140,18 +140,9 @@ function IntegrationsPage() {
           </div>
           <div className="space-y-2">
             <Label>Boutique</Label>
-            <Select value={storeId} onValueChange={setStoreId}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {stores.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
+              {activeStore?.name ?? "Boutique active"}
+            </div>
           </div>
           <div className="sm:col-span-2 xl:col-span-4">
             <Button onClick={addPixel}>
