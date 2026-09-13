@@ -168,6 +168,7 @@ export interface OrderFormDesign {
   buttonFontSize?: number;
   buttonHeight?: number;
   buttonBold?: boolean;
+  buttonAnimation?: "none" | "pulse" | "bounce" | "shake" | "float" | "shine";
   /** Bloc badges de confiance. */
   showTrustBadges?: boolean;
   trustBadges?: string[];

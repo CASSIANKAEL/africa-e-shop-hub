@@ -87,6 +87,7 @@ export function emptyForm(storeId: string): Omit<OrderForm, "id" | "createdAt"> 
       buttonFontSize: 15,
       buttonHeight: 46,
       buttonBold: true,
+      buttonAnimation: "none",
       showTrustBadges: true,
       trustBadges: ["Paiement à la livraison", "Données protégées", "Service client 7j/7"],
       showHeadline: true,
