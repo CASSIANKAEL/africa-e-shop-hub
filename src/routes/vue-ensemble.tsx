@@ -102,32 +102,33 @@ function OverviewPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Chiffre d'affaires total"
+          label={t("totalRevenue")}
           value={formatMoney(m.revenue)}
           change={m.revenueChange}
-          hint="toutes boutiques"
+          hint={t("allStores")}
           icon={Banknote}
         />
         <MetricCard
-          label="Commandes"
+          label={t("orders")}
           value={formatNumber(m.ordersVolume)}
           change={m.ordersChange}
-          hint="vs période précédente"
+          hint={t("previousPeriod")}
           icon={ShoppingBag}
         />
         <MetricCard
-          label="Taux de confirmation COD"
+          label={t("codRate")}
           value={formatPercent(m.codConfirmationRate)}
           change={m.codChange}
-          hint="paiement à la livraison"
+          hint={t("cashOnDelivery")}
           icon={PhoneCall}
         />
         <MetricCard
-          label="Panier moyen"
+          label={t("averageBasket")}
           value={formatMoney(m.averageBasket)}
-          hint={`sur ${formatNumber(m.ordersVolume)} commandes`}
+          hint={`${formatNumber(m.ordersVolume)} ${t("ordersReceived")}`}
           icon={CheckCircle2}
         />
+
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3 sm:mt-4 sm:gap-4 xl:grid-cols-4">
