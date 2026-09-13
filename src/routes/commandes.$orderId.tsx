@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { CourierAssign } from "@/components/commerce/courier-assign";
+import { CourierNoteButton } from "@/components/commerce/courier-note";
 import { commerceService } from "@/services/commerce.service";
 import { commerceStore, useOrder, useStoreName } from "@/services/commerce.store";
 import { toast } from "sonner";
@@ -111,8 +112,22 @@ function OrderDetailPage() {
                 status={order.status}
                 {...(order.courierId ? { courierId: order.courierId } : {})}
               />
+              {order.courierId && (
+                <CourierNoteButton
+                  orderId={order.id}
+                  {...(order.courierNote ? { note: order.courierNote } : {})}
+                />
+              )}
             </div>
           </CardHeader>
+          {order.courierNote && (
+            <div className="px-6 pb-2">
+              <p className="rounded-lg bg-muted p-3 text-sm">
+                <span className="font-medium">{t("courierNote")} : </span>
+                {order.courierNote}
+              </p>
+            </div>
+          )}
           <CardContent>
             <ul className="space-y-3">
               {order.items.map((item) => (

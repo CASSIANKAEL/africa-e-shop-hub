@@ -17,6 +17,8 @@ import {
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { CourierAssign } from "@/components/commerce/courier-assign";
+import { OrderStats } from "@/components/commerce/order-stats";
+import { CourierNoteButton } from "@/components/commerce/courier-note";
 import { isFollowUpDue, useActiveStoreId, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n";
@@ -78,6 +80,7 @@ function OrdersPage() {
             : t("ordersDescription")
         }
       />
+      <OrderStats orders={orders} />
       <div className="grid gap-3 md:hidden">
         {sorted.map((order) => {
           const lastComment = order.comments?.[order.comments.length - 1];
@@ -97,6 +100,9 @@ function OrdersPage() {
               )}
               <OrderStatusSelect orderId={order.id} status={order.status} {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})} />
               <CourierAssign orderId={order.id} status={order.status} {...(order.courierId ? { courierId: order.courierId } : {})} />
+              {order.courierId && (
+                <CourierNoteButton orderId={order.id} {...(order.courierNote ? { note: order.courierNote } : {})} />
+              )}
             </CardContent>
           </Card>
           );
@@ -183,11 +189,19 @@ function OrdersPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <CourierAssign
-                      orderId={order.id}
-                      status={order.status}
-                      {...(order.courierId ? { courierId: order.courierId } : {})}
-                    />
+                    <div className="flex flex-col gap-2">
+                      <CourierAssign
+                        orderId={order.id}
+                        status={order.status}
+                        {...(order.courierId ? { courierId: order.courierId } : {})}
+                      />
+                      {order.courierId && (
+                        <CourierNoteButton
+                          orderId={order.id}
+                          {...(order.courierNote ? { note: order.courierNote } : {})}
+                        />
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
                 );

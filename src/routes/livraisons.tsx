@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
+import { OrderStats } from "@/components/commerce/order-stats";
 import {
   commerceStore,
   useActiveStoreId,
@@ -93,6 +94,8 @@ function DeliveriesPage() {
             </Select>
           </div>
 
+          <OrderStats orders={orders} variant="courier" />
+
           {orders.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-sm text-muted-foreground">
@@ -130,6 +133,12 @@ function DeliveriesPage() {
                       <MapPin className="h-4 w-4" />
                       {order.customer.city}
                     </p>
+                    {order.courierNote && (
+                      <p className="rounded-lg bg-muted p-2 text-xs">
+                        <span className="font-medium">{t("courierNote")} : </span>
+                        {order.courierNote}
+                      </p>
+                    )}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Badge variant={order.status === "delivered" ? "default" : "secondary"}>
                         <Truck className="mr-1 h-3.5 w-3.5" />
