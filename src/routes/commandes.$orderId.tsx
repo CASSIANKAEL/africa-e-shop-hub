@@ -139,7 +139,15 @@ function OrderDetailPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <Info label="Nom" value={order.customer.fullName} />
-            <Info label="Téléphone" value={order.customer.phone} />
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-muted-foreground">Téléphone</span>
+              <a
+                href={`tel:${order.customer.phone.replace(/\s/g, "")}`}
+                className="font-medium text-primary"
+              >
+                {order.customer.phone}
+              </a>
+            </div>
             <Info label="Ville" value={order.customer.city} />
             <Info label="Paiement" value={paymentLabels[order.paymentMethod]} />
             <Info label="Devise" value={order.currency} />
@@ -157,10 +165,7 @@ function OrderDetailPage() {
             {order.comments?.length ? (
               <ul className="space-y-2">
                 {order.comments.map((c) => (
-                  <li key={c.id} className="rounded-xl bg-muted p-3 text-sm">
-                    <p>{c.text}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{formatDate(c.createdAt)}</p>
-                  </li>
+                  <CommentItem key={c.id} orderId={order.id} comment={c} />
                 ))}
               </ul>
             ) : (
@@ -171,6 +176,82 @@ function OrderDetailPage() {
         </Card>
       </div>
     </AppShell>
+  );
+}
+
+function CommentItem({
+  orderId,
+  comment,
+}: {
+  orderId: string;
+  comment: { id: string; text: string; createdAt: string };
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(comment.text);
+
+  return (
+    <li className="rounded-xl bg-muted p-3 text-sm">
+      {editing ? (
+        <div className="space-y-2">
+          <Textarea value={draft} onChange={(e) => setDraft(e.target.value)} />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              disabled={!draft.trim()}
+              onClick={() => {
+                commerceStore.updateComment(orderId, comment.id, draft);
+                setEditing(false);
+                toast.success("Commentaire modifié");
+              }}
+            >
+              Enregistrer
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setDraft(comment.text);
+                setEditing(false);
+              }}
+            >
+              Annuler
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+          <div className="min-w-0">
+            <p className="whitespace-pre-wrap">{comment.text}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{formatDate(comment.createdAt)}</p>
+          </div>
+          <div className="flex shrink-0 gap-1">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Modifier le commentaire"
+              onClick={() => {
+                setDraft(comment.text);
+                setEditing(true);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Supprimer le commentaire"
+              className="text-destructive"
+              onClick={() => {
+                commerceStore.deleteComment(orderId, comment.id);
+                toast.success("Commentaire supprimé");
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </li>
   );
 }
 
