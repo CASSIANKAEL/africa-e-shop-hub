@@ -4,6 +4,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { AddProductButton } from "@/components/commerce/add-product-button";
+import { stripHtml } from "@/components/commerce/rich-text-editor";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -79,7 +80,7 @@ function ProductsPage() {
                         <span className="block text-xs text-muted-foreground">{p.category}</span>
                         {p.description && (
                           <span className="block max-w-xs truncate text-xs text-muted-foreground">
-                            {p.description}
+                            {stripHtml(p.description)}
                           </span>
                         )}
                       </div>

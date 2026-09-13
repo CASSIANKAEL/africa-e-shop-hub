@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor, stripHtml } from "@/components/commerce/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -107,7 +107,9 @@ function NewProductPage() {
         trackStock,
         storeId,
         category,
-        ...(description.trim() ? { description: description.trim() } : {}),
+        ...(stripHtml(description) || /<img/i.test(description)
+          ? { description }
+          : {}),
         ...(images.length ? { images, image: images[0]! } : {}),
       });
     });
@@ -177,12 +179,10 @@ function NewProductPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="product-description">Description</Label>
-                <Textarea
-                  id="product-description"
+                <RichTextEditor
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Décrivez le produit, ses matières, tailles, bénéfices…"
-                  rows={6}
+                  onChange={setDescription}
+                  placeholder="Décrivez le produit : texte, titres, listes, couleurs, images…"
                 />
               </div>
             </CardContent>
