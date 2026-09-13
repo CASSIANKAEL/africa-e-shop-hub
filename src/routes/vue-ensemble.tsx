@@ -133,31 +133,32 @@ function OverviewPage() {
 
       <div className="mt-3 grid grid-cols-2 gap-3 sm:mt-4 sm:gap-4 xl:grid-cols-4">
         <MetricCard
-          label="Visites"
+          label={t("visits")}
           value={formatNumber(m.visits)}
           change={m.visitsChange}
-          hint="toutes boutiques"
+          hint={t("allStores")}
           icon={Eye}
         />
         <MetricCard
-          label="Taux de conversion"
+          label={t("conversionRate")}
           value={formatPercent(m.conversionRate)}
           change={m.conversionChange}
-          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          hint={`${formatNumber(m.ordersVolume)} ${t("orders")} / ${formatNumber(m.visits)} ${t("visits")}`}
           icon={MousePointerClick}
         />
         <MetricCard
-          label="Taux de livraison"
+          label={t("deliveryRate")}
           value={formatPercent(m.deliveryRate)}
-          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          hint={`${formatNumber(m.delivered)} / ${formatNumber(m.confirmed)} ${t("confirmed")}`}
           icon={Truck}
         />
         <MetricCard
-          label="Taux de retour"
+          label={t("returnRate")}
           value={formatPercent(m.returnRate)}
-          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit)} par visite`}
+          hint={`${formatNumber(m.returned)} ${t("returns")} · ${formatMoney(m.revenuePerVisit)}`}
           icon={Undo2}
         />
+
       </div>
 
       <Card className="mt-4">
