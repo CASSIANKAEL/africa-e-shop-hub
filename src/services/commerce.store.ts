@@ -78,9 +78,55 @@ export const commerceStore = {
     setState({ stores: [...state.stores, store] });
     return store;
   },
-  updateOrderStatus(orderId: string, status: OrderStatus) {
+  updateOrderStatus(
+    orderId: string,
+    status: OrderStatus,
+    options?: { followUpAt?: string | null; comment?: string },
+  ) {
     setState({
-      orders: state.orders.map((o) => (o.id === orderId ? { ...o, status } : o)),
+      orders: state.orders.map((o) => {
+        if (o.id !== orderId) return o;
+        const next: Order = { ...o, status };
+        if (options?.followUpAt === null) {
+          delete next.followUpAt;
+        } else if (options?.followUpAt) {
+          next.followUpAt = options.followUpAt;
+        }
+        if (options?.comment?.trim()) {
+          next.comments = [
+            ...(o.comments ?? []),
+            {
+              id: `cm-${Date.now()}`,
+              text: options.comment.trim(),
+              createdAt: new Date().toISOString(),
+            },
+          ];
+        }
+        return next;
+      }),
+    });
+  },
+  addComment(orderId: string, text: string) {
+    if (!text.trim()) return;
+    setState({
+      orders: state.orders.map((o) =>
+        o.id === orderId
+          ? {
+              ...o,
+              comments: [
+                ...(o.comments ?? []),
+                { id: `cm-${Date.now()}`, text: text.trim(), createdAt: new Date().toISOString() },
+              ],
+            }
+          : o,
+      ),
     });
   },
 };
+
+/** Une commande injoignable/programmée dont l'heure de rappel est arrivée. */
+export function isFollowUpDue(order: Order, now: number = Date.now()): boolean {
+  if (!order.followUpAt) return false;
+  if (order.status !== "unreachable" && order.status !== "scheduled") return false;
+  return new Date(order.followUpAt).getTime() <= now;
+}

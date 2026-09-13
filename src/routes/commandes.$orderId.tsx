@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, PhoneCall, XCircle } from "lucide-react";
 
@@ -6,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { paymentLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { commerceService } from "@/services/commerce.service";
@@ -62,7 +64,12 @@ function OrderDetailPage() {
                 <PhoneCall className="mr-1 h-4 w-4" /> Appeler le client
               </a>
             </Button>
-            <OrderStatusSelect orderId={order.id} status={order.status} className="h-9 w-[170px]" />
+            <OrderStatusSelect
+              orderId={order.id}
+              status={order.status}
+              {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+              className="h-9 w-[170px]"
+            />
             <Button
               variant="outline"
               className="text-destructive"
@@ -89,7 +96,11 @@ function OrderDetailPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Articles</CardTitle>
-            <OrderStatusSelect orderId={order.id} status={order.status} />
+            <OrderStatusSelect
+              orderId={order.id}
+              status={order.status}
+              {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+            />
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
@@ -132,10 +143,59 @@ function OrderDetailPage() {
             <Info label="Ville" value={order.customer.city} />
             <Info label="Paiement" value={paymentLabels[order.paymentMethod]} />
             <Info label="Devise" value={order.currency} />
+            {order.followUpAt && (
+              <Info label="Rappel prévu" value={formatDate(order.followUpAt)} />
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="text-base">Commentaires</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {order.comments?.length ? (
+              <ul className="space-y-2">
+                {order.comments.map((c) => (
+                  <li key={c.id} className="rounded-xl bg-muted p-3 text-sm">
+                    <p>{c.text}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{formatDate(c.createdAt)}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">Aucun commentaire pour le moment.</p>
+            )}
+            <CommentForm orderId={order.id} />
           </CardContent>
         </Card>
       </div>
     </AppShell>
+  );
+}
+
+function CommentForm({ orderId }: { orderId: string }) {
+  const [text, setText] = useState("");
+  return (
+    <form
+      className="space-y-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!text.trim()) return;
+        commerceStore.addComment(orderId, text);
+        setText("");
+        toast.success("Commentaire ajouté");
+      }}
+    >
+      <Textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Ajouter un commentaire (ex. : client à rappeler demain matin)."
+      />
+      <Button type="submit" size="sm" disabled={!text.trim()}>
+        Ajouter le commentaire
+      </Button>
+    </form>
   );
 }
 
