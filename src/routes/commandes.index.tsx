@@ -189,11 +189,19 @@ function OrdersPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <CourierAssign
-                      orderId={order.id}
-                      status={order.status}
-                      {...(order.courierId ? { courierId: order.courierId } : {})}
-                    />
+                    <div className="flex flex-col gap-2">
+                      <CourierAssign
+                        orderId={order.id}
+                        status={order.status}
+                        {...(order.courierId ? { courierId: order.courierId } : {})}
+                      />
+                      {order.courierId && (
+                        <CourierNoteButton
+                          orderId={order.id}
+                          {...(order.courierNote ? { note: order.courierNote } : {})}
+                        />
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
                 );
