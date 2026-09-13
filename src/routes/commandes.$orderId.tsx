@@ -62,7 +62,12 @@ function OrderDetailPage() {
                 <PhoneCall className="mr-1 h-4 w-4" /> Appeler le client
               </a>
             </Button>
-            <OrderStatusSelect orderId={order.id} status={order.status} className="h-9 w-[170px]" />
+            <OrderStatusSelect
+              orderId={order.id}
+              status={order.status}
+              {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+              className="h-9 w-[170px]"
+            />
             <Button
               variant="outline"
               className="text-destructive"
