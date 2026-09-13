@@ -66,8 +66,24 @@ function ProductsPage() {
               {products.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell>
-                    <span className="font-medium">{p.name}</span>
-                    <span className="block text-xs text-muted-foreground">{p.category}</span>
+                    <div className="flex items-center gap-3">
+                      {p.image && (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="h-10 w-10 rounded-md object-cover"
+                        />
+                      )}
+                      <div>
+                        <span className="font-medium">{p.name}</span>
+                        <span className="block text-xs text-muted-foreground">{p.category}</span>
+                        {p.description && (
+                          <span className="block max-w-xs truncate text-xs text-muted-foreground">
+                            {p.description}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.sku}</TableCell>
                   <TableCell className="text-muted-foreground">
@@ -75,7 +91,9 @@ function ProductsPage() {
                   </TableCell>
                   <TableCell className="font-medium">{formatMoney(p.price)}</TableCell>
                   <TableCell>
-                    {p.stock === 0 ? (
+                    {p.trackStock === false ? (
+                      <Badge variant="outline">Non suivi</Badge>
+                    ) : p.stock === 0 ? (
                       <Badge variant="destructive">Rupture</Badge>
                     ) : p.stock < 10 ? (
                       <Badge variant="secondary">{formatNumber(p.stock)} · faible</Badge>

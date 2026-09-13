@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { useRef, useState } from "react";
+import { ImagePlus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -23,38 +26,95 @@ import {
 } from "@/components/ui/select";
 import { commerceStore, useStores } from "@/services/commerce.store";
 
-const categories = ["Mode", "Beauté", "Électronique", "Accessoires", "Maison", "Alimentation"];
+export const productCategories = [
+  "Mode",
+  "Beauté",
+  "Bien-être",
+  "Santé générale",
+  "Électronique",
+  "Accessoires",
+  "Maison",
+  "Alimentation",
+  "Sport & fitness",
+  "Enfants & bébé",
+  "Hygiène",
+  "Autre",
+];
+
+function readFile(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
 
 export function NewProductDialog() {
   const stores = useStores();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
-  const [storeId, setStoreId] = useState(stores[0]?.id ?? "");
+  const [trackStock, setTrackStock] = useState(true);
+  const [storeIds, setStoreIds] = useState<string[]>(stores[0] ? [stores[0].id] : []);
   const [category, setCategory] = useState<string>("Mode");
+  const [description, setDescription] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+
+  const allSelected = storeIds.length === stores.length && stores.length > 0;
 
   function reset() {
     setName("");
     setSku("");
     setPrice("");
     setStock("");
+    setTrackStock(true);
     setCategory("Mode");
+    setDescription("");
+    setImages([]);
+    setStoreIds(stores[0] ? [stores[0].id] : []);
+  }
+
+  function toggleStore(id: string, checked: boolean) {
+    setStoreIds((prev) => (checked ? [...new Set([...prev, id])] : prev.filter((s) => s !== id)));
+  }
+
+  async function handleFiles(files: FileList | null) {
+    if (!files?.length) return;
+    const list = await Promise.all(Array.from(files).map(readFile));
+    setImages((prev) => [...prev, ...list]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !storeId) return;
-    commerceStore.addProduct({
-      name: name.trim(),
-      sku: sku.trim() || `REF-${Math.floor(Math.random() * 9000 + 1000)}`,
-      price: Number(price) || 0,
-      stock: Number(stock) || 0,
-      storeId,
-      category,
+    if (!name.trim()) return;
+    if (storeIds.length === 0) {
+      toast.error("Choisissez au moins une boutique");
+      return;
+    }
+    const baseSku = sku.trim() || `REF-${Math.floor(Math.random() * 9000 + 1000)}`;
+    storeIds.forEach((storeId) => {
+      commerceStore.addProduct({
+        name: name.trim(),
+        sku: baseSku,
+        price: Number(price) || 0,
+        stock: trackStock ? Number(stock) || 0 : 0,
+        trackStock,
+        storeId,
+        category,
+        ...(description.trim() ? { description: description.trim() } : {}),
+        ...(images.length ? { images, image: images[0]! } : {}),
+      });
     });
-    toast.success("Produit ajouté au catalogue");
+    toast.success(
+      storeIds.length > 1
+        ? `Produit ajouté à ${storeIds.length} boutiques`
+        : "Produit ajouté au catalogue",
+    );
     reset();
     setOpen(false);
   }
@@ -66,7 +126,7 @@ export function NewProductDialog() {
           <Plus className="mr-1 h-4 w-4" /> Ajouter un produit
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Nouveau produit</DialogTitle>
@@ -102,7 +162,7 @@ export function NewProductDialog() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => (
+                    {productCategories.map((c) => (
                       <SelectItem key={c} value={c}>
                         {c}
                       </SelectItem>
@@ -132,25 +192,99 @@ export function NewProductDialog() {
                   min="0"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
-                  placeholder="25"
-                  required
+                  placeholder={trackStock ? "25" : "Non suivi"}
+                  disabled={!trackStock}
                 />
               </div>
             </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div className="pr-3">
+                <Label htmlFor="product-track-stock">Suivi de stock</Label>
+                <p className="text-xs text-muted-foreground">
+                  Désactivez pour vendre sans limite d'unités.
+                </p>
+              </div>
+              <Switch
+                id="product-track-stock"
+                checked={trackStock}
+                onCheckedChange={setTrackStock}
+              />
+            </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="product-store">Boutique</Label>
-              <Select value={storeId} onValueChange={setStoreId}>
-                <SelectTrigger id="product-store">
-                  <SelectValue placeholder="Choisir une boutique" />
-                </SelectTrigger>
-                <SelectContent>
-                  {stores.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
+              <div className="flex items-center justify-between">
+                <Label>Boutiques</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStoreIds(allSelected ? [] : stores.map((s) => s.id))}
+                >
+                  {allSelected ? "Tout désélectionner" : "Toutes les boutiques"}
+                </Button>
+              </div>
+              <div className="grid gap-2 rounded-md border p-3">
+                {stores.map((s) => (
+                  <label key={s.id} className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      checked={storeIds.includes(s.id)}
+                      onCheckedChange={(c) => toggleStore(s.id, c === true)}
+                    />
+                    {s.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="product-description">Description</Label>
+              <Textarea
+                id="product-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Décrivez le produit, ses matières, tailles, bénéfices…"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Images</Label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => void handleFiles(e.target.files)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImagePlus className="mr-1 h-4 w-4" /> Importer des images
+              </Button>
+              {images.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {images.map((src, i) => (
+                    <div key={i} className="relative">
+                      <img
+                        src={src}
+                        alt={`Aperçu ${i + 1}`}
+                        className="h-16 w-16 rounded-md object-cover"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Retirer l'image"
+                        onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter>
