@@ -73,7 +73,7 @@ function AiProductsPage() {
   }
 
   async function handleGenerate() {
-    if (prompt.trim().length < 3 || loading) return;
+    if (prompt.trim().length < 3 || loading || !hasMedia) return;
     setLoading(true);
     try {
       const products = await generateProductsWithAi({
@@ -82,8 +82,10 @@ function AiProductsPage() {
           currency: activeStore?.currency ?? "XOF",
           language: pageLanguage,
           images,
+          sourceUrl: sourceUrl.trim(),
         },
       });
+
       if (products.length === 0) {
         toast.error(t("aiError"));
       } else {
