@@ -25,7 +25,9 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
     console.log("[ai] fetching gateway");
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    let res: Response;
+    try {
+      res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +43,11 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
           },
         ],
       }),
-    });
+      });
+    } catch (e) {
+      console.log("[ai] fetch threw", (e as Error).message);
+      throw e;
+    }
 
     console.log("[ai] gateway status", res.status);
     if (!res.ok) {
