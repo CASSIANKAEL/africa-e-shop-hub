@@ -151,6 +151,32 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(formsItem.url)}
+                  tooltip={formsItem.title}
+                >
+                  <Link to={formsItem.url} onClick={close} className="flex items-center gap-2">
+                    <formsItem.icon className="h-4 w-4" />
+                    <span>{formsItem.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+                {!collapsed && (
+                  <SidebarMenuSub>
+                    {formsSubItems.map((sub) => (
+                      <SidebarMenuSubItem key={sub.url}>
+                        <SidebarMenuSubButton asChild isActive={pathname === sub.url}>
+                          <Link to={sub.url} onClick={close}>
+                            <span>{sub.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                )}
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
