@@ -141,12 +141,16 @@ function AiProductsPage() {
 
       <Card>
         <CardContent className="grid gap-4 p-4 sm:p-6">
-          <Textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            rows={4}
-            placeholder={t("aiPromptPlaceholder")}
-          />
+          <div className="grid gap-1.5">
+            <Label htmlFor="ai-product-description">{t("aiProductDescriptionLabel")}</Label>
+            <Textarea
+              id="ai-product-description"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              rows={5}
+              placeholder={t("aiPromptPlaceholder")}
+            />
+          </div>
 
           <div className="grid gap-1.5">
             <Label htmlFor="ai-page-language">{t("aiProductLanguage")}</Label>
