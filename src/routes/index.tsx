@@ -10,12 +10,16 @@ import {
   Package,
   UserPlus,
   CreditCard,
+  Eye,
+  MousePointerClick,
+  Truck,
+  Undo2,
 } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { OrdersChart, RevenueChart } from "@/components/dashboard/sales-chart";
+import { OrdersChart, RevenueChart, TrafficChart } from "@/components/dashboard/sales-chart";
 import { PeriodFilter, type PeriodValue } from "@/components/dashboard/period-filter";
 import { OrderStatusBadge } from "@/components/commerce/order-status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -133,6 +137,44 @@ function DashboardPage() {
           icon={CheckCircle2}
         />
       </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="Visites"
+          value={formatNumber(m.visits)}
+          change={m.visitsChange}
+          hint="visiteurs de la boutique"
+          icon={Eye}
+        />
+        <MetricCard
+          label="Taux de conversion"
+          value={formatPercent(m.conversionRate)}
+          change={m.conversionChange}
+          hint={`${formatNumber(m.ordersVolume)} commandes / ${formatNumber(m.visits)} visites`}
+          icon={MousePointerClick}
+        />
+        <MetricCard
+          label="Taux de livraison"
+          value={formatPercent(m.deliveryRate)}
+          hint={`${formatNumber(m.delivered)} livrées sur ${formatNumber(m.confirmed)} confirmées`}
+          icon={Truck}
+        />
+        <MetricCard
+          label="Taux de retour"
+          value={formatPercent(m.returnRate)}
+          hint={`${formatNumber(m.returned)} retours · ${formatMoney(m.revenuePerVisit, currency)} par visite`}
+          icon={Undo2}
+        />
+      </div>
+
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle className="text-base">Visites & taux de conversion</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TrafficChart data={traffic} />
+        </CardContent>
+      </Card>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
