@@ -1,4 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
@@ -97,8 +100,19 @@ function ProductsPage() {
                       formatNumber(p.stock)
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <ProductActions product={p} />
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="icon" aria-label="Voir le produit en ligne" asChild>
+                        <Link
+                          to="/vitrine/$storeId/$productId"
+                          params={{ storeId: p.storeId, productId: p.id }}
+                          target="_blank"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <ProductActions product={p} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
