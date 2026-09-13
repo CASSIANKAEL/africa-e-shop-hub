@@ -58,15 +58,17 @@ const providerEvents: Record<PixelProvider, string[]> = {
 };
 
 function IntegrationsPage() {
-  const pixels = usePixels();
-  const integrations = useAppIntegrations();
-  const stores = useStores();
   const activeStoreId = useActiveStoreId();
+  const pixels = usePixels(activeStoreId);
+  const integrations = useAppIntegrations(activeStoreId);
+  const stores = useStores();
+  const activeStore = stores.find((s) => s.id === activeStoreId);
+  const storeId = activeStoreId;
 
   const [provider, setProvider] = useState<PixelProvider>("facebook");
   const [pixelId, setPixelId] = useState("");
   const [label, setLabel] = useState("");
-  const [storeId, setStoreId] = useState(activeStoreId);
+
 
   const addPixel = () => {
     if (!pixelId.trim()) {
