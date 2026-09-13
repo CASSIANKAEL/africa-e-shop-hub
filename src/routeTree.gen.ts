@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AbonnementRouteImport } from './routes/abonnement'
 import { Route as BoutiquesRouteImport } from './routes/boutiques'
 import { Route as ClientsRouteImport } from './routes/clients'
+import { Route as EquipeRouteImport } from './routes/equipe'
 import { Route as ParametresRouteImport } from './routes/parametres'
 import { Route as VueEnsembleRouteImport } from './routes/vue-ensemble'
 import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
@@ -47,6 +48,11 @@ const BoutiquesRoute = BoutiquesRouteImport.update({
 const ClientsRoute = ClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipeRoute = EquipeRouteImport.update({
+  id: '/equipe',
+  path: '/equipe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParametresRoute = ParametresRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/abonnement': typeof AbonnementRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
+  '/equipe': typeof EquipeRoute
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/abonnement': typeof AbonnementRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
+  '/equipe': typeof EquipeRoute
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/abonnement': typeof AbonnementRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
+  '/equipe': typeof EquipeRoute
   '/parametres': typeof ParametresRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/abonnement'
     | '/boutiques'
     | '/clients'
+    | '/equipe'
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/abonnement'
     | '/boutiques'
     | '/clients'
+    | '/equipe'
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/abonnement'
     | '/boutiques'
     | '/clients'
+    | '/equipe'
     | '/parametres'
     | '/vue-ensemble'
     | '/commandes/$orderId'
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   AbonnementRoute: typeof AbonnementRoute
   BoutiquesRoute: typeof BoutiquesRoute
   ClientsRoute: typeof ClientsRoute
+  EquipeRoute: typeof EquipeRoute
   ParametresRoute: typeof ParametresRoute
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       path: '/clients'
       fullPath: '/clients'
       preLoaderRoute: typeof ClientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipe': {
+      id: '/equipe'
+      path: '/equipe'
+      fullPath: '/equipe'
+      preLoaderRoute: typeof EquipeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parametres': {
@@ -420,6 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   AbonnementRoute: AbonnementRoute,
   BoutiquesRoute: BoutiquesRoute,
   ClientsRoute: ClientsRoute,
+  EquipeRoute: EquipeRoute,
   ParametresRoute: ParametresRoute,
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
