@@ -19,8 +19,10 @@ import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 import { Route as FormulairesIndexRouteImport } from './routes/formulaires.index'
 import { Route as FormulairesFormIdRouteImport } from './routes/formulaires.$formId'
+import { Route as FormulairesCommandeRouteImport } from './routes/formulaires.commande'
 import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaires.integrations'
 import { Route as FormulairesNouveauRouteImport } from './routes/formulaires.nouveau'
+import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
 import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
@@ -77,6 +79,11 @@ const FormulairesFormIdRoute = FormulairesFormIdRouteImport.update({
   path: '/formulaires/$formId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormulairesCommandeRoute = FormulairesCommandeRouteImport.update({
+  id: '/formulaires/commande',
+  path: '/formulaires/commande',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
   id: '/formulaires/integrations',
   path: '/formulaires/integrations',
@@ -85,6 +92,11 @@ const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
 const FormulairesNouveauRoute = FormulairesNouveauRouteImport.update({
   id: '/formulaires/nouveau',
   path: '/formulaires/nouveau',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormulairesOffresRoute = FormulairesOffresRouteImport.update({
+  id: '/formulaires/offres',
+  path: '/formulaires/offres',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
@@ -122,8 +134,10 @@ export interface FileRoutesByFullPath {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -141,8 +155,10 @@ export interface FileRoutesByTo {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
@@ -161,8 +177,10 @@ export interface FileRoutesById {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/$formId': typeof FormulairesFormIdRoute
+  '/formulaires/commande': typeof FormulairesCommandeRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/nouveau': typeof FormulairesNouveauRoute
+  '/formulaires/offres': typeof FormulairesOffresRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -182,8 +200,10 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
     | '/formulaires/nouveau'
+    | '/formulaires/offres'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -201,8 +221,10 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
     | '/formulaires/nouveau'
+    | '/formulaires/offres'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes'
@@ -220,8 +242,10 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/$formId'
+    | '/formulaires/commande'
     | '/formulaires/integrations'
     | '/formulaires/nouveau'
+    | '/formulaires/offres'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -240,8 +264,10 @@ export interface RootRouteChildren {
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
   FormulairesFormIdRoute: typeof FormulairesFormIdRoute
+  FormulairesCommandeRoute: typeof FormulairesCommandeRoute
   FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
   FormulairesNouveauRoute: typeof FormulairesNouveauRoute
+  FormulairesOffresRoute: typeof FormulairesOffresRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
   CommandesIndexRoute: typeof CommandesIndexRoute
@@ -323,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesFormIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formulaires/commande': {
+      id: '/formulaires/commande'
+      path: '/formulaires/commande'
+      fullPath: '/formulaires/commande'
+      preLoaderRoute: typeof FormulairesCommandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/formulaires/integrations': {
       id: '/formulaires/integrations'
       path: '/formulaires/integrations'
@@ -335,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/formulaires/nouveau'
       fullPath: '/formulaires/nouveau'
       preLoaderRoute: typeof FormulairesNouveauRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formulaires/offres': {
+      id: '/formulaires/offres'
+      path: '/formulaires/offres'
+      fullPath: '/formulaires/offres'
+      preLoaderRoute: typeof FormulairesOffresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produits/': {
@@ -384,8 +424,10 @@ const rootRouteChildren: RootRouteChildren = {
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
   FormulairesFormIdRoute: FormulairesFormIdRoute,
+  FormulairesCommandeRoute: FormulairesCommandeRoute,
   FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
   FormulairesNouveauRoute: FormulairesNouveauRoute,
+  FormulairesOffresRoute: FormulairesOffresRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,
   CommandesIndexRoute: CommandesIndexRoute,
