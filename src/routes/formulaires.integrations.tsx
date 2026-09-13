@@ -58,15 +58,17 @@ const providerEvents: Record<PixelProvider, string[]> = {
 };
 
 function IntegrationsPage() {
-  const pixels = usePixels();
-  const integrations = useAppIntegrations();
-  const stores = useStores();
   const activeStoreId = useActiveStoreId();
+  const pixels = usePixels(activeStoreId);
+  const integrations = useAppIntegrations(activeStoreId);
+  const stores = useStores();
+  const activeStore = stores.find((s) => s.id === activeStoreId);
+  const storeId = activeStoreId;
 
   const [provider, setProvider] = useState<PixelProvider>("facebook");
   const [pixelId, setPixelId] = useState("");
   const [label, setLabel] = useState("");
-  const [storeId, setStoreId] = useState(activeStoreId);
+
 
   const addPixel = () => {
     if (!pixelId.trim()) {
@@ -90,7 +92,7 @@ function IntegrationsPage() {
     <AppShell>
       <PageHeader
         title="Intégrations & pixels"
-        description="Mesurez vos campagnes et automatisez le traitement des commandes."
+        description={`Réglages propres à ${activeStore?.name ?? "la boutique active"} : pixels et outils connectés.`}
         action={
           <Button variant="outline" asChild>
             <Link to="/formulaires">Formulaires</Link>
@@ -138,18 +140,9 @@ function IntegrationsPage() {
           </div>
           <div className="space-y-2">
             <Label>Boutique</Label>
-            <Select value={storeId} onValueChange={setStoreId}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {stores.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex h-9 items-center rounded-md border px-3 text-sm text-muted-foreground">
+              {activeStore?.name ?? "Boutique active"}
+            </div>
           </div>
           <div className="sm:col-span-2 xl:col-span-4">
             <Button onClick={addPixel}>
@@ -225,7 +218,7 @@ function IntegrationsPage() {
                   </Badge>
                   <Switch
                     checked={i.connected}
-                    onCheckedChange={() => formsStore.toggleIntegration(i.key)}
+                    onCheckedChange={() => formsStore.toggleIntegration(storeId, i.key)}
                     aria-label={`Activer ${i.name}`}
                   />
                 </div>
@@ -238,7 +231,7 @@ function IntegrationsPage() {
                   id={`int-${i.key}`}
                   value={i.value}
                   placeholder={i.placeholder}
-                  onChange={(e) => formsStore.setIntegrationValue(i.key, e.target.value)}
+                  onChange={(e) => formsStore.setIntegrationValue(storeId, i.key, e.target.value)}
                 />
               </div>
             </div>

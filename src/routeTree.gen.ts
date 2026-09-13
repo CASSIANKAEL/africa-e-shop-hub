@@ -24,6 +24,8 @@ import { Route as FormulairesNouveauRouteImport } from './routes/formulaires.nou
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
 import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
+import { Route as VitrineStoreIdIndexRouteImport } from './routes/vitrine.$storeId.index'
+import { Route as VitrineStoreIdProductIdRouteImport } from './routes/vitrine.$storeId.$productId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +102,16 @@ const ProduitsNouveauRoute = ProduitsNouveauRouteImport.update({
   path: '/produits/nouveau',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VitrineStoreIdIndexRoute = VitrineStoreIdIndexRouteImport.update({
+  id: '/vitrine/$storeId/',
+  path: '/vitrine/$storeId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VitrineStoreIdProductIdRoute = VitrineStoreIdProductIdRouteImport.update({
+  id: '/vitrine/$storeId/$productId',
+  path: '/vitrine/$storeId/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +129,8 @@ export interface FileRoutesByFullPath {
   '/commandes/': typeof CommandesIndexRoute
   '/formulaires/': typeof FormulairesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
+  '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
+  '/vitrine/$storeId/': typeof VitrineStoreIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +148,8 @@ export interface FileRoutesByTo {
   '/commandes': typeof CommandesIndexRoute
   '/formulaires': typeof FormulairesIndexRoute
   '/produits': typeof ProduitsIndexRoute
+  '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
+  '/vitrine/$storeId': typeof VitrineStoreIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +168,8 @@ export interface FileRoutesById {
   '/commandes/': typeof CommandesIndexRoute
   '/formulaires/': typeof FormulairesIndexRoute
   '/produits/': typeof ProduitsIndexRoute
+  '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
+  '/vitrine/$storeId/': typeof VitrineStoreIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +189,8 @@ export interface FileRouteTypes {
     | '/commandes/'
     | '/formulaires/'
     | '/produits/'
+    | '/vitrine/$storeId/$productId'
+    | '/vitrine/$storeId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +208,8 @@ export interface FileRouteTypes {
     | '/commandes'
     | '/formulaires'
     | '/produits'
+    | '/vitrine/$storeId/$productId'
+    | '/vitrine/$storeId'
   id:
     | '__root__'
     | '/'
@@ -205,6 +227,8 @@ export interface FileRouteTypes {
     | '/commandes/'
     | '/formulaires/'
     | '/produits/'
+    | '/vitrine/$storeId/$productId'
+    | '/vitrine/$storeId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +247,8 @@ export interface RootRouteChildren {
   CommandesIndexRoute: typeof CommandesIndexRoute
   FormulairesIndexRoute: typeof FormulairesIndexRoute
   ProduitsIndexRoute: typeof ProduitsIndexRoute
+  VitrineStoreIdProductIdRoute: typeof VitrineStoreIdProductIdRoute
+  VitrineStoreIdIndexRoute: typeof VitrineStoreIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProduitsNouveauRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vitrine/$storeId/': {
+      id: '/vitrine/$storeId/'
+      path: '/vitrine/$storeId'
+      fullPath: '/vitrine/$storeId/'
+      preLoaderRoute: typeof VitrineStoreIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vitrine/$storeId/$productId': {
+      id: '/vitrine/$storeId/$productId'
+      path: '/vitrine/$storeId/$productId'
+      fullPath: '/vitrine/$storeId/$productId'
+      preLoaderRoute: typeof VitrineStoreIdProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -351,6 +391,8 @@ const rootRouteChildren: RootRouteChildren = {
   CommandesIndexRoute: CommandesIndexRoute,
   FormulairesIndexRoute: FormulairesIndexRoute,
   ProduitsIndexRoute: ProduitsIndexRoute,
+  VitrineStoreIdProductIdRoute: VitrineStoreIdProductIdRoute,
+  VitrineStoreIdIndexRoute: VitrineStoreIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

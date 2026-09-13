@@ -6,13 +6,14 @@ import { emptyForm, initialAppIntegrations, initialForms, initialPixels } from "
 interface FormsState {
   forms: OrderForm[];
   pixels: PixelIntegration[];
-  integrations: AppIntegration[];
+  /** Intégrations propres à chaque boutique. */
+  integrations: Record<string, AppIntegration[]>;
 }
 
 let state: FormsState = {
   forms: initialForms,
   pixels: initialPixels,
-  integrations: initialAppIntegrations,
+  integrations: {},
 };
 
 const listeners = new Set<() => void>();
@@ -35,20 +36,30 @@ function useFormsState(): FormsState {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
-export function useForms(): OrderForm[] {
-  return useFormsState().forms;
+/** Formulaires, filtrés sur une boutique si `storeId` est fourni. */
+export function useForms(storeId?: string): OrderForm[] {
+  const forms = useFormsState().forms;
+  return storeId ? forms.filter((f) => f.storeId === storeId) : forms;
 }
 
 export function useOrderForm(id: string): OrderForm | undefined {
   return useFormsState().forms.find((f) => f.id === id);
 }
 
-export function usePixels(): PixelIntegration[] {
-  return useFormsState().pixels;
+/** Pixels, filtrés sur une boutique si `storeId` est fourni. */
+export function usePixels(storeId?: string): PixelIntegration[] {
+  const pixels = useFormsState().pixels;
+  return storeId ? pixels.filter((p) => p.storeId === storeId) : pixels;
 }
 
-export function useAppIntegrations(): AppIntegration[] {
-  return useFormsState().integrations;
+function integrationsFor(storeId: string): AppIntegration[] {
+  return state.integrations[storeId] ?? initialAppIntegrations;
+}
+
+/** Intégrations propres à la boutique donnée. */
+export function useAppIntegrations(storeId: string): AppIntegration[] {
+  const map = useFormsState().integrations;
+  return map[storeId] ?? initialAppIntegrations;
 }
 
 export type NewPixelInput = Omit<PixelIntegration, "id">;
@@ -102,16 +113,22 @@ export const formsStore = {
   deletePixel(id: string) {
     setState({ pixels: state.pixels.filter((p) => p.id !== id) });
   },
-  toggleIntegration(key: AppIntegrationKey) {
+  toggleIntegration(storeId: string, key: AppIntegrationKey) {
     setState({
-      integrations: state.integrations.map((i) =>
-        i.key === key ? { ...i, connected: !i.connected } : i,
-      ),
+      integrations: {
+        ...state.integrations,
+        [storeId]: integrationsFor(storeId).map((i) =>
+          i.key === key ? { ...i, connected: !i.connected } : i,
+        ),
+      },
     });
   },
-  setIntegrationValue(key: AppIntegrationKey, value: string) {
+  setIntegrationValue(storeId: string, key: AppIntegrationKey, value: string) {
     setState({
-      integrations: state.integrations.map((i) => (i.key === key ? { ...i, value } : i)),
+      integrations: {
+        ...state.integrations,
+        [storeId]: integrationsFor(storeId).map((i) => (i.key === key ? { ...i, value } : i)),
+      },
     });
   },
 };
