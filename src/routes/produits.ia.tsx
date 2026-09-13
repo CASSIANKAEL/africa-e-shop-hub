@@ -189,9 +189,25 @@ function AiProductsPage() {
                 </Button>
               )}
             </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="ai-source-url">{t("aiSourceUrlLabel")}</Label>
+              <Input
+                id="ai-source-url"
+                type="url"
+                inputMode="url"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder={t("aiSourceUrlPlaceholder")}
+              />
+            </div>
+            {!hasMedia && <p className="text-sm text-muted-foreground">{t("aiMediaHint")}</p>}
           </div>
 
-          <Button onClick={() => void handleGenerate()} disabled={loading || prompt.trim().length < 3} size="lg">
+          <Button
+            onClick={() => void handleGenerate()}
+            disabled={loading || prompt.trim().length < 3 || !hasMedia}
+            size="lg"
+          >
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -199,6 +215,7 @@ function AiProductsPage() {
             )}
             {loading ? t("aiGenerating") : t("aiGenerate")}
           </Button>
+
         </CardContent>
       </Card>
 
