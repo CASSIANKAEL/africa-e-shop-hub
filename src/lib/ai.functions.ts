@@ -17,17 +17,43 @@ const GenerateInput = z.object({
 
 export type GeneratedProduct = z.infer<typeof ProductIdea>;
 
+/** Lit un flux SSE et concatène les deltas de texte. */
+async function readSseText(res: Response): Promise<string> {
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const data = trimmed.slice(5).trim();
+      if (data === "[DONE]") return text;
+      try {
+        const json = JSON.parse(data) as {
+          choices?: { delta?: { content?: string } }[];
+        };
+        text += json.choices?.[0]?.delta?.content ?? "";
+      } catch {
+        // ignore partial lines
+      }
+    }
+  }
+  return text;
+}
+
 export const generateProductsWithAi = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => GenerateInput.parse(input))
   .handler(async ({ data }): Promise<GeneratedProduct[]> => {
-    console.log("[ai] handler start");
     const key = process.env["LOVABLE_API_KEY"];
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
-    console.log("[ai] fetching gateway");
-    let res: Response;
-    try {
-      res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,6 +61,7 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
       },
       body: JSON.stringify({
         model: "google/gemini-3.8-flash",
+        stream: true,
         response_format: { type: "json_object" },
         messages: [
           {
@@ -43,42 +70,20 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
           },
         ],
       }),
-      });
-    } catch (e) {
-      console.log("[ai] fetch threw", (e as Error).message);
-      throw e;
-    }
+    });
 
-    console.log("[ai] gateway status", res.status);
-    if (!res.ok) {
+    if (!res.ok || !res.body) {
       const message = await res.text();
       throw new Error(`AI gateway error ${res.status}: ${message.slice(0, 200)}`);
     }
 
     try {
-      console.log("[ai] reading body");
-      const raw = await res.text();
-      console.log("[ai] body length", raw.length);
-      const json = JSON.parse(raw) as { choices?: { message?: { content?: string } }[] };
-      const content = json.choices?.[0]?.message?.content ?? "";
+      const content = await readSseText(res);
       const parsed = z
         .object({ products: z.array(ProductIdea) })
         .parse(JSON.parse(content));
-      console.log("[ai] parsed", parsed.products.length);
       return parsed.products.slice(0, 5);
-    } catch (e) {
-      console.log("[ai] parse failed", (e as Error).message);
+    } catch {
       return [];
     }
   });
-
-export const pingServerFn = createServerFn({ method: "GET" }).handler(() => "pong");
-
-export const probeEgress = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const r = await fetch("https://example.com", { signal: AbortSignal.timeout(8000) });
-    return `ok ${r.status}`;
-  } catch (e) {
-    return `err ${(e as Error).message}`;
-  }
-});
