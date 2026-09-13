@@ -150,18 +150,6 @@ function ImportProductsPage() {
         }
       />
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/nouveau">{t("addProductManually")}</Link>
-        </Button>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/produits/import">{t("importCsv")}</Link>
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/produits/ia">{t("addProductAi")}</Link>
-        </Button>
-      </div>
-
       <Card>
         <CardContent className="grid gap-4 p-4 sm:p-6">
           <input
@@ -188,6 +176,17 @@ function ImportProductsPage() {
           <Button onClick={handleImport} disabled={rows.length === 0} size="lg" className="w-full">
             {rows.length > 0 ? `${t("save")} (${rows.length})` : t("noRows")}
           </Button>
+
+          <div className="rounded-lg border bg-muted/40 p-4">
+            <p className="mb-2 text-sm font-semibold">{t("csvRestrictionsTitle")}</p>
+            <ul className="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+              <li>{t("csvRestrictionHeader")}</li>
+              <li>{t("csvRestrictionSeparator")}</li>
+              <li>{t("csvRestrictionName")}</li>
+              <li>{t("csvRestrictionPrice")}</li>
+              <li>{t("csvRestrictionStock")}</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </AppShell>
