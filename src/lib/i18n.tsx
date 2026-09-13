@@ -402,7 +402,7 @@ let activeLanguage: AppLanguage = "fr";
 export const getActiveLanguage = () => activeLanguage;
 export const getActiveLocale = () => localeByLanguage[activeLanguage];
 const translate = (language: AppLanguage, key: MessageKey) =>
-  messages[language]?.[key] ?? fr[key] ?? key;
+  messages[language]?.[key] ?? (fr as Dict)[key] ?? key;
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
@@ -440,7 +440,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 const fallbackContext: LanguageContextValue = {
   language: "fr",
   setLanguage: () => {},
-  t: (key) => fr[key],
+  t: (key) => (fr as Dict)[key] ?? key,
 };
 
 export function useLanguage() {
