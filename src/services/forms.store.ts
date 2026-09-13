@@ -113,16 +113,22 @@ export const formsStore = {
   deletePixel(id: string) {
     setState({ pixels: state.pixels.filter((p) => p.id !== id) });
   },
-  toggleIntegration(key: AppIntegrationKey) {
+  toggleIntegration(storeId: string, key: AppIntegrationKey) {
     setState({
-      integrations: state.integrations.map((i) =>
-        i.key === key ? { ...i, connected: !i.connected } : i,
-      ),
+      integrations: {
+        ...state.integrations,
+        [storeId]: integrationsFor(storeId).map((i) =>
+          i.key === key ? { ...i, connected: !i.connected } : i,
+        ),
+      },
     });
   },
-  setIntegrationValue(key: AppIntegrationKey, value: string) {
+  setIntegrationValue(storeId: string, key: AppIntegrationKey, value: string) {
     setState({
-      integrations: state.integrations.map((i) => (i.key === key ? { ...i, value } : i)),
+      integrations: {
+        ...state.integrations,
+        [storeId]: integrationsFor(storeId).map((i) => (i.key === key ? { ...i, value } : i)),
+      },
     });
   },
 };
