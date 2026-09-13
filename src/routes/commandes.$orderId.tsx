@@ -111,8 +111,22 @@ function OrderDetailPage() {
                 status={order.status}
                 {...(order.courierId ? { courierId: order.courierId } : {})}
               />
+              {order.courierId && (
+                <CourierNoteButton
+                  orderId={order.id}
+                  {...(order.courierNote ? { note: order.courierNote } : {})}
+                />
+              )}
             </div>
           </CardHeader>
+          {order.courierNote && (
+            <div className="px-6 pb-2">
+              <p className="rounded-lg bg-muted p-3 text-sm">
+                <span className="font-medium">{t("courierNote")} : </span>
+                {order.courierNote}
+              </p>
+            </div>
+          )}
           <CardContent>
             <ul className="space-y-3">
               {order.items.map((item) => (
