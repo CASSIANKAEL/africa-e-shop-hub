@@ -72,7 +72,7 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
             content: [
               {
                 type: "text",
-                text: `Tu es un assistant pour des commerçants africains. À partir de cette demande : « ${data.prompt} »${data.images.length > 0 ? " et des photos jointes" : ""}, propose 1 à 5 produits concrets et réalistes pour une boutique en ligne (paiement à la livraison). Prix en ${data.currency} (nombres entiers réalistes pour le marché local), stock entre 5 et 100, description courte et vendeuse en langue "${data.language}". Catégorie courte (Mode, Beauté, Électronique, Maison, Alimentation…). Réponds uniquement avec un objet json de la forme {"products":[{"name":"...","category":"...","price":0,"stock":0,"description":"..."}]}.`,
+                text: `Tu es un assistant pour des commerçants africains. À partir de cette demande : « ${data.prompt} »${data.images.length > 0 ? " et des photos jointes" : ""}${data.sourceUrl ? ` et de cette page produit de référence : ${data.sourceUrl} (inspire-toi du produit qu'elle décrit, sans copier le texte)` : ""}, propose 1 à 5 produits concrets et réalistes pour une boutique en ligne (paiement à la livraison). Prix en ${data.currency} (nombres entiers réalistes pour le marché local), stock entre 5 et 100, description courte et vendeuse en langue "${data.language}". Catégorie courte (Mode, Beauté, Électronique, Maison, Alimentation…). Réponds uniquement avec un objet json de la forme {"products":[{"name":"...","category":"...","price":0,"stock":0,"description":"..."}]}.`,
               },
               ...data.images.map((url) => ({
                 type: "image_url" as const,
