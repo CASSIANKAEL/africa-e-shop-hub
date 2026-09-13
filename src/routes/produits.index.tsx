@@ -50,7 +50,16 @@ function ProductsPage() {
       <PageHeader
         title="Produits"
         description={`Catalogue de ${activeStore?.name ?? "votre boutique"}.`}
-        action={<AddProductButton />}
+        action={
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" asChild>
+              <Link to="/vitrine/$storeId" params={{ storeId: activeStoreId }} target="_blank">
+                <ExternalLink className="mr-2 h-4 w-4" /> Voir la boutique en ligne
+              </Link>
+            </Button>
+            <AddProductButton />
+          </div>
+        }
       />
       <Card>
         <CardContent className="overflow-x-auto p-0">
