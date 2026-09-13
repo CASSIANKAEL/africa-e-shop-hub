@@ -105,11 +105,31 @@ function OrdersPage() {
                   <TableCell className="text-muted-foreground">
                     {formatDate(order.createdAt)}
                   </TableCell>
+                  <TableCell className="text-xs">
+                    {order.followUpAt ? (
+                      <span
+                        className={
+                          isFollowUpDue(order, now)
+                            ? "inline-flex items-center gap-1 font-medium text-warning-foreground"
+                            : "inline-flex items-center gap-1 text-muted-foreground"
+                        }
+                      >
+                        <BellRing className="h-3.5 w-3.5" />
+                        {formatDate(order.followUpAt)}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">
                     {formatMoney(order.total, order.currency)}
                   </TableCell>
                   <TableCell>
-                    <OrderStatusSelect orderId={order.id} status={order.status} />
+                    <OrderStatusSelect
+                      orderId={order.id}
+                      status={order.status}
+                      {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
