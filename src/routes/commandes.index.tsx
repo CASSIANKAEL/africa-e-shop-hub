@@ -116,6 +116,7 @@ function OrdersPage() {
                 <TableHead>{t("lastComment")}</TableHead>
                 <TableHead>{t("amount")}</TableHead>
                 <TableHead>{t("status")}</TableHead>
+                <TableHead>{t("courierColumn")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
