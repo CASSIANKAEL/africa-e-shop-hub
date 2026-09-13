@@ -51,7 +51,7 @@ function ProductsPage() {
     <AppShell>
       <PageHeader
         title={t("products")}
-        description={`Catalogue de ${activeStore?.name ?? "votre boutique"}.`}
+        description={t("productsCatalogOf", { store: activeStore?.name ?? t("store") })}
         action={
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" asChild>
@@ -129,7 +129,7 @@ function ProductsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="icon" aria-label="Voir le produit en ligne" asChild>
+                      <Button variant="ghost" size="icon" aria-label={t("viewProduct")} asChild>
                         <Link
                           to="/vitrine/$storeId/$productId"
                           params={{ storeId: p.storeId, productId: p.id }}

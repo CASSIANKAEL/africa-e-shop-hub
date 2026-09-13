@@ -78,7 +78,7 @@ function SettingsPage() {
                 onValueChange={(v) => {
                   if (!store) return;
                   commerceStore.updateStore(store.id, { language: v as AppLanguage });
-                  toast.success("Langue de la boutique mise à jour");
+                  toast.success(t("storeLanguageUpdated"));
                 }}
                 disabled={!store}
               >
@@ -124,13 +124,13 @@ function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Notifications</CardTitle>
+            <CardTitle className="text-base">{t("notifications")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Toggle label="Nouvelle commande" hint="Alerte WhatsApp immédiate" defaultChecked />
-            <Toggle label="Commande à confirmer depuis 24 h" hint="Rappel quotidien" defaultChecked />
-            <Toggle label="Stock faible" hint="Seuil de 10 unités" />
-            <Toggle label="Rapport hebdomadaire" hint="Chaque lundi matin" defaultChecked />
+            <Toggle label={t("notifNewOrder")} hint={t("notifNewOrderHint")} defaultChecked />
+            <Toggle label={t("notifPending")} hint={t("notifPendingHint")} defaultChecked />
+            <Toggle label={t("notifLowStock")} hint={t("notifLowStockHint")} />
+            <Toggle label={t("notifWeekly")} hint={t("notifWeeklyHint")} defaultChecked />
           </CardContent>
         </Card>
       </div>

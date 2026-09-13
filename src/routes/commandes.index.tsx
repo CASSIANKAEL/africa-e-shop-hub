@@ -73,8 +73,8 @@ function OrdersPage() {
         title={t("orders")}
         description={
           dueCount > 0
-            ? `${dueCount} commande(s) à rappeler maintenant.`
-            : "Confirmez, suivez et clôturez les commandes de vos boutiques."
+            ? t("ordersDueDescription", { n: dueCount })
+            : t("ordersDescription")
         }
       />
       <div className="grid gap-3 md:hidden">

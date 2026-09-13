@@ -199,6 +199,7 @@ export const dictionary: Record<string, readonly [string, string, string, string
   eventPageView: ["Page vue", "Page view", "Página vista", "Seitenaufruf", "Página vista", "Pagina vista", "مشاهدة صفحة"],
   eventViewProduct: ["Produit consulté", "Product viewed", "Producto visto", "Produkt angesehen", "Produto visto", "Prodotto visualizzato", "عرض منتج"],
   eventAddToCart: ["Ajout au panier", "Add to cart", "Añadido al carrito", "In den Warenkorb", "Adicionado ao carrinho", "Aggiunta al carrello", "إضافة إلى السلة"],
+  eventFormView: ["Formulaire ouvert", "Form opened", "Formulario abierto", "Formular geöffnet", "Formulário aberto", "Modulo aperto", "فتح النموذج"],
   eventInitiateCheckout: ["Début de commande", "Checkout started", "Inicio de pedido", "Kauf begonnen", "Início de pedido", "Inizio ordine", "بدء الطلب"],
   eventPurchase: ["Commande validée", "Purchase", "Pedido confirmado", "Kauf abgeschlossen", "Pedido confirmado", "Ordine completato", "طلب مكتمل"],
 
