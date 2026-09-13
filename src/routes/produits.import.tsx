@@ -70,17 +70,26 @@ function splitLine(line: string): string[] {
   return out;
 }
 
+function stripHtml(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function parseCsv(text: string): Row[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length === 0) return [];
   const header = splitLine(lines[0]!).map((h) => h.toLowerCase());
   const idx = (...names: string[]) => header.findIndex((h) => names.includes(h));
-  const iName = idx("nom", "name", "produit");
-  const iSku = idx("reference", "référence", "sku");
-  const iCat = idx("categorie", "catégorie", "category");
-  const iPrice = idx("prix", "price");
-  const iStock = idx("stock", "quantite", "quantité");
-  const iDesc = idx("description", "desc");
+  const iName = idx("nom", "name", "produit", "title");
+  const iSku = idx("reference", "référence", "sku", "variant sku");
+  const iCat = idx("categorie", "catégorie", "category", "product category", "type", "vendor");
+  const iPrice = idx("prix", "price", "variant price");
+  const iStock = idx("stock", "quantite", "quantité", "variant inventory qty", "inventory qty");
+  const iDesc = idx("description", "desc", "body (html)");
   const hasHeader = iName >= 0;
   const body = hasHeader ? lines.slice(1) : lines;
 
@@ -94,7 +103,7 @@ function parseCsv(text: string): Row[] {
         category: (hasHeader ? get(iCat) : c[2]) || "Autre",
         price: Number((hasHeader ? get(iPrice) : c[3])?.replace(/[^\d.,-]/g, "").replace(",", ".")) || 0,
         stock: Number((hasHeader ? get(iStock) : c[4])?.replace(/[^\d-]/g, "")) || 0,
-        description: hasHeader ? get(iDesc) : (c[5] ?? ""),
+        description: stripHtml(hasHeader ? get(iDesc) : (c[5] ?? "")),
       };
     })
     .filter((r) => r.name.length > 0);
@@ -210,8 +219,11 @@ function ImportProductsPage() {
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="flex-row items-center justify-between space-y-0">
               <CardTitle>Aperçu ({rows.length})</CardTitle>
+              <Button onClick={handleImport} disabled={rows.length === 0} size="sm">
+                Enregistrer
+              </Button>
             </CardHeader>
             <CardContent className="overflow-x-auto p-0">
               {rows.length === 0 ? (
@@ -271,9 +283,12 @@ function ImportProductsPage() {
               ))}
             </CardContent>
           </Card>
-          <Button onClick={handleImport} disabled={rows.length === 0}>
-            Importer {rows.length > 0 ? `${rows.length} produit(s)` : ""}
+          <Button onClick={handleImport} disabled={rows.length === 0} className="w-full" size="lg">
+            Enregistrer {rows.length > 0 ? `${rows.length} produit(s)` : "les produits"}
           </Button>
+          <p className="text-xs text-muted-foreground">
+            Les produits sont enregistrés directement dans la ou les boutiques cochées.
+          </p>
         </div>
       </div>
     </AppShell>
