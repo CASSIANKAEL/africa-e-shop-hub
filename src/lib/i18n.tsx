@@ -148,10 +148,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const fallbackContext: LanguageContextValue = {
+  language: "fr",
+  setLanguage: () => {},
+  t: (key) => messages.fr[key],
+};
+
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) throw new Error("useLanguage must be used inside LanguageProvider");
-  return context;
+  return useContext(LanguageContext) ?? fallbackContext;
 }
 
 export { languageNames };
