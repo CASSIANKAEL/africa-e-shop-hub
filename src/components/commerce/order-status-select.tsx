@@ -18,10 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { orderStatusLabels, statusesNeedingFollowUp } from "./order-status-badge";
+import { statusesNeedingFollowUp, useOrderLabels } from "./order-status-badge";
 import { commerceStore } from "@/services/commerce.store";
 import type { OrderStatus } from "@/types";
 import { toast } from "sonner";
+import { useLanguage } from "@/lib/i18n";
+import { getActiveLocale } from "@/lib/i18n";
 
 const statuses: OrderStatus[] = [
   "pending",
@@ -52,6 +54,8 @@ export function OrderStatusSelect({
   currentFollowUpAt?: string;
   className?: string;
 }) {
+  const { t } = useLanguage();
+  const { statuses: orderStatusLabels } = useOrderLabels();
   const [pending, setPending] = useState<OrderStatus | null>(null);
   const [when, setWhen] = useState("");
   const [comment, setComment] = useState("");
@@ -82,8 +86,8 @@ export function OrderStatusSelect({
         }}
       >
         <SelectTrigger
-          className={className ?? "h-9 w-[170px]"}
-          aria-label="Changer le statut de la commande"
+          className={className ?? "h-10 w-full sm:w-[170px]"}
+          aria-label={t("changeOrderStatus")}
           onClick={(e) => e.stopPropagation()}
         >
           <SelectValue />
@@ -101,16 +105,15 @@ export function OrderStatusSelect({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {pending ? orderStatusLabels[pending] : ""} — planifier le rappel
+              {pending ? orderStatusLabels[pending] : ""} — {t("scheduleReminder")}
             </DialogTitle>
             <DialogDescription>
-              Vous pouvez choisir la date et l'heure auxquelles rappeler le client (optionnel). Si
-              vous en mettez une, la commande remontera en haut de la liste à ce moment-là.
+              {t("reminderHelp")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="follow-up-at">Date et heure du rappel (optionnel)</Label>
+              <Label htmlFor="follow-up-at">{t("reminderDate")}</Label>
               <Input
                 id="follow-up-at"
                 type="datetime-local"
@@ -119,10 +122,10 @@ export function OrderStatusSelect({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="follow-up-comment">Commentaire (optionnel)</Label>
+              <Label htmlFor="follow-up-comment">{t("optionalComment")}</Label>
               <Textarea
                 id="follow-up-comment"
-                placeholder="Ex. : Client en réunion, rappeler en fin de journée."
+                placeholder={t("commentPlaceholder")}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
@@ -130,7 +133,7 @@ export function OrderStatusSelect({
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPending(null)}>
-              Annuler
+              {t("cancel")}
             </Button>
             <Button
               onClick={() => {
@@ -141,13 +144,13 @@ export function OrderStatusSelect({
                 });
                 toast.success(
                   when
-                    ? `${orderStatusLabels[pending]} · rappel le ${new Date(when).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                    ? `${orderStatusLabels[pending]} · ${new Date(when).toLocaleString(getActiveLocale(), { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
                     : `Commande mise à jour : ${orderStatusLabels[pending]}`,
                 );
                 setPending(null);
               }}
             >
-              Enregistrer
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

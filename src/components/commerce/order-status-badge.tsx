@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 import type { OrderStatus, PaymentMethod } from "@/types";
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
@@ -37,7 +38,23 @@ export const paymentLabels: Record<PaymentMethod, string> = {
   transfer: "Virement",
 };
 
+const statusKeys: Record<OrderStatus, string> = {
+  pending: "statusPending", unreachable: "statusUnreachable", scheduled: "statusScheduled",
+  callback: "statusCallback", confirmed: "statusConfirmed", shipped: "statusShipped",
+  delivered: "statusDelivered", rejected: "statusRejected", cancelled: "statusCancelled",
+  returned: "statusReturned",
+};
+
+export function useOrderLabels() {
+  const { t } = useLanguage();
+  return {
+    statuses: Object.fromEntries(Object.entries(statusKeys).map(([key, value]) => [key, t(value)])) as Record<OrderStatus, string>,
+    payments: { cod: t("paymentCod"), mobile_money: "Mobile Money", card: t("paymentCard"), transfer: t("paymentTransfer") } as Record<PaymentMethod, string>,
+  };
+}
+
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+  const { statuses } = useOrderLabels();
   return (
     <span
       className={cn(
@@ -45,7 +62,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
         statusStyles[status],
       )}
     >
-      {orderStatusLabels[status]}
+      {statuses[status]}
     </span>
   );
 }
