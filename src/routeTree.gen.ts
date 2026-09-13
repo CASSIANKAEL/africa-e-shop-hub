@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AbonnementRouteImport } from './routes/abonnement'
+import { Route as BoutiquesRouteImport } from './routes/boutiques'
+import { Route as ClientsRouteImport } from './routes/clients'
+import { Route as ParametresRouteImport } from './routes/parametres'
+import { Route as ProduitsRouteImport } from './routes/produits'
+import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
+import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AbonnementRoute = AbonnementRouteImport.update({
+  id: '/abonnement',
+  path: '/abonnement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiquesRoute = BoutiquesRouteImport.update({
+  id: '/boutiques',
+  path: '/boutiques',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientsRoute = ClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParametresRoute = ParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProduitsRoute = ProduitsRouteImport.update({
+  id: '/produits',
+  path: '/produits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommandesIndexRoute = CommandesIndexRouteImport.update({
+  id: '/commandes/',
+  path: '/commandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommandesOrderIdRoute = CommandesOrderIdRouteImport.update({
+  id: '/commandes/$orderId',
+  path: '/commandes/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/abonnement': typeof AbonnementRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/clients': typeof ClientsRoute
+  '/parametres': typeof ParametresRoute
+  '/produits': typeof ProduitsRoute
+  '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/commandes/': typeof CommandesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/abonnement': typeof AbonnementRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/clients': typeof ClientsRoute
+  '/parametres': typeof ParametresRoute
+  '/produits': typeof ProduitsRoute
+  '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/commandes': typeof CommandesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/abonnement': typeof AbonnementRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/clients': typeof ClientsRoute
+  '/parametres': typeof ParametresRoute
+  '/produits': typeof ProduitsRoute
+  '/commandes/$orderId': typeof CommandesOrderIdRoute
+  '/commandes/': typeof CommandesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/abonnement'
+    | '/boutiques'
+    | '/clients'
+    | '/parametres'
+    | '/produits'
+    | '/commandes/$orderId'
+    | '/commandes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/abonnement'
+    | '/boutiques'
+    | '/clients'
+    | '/parametres'
+    | '/produits'
+    | '/commandes/$orderId'
+    | '/commandes'
+  id:
+    | '__root__'
+    | '/'
+    | '/abonnement'
+    | '/boutiques'
+    | '/clients'
+    | '/parametres'
+    | '/produits'
+    | '/commandes/$orderId'
+    | '/commandes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AbonnementRoute: typeof AbonnementRoute
+  BoutiquesRoute: typeof BoutiquesRoute
+  ClientsRoute: typeof ClientsRoute
+  ParametresRoute: typeof ParametresRoute
+  ProduitsRoute: typeof ProduitsRoute
+  CommandesOrderIdRoute: typeof CommandesOrderIdRoute
+  CommandesIndexRoute: typeof CommandesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/abonnement': {
+      id: '/abonnement'
+      path: '/abonnement'
+      fullPath: '/abonnement'
+      preLoaderRoute: typeof AbonnementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutiques': {
+      id: '/boutiques'
+      path: '/boutiques'
+      fullPath: '/boutiques'
+      preLoaderRoute: typeof BoutiquesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clients': {
+      id: '/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof ClientsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parametres': {
+      id: '/parametres'
+      path: '/parametres'
+      fullPath: '/parametres'
+      preLoaderRoute: typeof ParametresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produits': {
+      id: '/produits'
+      path: '/produits'
+      fullPath: '/produits'
+      preLoaderRoute: typeof ProduitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commandes/': {
+      id: '/commandes/'
+      path: '/commandes'
+      fullPath: '/commandes/'
+      preLoaderRoute: typeof CommandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/commandes/$orderId': {
+      id: '/commandes/$orderId'
+      path: '/commandes/$orderId'
+      fullPath: '/commandes/$orderId'
+      preLoaderRoute: typeof CommandesOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AbonnementRoute: AbonnementRoute,
+  BoutiquesRoute: BoutiquesRoute,
+  ClientsRoute: ClientsRoute,
+  ParametresRoute: ParametresRoute,
+  ProduitsRoute: ProduitsRoute,
+  CommandesOrderIdRoute: CommandesOrderIdRoute,
+  CommandesIndexRoute: CommandesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
