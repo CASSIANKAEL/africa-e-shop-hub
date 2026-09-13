@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { CourierAssign } from "@/components/commerce/courier-assign";
+import { CourierNoteButton } from "@/components/commerce/courier-note";
 import { commerceService } from "@/services/commerce.service";
 import { commerceStore, useOrder, useStoreName } from "@/services/commerce.store";
 import { toast } from "sonner";
