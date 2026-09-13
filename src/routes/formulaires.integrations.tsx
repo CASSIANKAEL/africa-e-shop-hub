@@ -92,7 +92,7 @@ function IntegrationsPage() {
     <AppShell>
       <PageHeader
         title="Intégrations & pixels"
-        description="Mesurez vos campagnes et automatisez le traitement des commandes."
+        description={`Réglages propres à ${activeStore?.name ?? "la boutique active"} : pixels et outils connectés.`}
         action={
           <Button variant="outline" asChild>
             <Link to="/formulaires">Formulaires</Link>
