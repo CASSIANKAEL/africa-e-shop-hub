@@ -23,7 +23,13 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { commerceService } from "@/services/commerce.service";
 import { useActiveStore, useActiveStoreId, useOrders } from "@/services/commerce.store";
-import { allOrders, buildSeries, computeMetrics, resolveRange } from "@/services/analytics";
+import {
+  allOrders,
+  buildSeries,
+  buildTrafficSeries,
+  computeMetrics,
+  resolveRange,
+} from "@/services/analytics";
 import { formatDate, formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -68,8 +74,16 @@ function DashboardPage() {
     () => resolveRange(period.period, { ...(period.from ? { from: period.from } : {}), ...(period.to ? { to: period.to } : {}) }),
     [period],
   );
-  const m = useMemo(() => computeMetrics(storeOrders, range), [storeOrders, range]);
+  const storeIds = useMemo(() => [activeStoreId], [activeStoreId]);
+  const m = useMemo(
+    () => computeMetrics(storeOrders, range, storeIds),
+    [storeOrders, range, storeIds],
+  );
   const sales = useMemo(() => buildSeries(storeOrders, range), [storeOrders, range]);
+  const traffic = useMemo(
+    () => buildTrafficSeries(storeOrders, range, storeIds),
+    [storeOrders, range, storeIds],
+  );
 
   const recent = liveOrders.filter((o) => o.storeId === activeStoreId).slice(0, 5);
   const totalStatuses = m.pending + m.confirmed + m.cancelled;
