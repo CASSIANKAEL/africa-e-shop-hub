@@ -57,13 +57,14 @@ export function NewStoreDialog({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
-    commerceStore.addStore({
+    const store = commerceStore.addStore({
       name: name.trim(),
       city: city.trim() || "—",
       country: country.trim() || "—",
       currency,
       status,
     });
+    if (switchOnCreate) commerceStore.setActiveStore(store.id);
     toast.success("Boutique créée");
     setName("");
     setCity("");
@@ -73,11 +74,15 @@ export function NewStoreDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
-        </Button>
-      </DialogTrigger>
+      {trigger === undefined ? (
+        <DialogTrigger asChild>
+          <Button>
+            <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
+          </Button>
+        </DialogTrigger>
+      ) : trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : null}
       <DialogContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
