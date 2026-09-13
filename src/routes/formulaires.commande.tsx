@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { FormBuilder } from "@/components/forms/form-builder";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
 import { formsStore, useForms } from "@/services/forms.store";
+import { useLanguage } from "@/lib/i18n";
 
 export const Route = createFileRoute("/formulaires/commande")({
   head: () => ({
@@ -36,16 +37,21 @@ function OrderFormPage() {
   const existing = forms[0];
   const blank = useMemo(() => formsStore.blankForm(storeId), [storeId]);
   const form = existing ?? blank;
+  const { t } = useLanguage();
 
   return (
     <AppShell>
       <PageHeader
-        title="Formulaire de commande"
-        description={`Le formulaire unique de ${store?.name ?? "la boutique active"}.`}
+        title={t("orderFormTitle")}
+        description={
+          store?.name
+            ? `${t("orderFormDescription").replace("la boutique active", store.name).replace("the active store", store.name).replace("la tienda activa", store.name)}`
+            : t("orderFormDescription")
+        }
         action={
           <Button variant="outline" asChild>
             <Link to="/formulaires">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Retour
+              <ArrowLeft className="mr-2 h-4 w-4" /> {t("back")}
             </Link>
           </Button>
         }
@@ -53,7 +59,7 @@ function OrderFormPage() {
       <FormBuilder
         key={form.id}
         initial={form}
-        saveLabel={existing ? "Enregistrer" : "Créer le formulaire"}
+        saveLabel={existing ? t("save") : t("createForm")}
         onSave={(f) => {
           formsStore.saveForm({ ...f, storeId });
           toast.success(existing ? "Formulaire enregistré" : "Formulaire créé");

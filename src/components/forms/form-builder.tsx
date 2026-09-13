@@ -1,7 +1,5 @@
-import { useState } from "react";
+import { useState, type PointerEvent as ReactPointerEvent } from "react";
 import {
-  ArrowDown,
-  ArrowUp,
   ChevronDown,
   Eye,
   EyeOff,
@@ -32,6 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 import { useStores } from "@/services/commerce.store";
 import type { OrderForm, OrderFormDisplay, OrderFormField, OrderFormFieldType } from "@/types";
 
@@ -71,6 +70,9 @@ export function FormBuilder({
   const [thanksOpen, setThanksOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [draggedFieldId, setDraggedFieldId] = useState<string | null>(null);
+  const [dragOverFieldId, setDragOverFieldId] = useState<string | null>(null);
+  const { t } = useLanguage();
   const stores = useStores();
   const currency = stores.find((s) => s.id === form.storeId)?.currency ?? "XOF";
   const design = form.design;
@@ -90,17 +92,42 @@ export function FormBuilder({
   const updateField = (id: string, p: Partial<OrderFormField>) =>
     setForm((f) => ({ ...f, fields: f.fields.map((x) => (x.id === id ? { ...x, ...p } : x)) }));
 
-  const moveField = (index: number, dir: -1 | 1) =>
+  const moveFieldTo = (sourceId: string, targetId: string) =>
     setForm((f) => {
+      const sourceIndex = f.fields.findIndex((field) => field.id === sourceId);
+      const targetIndex = f.fields.findIndex((field) => field.id === targetId);
+      if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return f;
       const next = [...f.fields];
-      const target = index + dir;
-      if (target < 0 || target >= next.length) return f;
-      const a = next[index]!;
-      const b = next[target]!;
-      next[index] = b;
-      next[target] = a;
+      const [moving] = next.splice(sourceIndex, 1);
+      if (!moving) return f;
+      next.splice(targetIndex, 0, moving);
       return { ...f, fields: next };
     });
+
+  const beginFieldDrag = (event: ReactPointerEvent<HTMLButtonElement>, id: string) => {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDraggedFieldId(id);
+    setDragOverFieldId(id);
+  };
+
+  const continueFieldDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (!draggedFieldId) return;
+    const element = document.elementFromPoint(event.clientX, event.clientY);
+    const row = element?.closest<HTMLElement>("[data-field-id]");
+    const targetId = row?.dataset["fieldId"];
+    if (!targetId || targetId === draggedFieldId) return;
+    setDragOverFieldId(targetId);
+    moveFieldTo(draggedFieldId, targetId);
+  };
+
+  const endFieldDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setDraggedFieldId(null);
+    setDragOverFieldId(null);
+  };
 
   const addField = () => {
     const id = `f-${Date.now()}`;
@@ -334,7 +361,7 @@ export function FormBuilder({
   /* ---------------- Éditeur complet ---------------- */
   const blockRow = (opts: {
     id: string;
-    index?: number;
+    draggable?: boolean;
     icon?: React.ReactNode;
     title: string;
     subtitle?: string;
@@ -349,13 +376,33 @@ export function FormBuilder({
     return (
       <div
         key={opts.id}
+        data-field-id={opts.draggable ? opts.id : undefined}
         className={cn(
           "rounded-xl border transition-colors",
           open ? "border-primary bg-accent/40" : "bg-card",
+          draggedFieldId === opts.id && "scale-[0.99] border-primary opacity-70",
+          dragOverFieldId === opts.id && draggedFieldId !== opts.id && "border-primary",
         )}
       >
         <div className="flex flex-wrap items-center gap-2 px-3 py-2.5">
-          <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" />
+          {opts.draggable ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="cursor-grab touch-none active:cursor-grabbing"
+              aria-label={t("dragHint")}
+              title={t("dragHint")}
+              onPointerDown={(event) => beginFieldDrag(event, opts.id)}
+              onPointerMove={continueFieldDrag}
+              onPointerUp={endFieldDrag}
+              onPointerCancel={endFieldDrag}
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          ) : (
+            <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground/40" />
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{opts.title}</p>
             {opts.subtitle && (
@@ -363,28 +410,6 @@ export function FormBuilder({
             )}
           </div>
           {opts.badge && <Badge variant="secondary">{opts.badge}</Badge>}
-          {opts.index !== undefined && (
-            <>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label="Monter"
-                onClick={() => moveField(opts.index!, -1)}
-              >
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label="Descendre"
-                onClick={() => moveField(opts.index!, 1)}
-              >
-                <ArrowDown className="h-4 w-4" />
-              </Button>
-            </>
-          )}
           {opts.onToggleVisible && (
             <Button
               type="button"
@@ -485,7 +510,12 @@ export function FormBuilder({
       )}
       <button
         type="button"
-        className="mt-4 w-full px-4"
+        className={cn(
+          "mt-4 w-full overflow-hidden px-4",
+          design.buttonAnimation && design.buttonAnimation !== "none"
+            ? `order-button-${design.buttonAnimation}`
+            : "",
+        )}
         style={{
           backgroundColor: design.primaryColor,
           color: design.buttonTextColor ?? "#ffffff",
@@ -709,10 +739,10 @@ export function FormBuilder({
               ),
             })}
 
-            {form.fields.map((field, index) =>
+            {form.fields.map((field) =>
               blockRow({
                 id: field.id,
-                index,
+                draggable: true,
                 title: field.label,
                 subtitle: fieldTypeLabels[field.type],
                 badge: field.required ? "Obligatoire" : "Optionnel",
@@ -885,6 +915,31 @@ export function FormBuilder({
                     />
                     Texte en gras
                   </label>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label className="text-xs">{t("animation")}</Label>
+                    <Select
+                      value={design.buttonAnimation ?? "none"}
+                      onValueChange={(value) =>
+                        patchDesign({
+                          buttonAnimation: value as NonNullable<
+                            OrderForm["design"]["buttonAnimation"]
+                          >,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">{t("none")}</SelectItem>
+                        <SelectItem value="pulse">{t("pulse")}</SelectItem>
+                        <SelectItem value="bounce">{t("bounce")}</SelectItem>
+                        <SelectItem value="shake">{t("shake")}</SelectItem>
+                        <SelectItem value="float">{t("float")}</SelectItem>
+                        <SelectItem value="shine">{t("shine")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               ),
             })}
