@@ -48,6 +48,9 @@ function AiProductsPage() {
   const [prompt, setPrompt] = useState("");
   const [pageLanguage, setPageLanguage] = useState<AppLanguage>(language);
   const [images, setImages] = useState<string[]>([]);
+  const [sourceUrl, setSourceUrl] = useState("");
+  const hasMedia = images.length > 0 || sourceUrl.trim().length > 3;
+
   const fileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<GeneratedProduct[]>([]);
