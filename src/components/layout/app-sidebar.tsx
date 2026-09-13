@@ -13,6 +13,8 @@ import {
   Sparkles,
   FileText,
   Plug,
+  Truck,
+  UsersRound,
 } from "lucide-react";
 
 import {
@@ -49,6 +51,8 @@ const mainItems = [
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
+  { title: "Équipe", url: "/equipe", icon: UsersRound },
+  { title: "Livraisons", url: "/livraisons", icon: Truck },
 ] as const;
 
 const formsItem = {
@@ -86,6 +90,8 @@ export function AppSidebar() {
     { ...mainItems[3], title: t("products") },
     { ...mainItems[4], title: t("orders") },
     { ...mainItems[5], title: t("customers") },
+    { ...mainItems[6], title: t("team") },
+    { ...mainItems[7], title: t("deliveries") },
   ];
   const translatedFormSubItems = [
     { ...formsSubItems[0], title: t("orderForm") },

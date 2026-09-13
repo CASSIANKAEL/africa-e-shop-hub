@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import type { Order, OrderStatus, Product, Store } from "@/types";
+import type { Order, OrderStatus, Product, Store, TeamMember, TeamRole } from "@/types";
 import {
   orders as initialOrders,
   products as initialProducts,
@@ -11,15 +11,42 @@ interface CommerceState {
   stores: Store[];
   products: Product[];
   orders: Order[];
+  team: TeamMember[];
   /** Boutique active : chaque boutique est indépendante, une seule à la fois. */
   activeStoreId: string;
 }
+
+const firstStoreId = initialStores[0]?.id ?? "";
+
+const initialTeam: TeamMember[] = [
+  {
+    id: "tm-1",
+    storeId: firstStoreId,
+    fullName: "Awa Diallo",
+    email: "awa@example.com",
+    phone: "+225 07 00 11 22",
+    role: "closer",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "tm-2",
+    storeId: firstStoreId,
+    fullName: "Koffi Mensah",
+    email: "koffi@example.com",
+    phone: "+225 05 44 33 22",
+    role: "courier",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  },
+];
 
 let state: CommerceState = {
   stores: initialStores,
   products: initialProducts,
   orders: initialOrders,
-  activeStoreId: initialStores[0]?.id ?? "",
+  team: initialTeam,
+  activeStoreId: firstStoreId,
 };
 
 const listeners = new Set<() => void>();
@@ -70,6 +97,25 @@ export function useActiveStore(): Store | undefined {
 export function useStoreName(storeId: string): string {
   return useCommerceState().stores.find((s) => s.id === storeId)?.name ?? "Boutique";
 }
+
+/** Équipe de la boutique active (ou d'une boutique précise). */
+export function useTeam(storeId?: string): TeamMember[] {
+  const s = useCommerceState();
+  const id = storeId ?? s.activeStoreId;
+  return s.team.filter((m) => m.storeId === id);
+}
+
+export function useCouriers(storeId?: string): TeamMember[] {
+  return useTeam(storeId).filter((m) => m.role === "courier");
+}
+
+export type NewTeamMemberInput = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: TeamRole;
+  status: "invited" | "active";
+};
 
 export type NewProductInput = Omit<Product, "id">;
 export type NewStoreInput = Omit<Store, "id" | "productsCount" | "monthlyRevenue">;
@@ -208,6 +254,54 @@ export const commerceStore = {
           ? { ...o, comments: (o.comments ?? []).filter((c) => c.id !== commentId) }
           : o,
       ),
+    });
+  },
+
+  /* ---------- Équipe ---------- */
+  addTeamMember(storeId: string, input: NewTeamMemberInput): TeamMember {
+    const member: TeamMember = {
+      id: `tm-${Date.now()}`,
+      storeId,
+      fullName: input.fullName.trim(),
+      email: input.email.trim(),
+      ...(input.phone?.trim() ? { phone: input.phone.trim() } : {}),
+      role: input.role,
+      status: input.status,
+      createdAt: new Date().toISOString(),
+    };
+    setState({ team: [...state.team, member] });
+    return member;
+  },
+  setMemberStatus(memberId: string, status: "invited" | "active") {
+    setState({
+      team: state.team.map((m) => (m.id === memberId ? { ...m, status } : m)),
+    });
+  },
+  removeTeamMember(memberId: string) {
+    setState({
+      team: state.team.filter((m) => m.id !== memberId),
+      orders: state.orders.map((o) => {
+        if (o.courierId !== memberId) return o;
+        const next = { ...o };
+        delete next.courierId;
+        return next;
+      }),
+    });
+  },
+  /** Attribue (ou retire) une commande confirmée à un livreur. */
+  assignCourier(orderId: string, courierId: string | null) {
+    setState({
+      orders: state.orders.map((o) => {
+        if (o.id !== orderId) return o;
+        const next: Order = { ...o };
+        if (courierId) {
+          next.courierId = courierId;
+          if (next.status === "confirmed") next.status = "shipped";
+        } else {
+          delete next.courierId;
+        }
+        return next;
+      }),
     });
   },
 };

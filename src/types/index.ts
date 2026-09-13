@@ -83,6 +83,23 @@ export interface Order {
   /** Date/heure de rappel pour les commandes injoignables ou programmées. */
   followUpAt?: string;
   comments?: OrderComment[];
+  /** Livreur à qui la commande confirmée est attribuée. */
+  courierId?: string;
+}
+
+/* ---------- Équipe ---------- */
+
+export type TeamRole = "admin" | "closer" | "courier";
+
+export interface TeamMember {
+  id: string;
+  storeId: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: TeamRole;
+  status: "invited" | "active";
+  createdAt: string;
 }
 
 export interface DashboardMetrics {
