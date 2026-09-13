@@ -1,5 +1,8 @@
 import type { Order, SalesPoint } from "@/types";
 import { historicalOrders } from "./history";
+import { allStoreIds, visitsInRange } from "./traffic";
+
+export { allStoreIds } from "./traffic";
 
 export type PeriodKey = "today" | "yesterday" | "7d" | "30d" | "90d" | "custom";
 
@@ -111,7 +114,11 @@ function revenueOf(orders: Order[]): number {
     .reduce((sum, o) => sum + o.total, 0);
 }
 
-export function computeMetrics(orders: Order[], range: DateRange): PeriodMetrics {
+export function computeMetrics(
+  orders: Order[],
+  range: DateRange,
+  storeIds: string[] = allStoreIds,
+): PeriodMetrics {
   const span = range.to - range.from;
   const current = inRange(orders, range);
   const previous = inRange(orders, { from: range.from - span, to: range.from });
@@ -119,6 +126,13 @@ export function computeMetrics(orders: Order[], range: DateRange): PeriodMetrics
   const revenue = revenueOf(current);
   const prevRevenue = revenueOf(previous);
   const confirmed = current.filter((o) => confirmedStatuses.includes(o.status)).length;
+  const delivered = current.filter((o) => o.status === "delivered").length;
+  const returned = current.filter((o) => o.status === "returned").length;
+
+  const visits = visitsInRange(storeIds, range);
+  const prevVisits = visitsInRange(storeIds, { from: range.from - span, to: range.from });
+  const conversionRate = visits ? (current.length / visits) * 100 : 0;
+  const prevConversion = prevVisits ? (previous.length / prevVisits) * 100 : 0;
 
   return {
     revenue,
@@ -133,6 +147,15 @@ export function computeMetrics(orders: Order[], range: DateRange): PeriodMetrics
     codConfirmationRate: codRate(current),
     codChange: codRate(current) - codRate(previous),
     averageBasket: current.length ? Math.round(revenue / current.length) : 0,
+    visits,
+    visitsChange: change(visits, prevVisits),
+    conversionRate,
+    conversionChange: conversionRate - prevConversion,
+    delivered,
+    deliveryRate: confirmed ? (delivered / confirmed) * 100 : 0,
+    returned,
+    returnRate: delivered + returned ? (returned / (delivered + returned)) * 100 : 0,
+    revenuePerVisit: visits ? Math.round(revenue / visits) : 0,
   };
 }
 
