@@ -146,7 +146,7 @@ const fr = {
 type Dict = Record<string, string>;
 type MessageKey = string;
 
-const messages: Record<AppLanguage, Dict> = {
+const messages: Record<AppLanguage, Partial<Dict>> = {
   fr,
   en: {
     search: "Search orders, customers…",

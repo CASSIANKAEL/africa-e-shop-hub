@@ -20,15 +20,15 @@ export function MetricCard({
   const positive = (change ?? 0) >= 0;
   return (
     <Card className="overflow-hidden">
-      <CardContent className="p-5">
+      <CardContent className="p-3 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm text-muted-foreground">{label}</p>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+          <span className="flex h-8 w-8 shrink-0 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-accent text-accent-foreground">
             <Icon className="h-4 w-4" />
           </span>
         </div>
-        <p className="mt-3 font-display text-2xl font-semibold tracking-tight">{value}</p>
-        <div className="mt-2 flex items-center gap-2 text-xs">
+        <p className="mt-3 break-words font-display text-xl sm:text-2xl font-semibold tracking-tight">{value}</p>
+        <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
           {change !== undefined && (
             <span
               className={cn(
