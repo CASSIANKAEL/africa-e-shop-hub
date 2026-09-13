@@ -87,8 +87,10 @@ export const commerceStore = {
       orders: state.orders.map((o) => {
         if (o.id !== orderId) return o;
         const next: Order = { ...o, status };
-        if (options?.followUpAt !== undefined) {
-          next.followUpAt = options.followUpAt ?? undefined;
+        if (options?.followUpAt === null) {
+          delete next.followUpAt;
+        } else if (options?.followUpAt) {
+          next.followUpAt = options.followUpAt;
         }
         if (options?.comment?.trim()) {
           next.comments = [

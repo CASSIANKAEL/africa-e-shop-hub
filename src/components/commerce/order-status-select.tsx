@@ -63,20 +63,8 @@ export function OrderStatusSelect({
   }
 
   function apply(next: OrderStatus) {
-    commerceStore.updateOrderStatus(next === "rejected" ? orderId : orderId, next, {
-      followUpAt: null,
-    });
+    commerceStore.updateOrderStatus(orderId, next, { followUpAt: null });
     toast.success(`Commande mise à jour : ${orderStatusLabels[next]}`);
-  }
-
-  function confirmFollowUp() {
-    if (!pending) return;
-    if (!when) {
-      toast.error("Choisissez une date et une heure de rappel.");
-      return;
-    }
-    commerceStore.updateOrderStatus(pending, pending, undefined as never); // placeholder replaced below
-    setPending(null);
   }
 
   return (
