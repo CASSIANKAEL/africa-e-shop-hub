@@ -194,7 +194,7 @@ function ImportProductsPage() {
           </p>
 
           <Button onClick={handleImport} disabled={rows.length === 0} size="lg" className="w-full">
-            {rows.length > 0 ? t("importedCount", { n: rows.length }) : t("noRows")}
+            {rows.length > 0 ? `${t("save")} (${rows.length})` : t("noRows")}
           </Button>
         </CardContent>
       </Card>
