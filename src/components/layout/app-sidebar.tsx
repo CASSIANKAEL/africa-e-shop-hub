@@ -60,6 +60,7 @@ export function AppSidebar() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const stores = useStores();
   const activeStoreId = useActiveStoreId();
+  const [newStoreOpen, setNewStoreOpen] = useState(false);
 
   const isActive = (url: string, exact?: boolean) =>
     exact ? pathname === url : pathname === url || pathname.startsWith(`${url}/`);
