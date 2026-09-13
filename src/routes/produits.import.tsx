@@ -70,6 +70,15 @@ function splitLine(line: string): string[] {
   return out;
 }
 
+function stripHtml(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function parseCsv(text: string): Row[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length === 0) return [];
@@ -94,7 +103,7 @@ function parseCsv(text: string): Row[] {
         category: (hasHeader ? get(iCat) : c[2]) || "Autre",
         price: Number((hasHeader ? get(iPrice) : c[3])?.replace(/[^\d.,-]/g, "").replace(",", ".")) || 0,
         stock: Number((hasHeader ? get(iStock) : c[4])?.replace(/[^\d-]/g, "")) || 0,
-        description: hasHeader ? get(iDesc) : (c[5] ?? ""),
+        description: stripHtml(hasHeader ? get(iDesc) : (c[5] ?? "")),
       };
     })
     .filter((r) => r.name.length > 0);
