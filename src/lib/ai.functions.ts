@@ -62,3 +62,12 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
   });
 
 export const pingServerFn = createServerFn({ method: "GET" }).handler(() => "pong");
+
+export const probeEgress = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const r = await fetch("https://example.com", { signal: AbortSignal.timeout(8000) });
+    return `ok ${r.status}`;
+  } catch (e) {
+    return `err ${(e as Error).message}`;
+  }
+});
