@@ -24,6 +24,7 @@ import {
 import { commerceStore } from "@/services/commerce.store";
 import type { Currency, Store } from "@/types";
 import { currencies, currencyNames } from "@/lib/currencies";
+import { useLanguage } from "@/lib/i18n";
 
 
 interface NewStoreDialogProps {
@@ -42,6 +43,7 @@ export function NewStoreDialog({
   onOpenChange,
   switchOnCreate = false,
 }: NewStoreDialogProps = {}) {
+  const { t } = useLanguage();
   const [openState, setOpenState] = useState(false);
   const open = openProp ?? openState;
   const setOpen = (v: boolean) => {
@@ -77,7 +79,7 @@ export function NewStoreDialog({
       {trigger === undefined ? (
         <DialogTrigger asChild>
           <Button>
-            <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
+            <Plus className="mr-1 h-4 w-4" /> {t("newStore")}
           </Button>
         </DialogTrigger>
       ) : trigger ? (
@@ -86,7 +88,7 @@ export function NewStoreDialog({
       <DialogContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Nouvelle boutique</DialogTitle>
+            <DialogTitle>{t("newStore")}</DialogTitle>
             <DialogDescription>
               Chaque boutique a son catalogue, sa devise et ses commandes.
             </DialogDescription>
@@ -124,7 +126,7 @@ export function NewStoreDialog({
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="store-currency">Devise</Label>
+                <Label htmlFor="store-currency">{t("currency")}</Label>
                 <Select value={currency} onValueChange={(v) => setCurrency(v as Currency)}>
                   <SelectTrigger id="store-currency">
                     <SelectValue />
@@ -154,9 +156,9 @@ export function NewStoreDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Annuler
+              {t("cancel")}
             </Button>
-            <Button type="submit">Créer la boutique</Button>
+            <Button type="submit">{t("newStore")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
