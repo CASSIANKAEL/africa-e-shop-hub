@@ -75,12 +75,12 @@ function parseCsv(text: string): Row[] {
   if (lines.length === 0) return [];
   const header = splitLine(lines[0]!).map((h) => h.toLowerCase());
   const idx = (...names: string[]) => header.findIndex((h) => names.includes(h));
-  const iName = idx("nom", "name", "produit");
-  const iSku = idx("reference", "référence", "sku");
-  const iCat = idx("categorie", "catégorie", "category");
-  const iPrice = idx("prix", "price");
-  const iStock = idx("stock", "quantite", "quantité");
-  const iDesc = idx("description", "desc");
+  const iName = idx("nom", "name", "produit", "title");
+  const iSku = idx("reference", "référence", "sku", "variant sku");
+  const iCat = idx("categorie", "catégorie", "category", "product category", "type", "vendor");
+  const iPrice = idx("prix", "price", "variant price");
+  const iStock = idx("stock", "quantite", "quantité", "variant inventory qty", "inventory qty");
+  const iDesc = idx("description", "desc", "body (html)");
   const hasHeader = iName >= 0;
   const body = hasHeader ? lines.slice(1) : lines;
 
