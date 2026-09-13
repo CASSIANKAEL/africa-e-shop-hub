@@ -98,6 +98,25 @@ export function useStoreName(storeId: string): string {
   return useCommerceState().stores.find((s) => s.id === storeId)?.name ?? "Boutique";
 }
 
+/** Équipe de la boutique active (ou d'une boutique précise). */
+export function useTeam(storeId?: string): TeamMember[] {
+  const s = useCommerceState();
+  const id = storeId ?? s.activeStoreId;
+  return s.team.filter((m) => m.storeId === id);
+}
+
+export function useCouriers(storeId?: string): TeamMember[] {
+  return useTeam(storeId).filter((m) => m.role === "courier");
+}
+
+export type NewTeamMemberInput = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: TeamRole;
+  status: "invited" | "active";
+};
+
 export type NewProductInput = Omit<Product, "id">;
 export type NewStoreInput = Omit<Store, "id" | "productsCount" | "monthlyRevenue">;
 
