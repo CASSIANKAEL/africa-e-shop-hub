@@ -57,3 +57,5 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
       return [];
     }
   });
+
+export const pingServerFn = createServerFn({ method: "GET" }).handler(() => "pong");
