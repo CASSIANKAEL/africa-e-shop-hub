@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-import type { Order, OrderStatus, Product, Store } from "@/types";
+import type { Order, OrderStatus, Product, Store, TeamMember, TeamRole } from "@/types";
 import {
   orders as initialOrders,
   products as initialProducts,
@@ -11,15 +11,42 @@ interface CommerceState {
   stores: Store[];
   products: Product[];
   orders: Order[];
+  team: TeamMember[];
   /** Boutique active : chaque boutique est indépendante, une seule à la fois. */
   activeStoreId: string;
 }
+
+const firstStoreId = initialStores[0]?.id ?? "";
+
+const initialTeam: TeamMember[] = [
+  {
+    id: "tm-1",
+    storeId: firstStoreId,
+    fullName: "Awa Diallo",
+    email: "awa@example.com",
+    phone: "+225 07 00 11 22",
+    role: "closer",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "tm-2",
+    storeId: firstStoreId,
+    fullName: "Koffi Mensah",
+    email: "koffi@example.com",
+    phone: "+225 05 44 33 22",
+    role: "courier",
+    status: "active",
+    createdAt: new Date().toISOString(),
+  },
+];
 
 let state: CommerceState = {
   stores: initialStores,
   products: initialProducts,
   orders: initialOrders,
-  activeStoreId: initialStores[0]?.id ?? "",
+  team: initialTeam,
+  activeStoreId: firstStoreId,
 };
 
 const listeners = new Set<() => void>();
