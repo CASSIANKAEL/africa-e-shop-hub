@@ -93,6 +93,8 @@ function DeliveriesPage() {
             </Select>
           </div>
 
+          <OrderStats orders={orders} variant="courier" />
+
           {orders.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-sm text-muted-foreground">
