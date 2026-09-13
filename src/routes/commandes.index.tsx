@@ -11,8 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { OrderStatusBadge, paymentLabels } from "@/components/commerce/order-status-badge";
-import { commerceService } from "@/services/commerce.service";
+import { paymentLabels } from "@/components/commerce/order-status-badge";
+import { OrderStatusSelect } from "@/components/commerce/order-status-select";
+import { useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/commandes/")({
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/commandes/")({
 });
 
 function OrdersPage() {
-  const orders = commerceService.getOrders();
+  const orders = useOrders();
 
   return (
     <AppShell>
@@ -58,7 +59,7 @@ function OrdersPage() {
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
-                <TableRow key={order.id} className="cursor-pointer">
+                <TableRow key={order.id}>
                   <TableCell className="font-medium">
                     <Link to="/commandes/$orderId" params={{ orderId: order.id }}>
                       {order.reference}
@@ -80,7 +81,7 @@ function OrdersPage() {
                     {formatMoney(order.total, order.currency)}
                   </TableCell>
                   <TableCell>
-                    <OrderStatusBadge status={order.status} />
+                    <OrderStatusSelect orderId={order.id} status={order.status} />
                   </TableCell>
                 </TableRow>
               ))}

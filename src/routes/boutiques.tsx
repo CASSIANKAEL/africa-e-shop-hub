@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, Store as StoreIcon } from "lucide-react";
+import { Store as StoreIcon } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
 import { Badge } from "@/components/ui/badge";
-import { commerceService } from "@/services/commerce.service";
+import { useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/boutiques")({
@@ -28,18 +28,14 @@ export const Route = createFileRoute("/boutiques")({
 });
 
 function StoresPage() {
-  const stores = commerceService.getStores();
+  const stores = useStores();
 
   return (
     <AppShell>
       <PageHeader
         title="Boutiques"
         description="Chaque boutique possède son catalogue, sa devise et ses commandes."
-        action={
-          <Button>
-            <Plus className="mr-1 h-4 w-4" /> Nouvelle boutique
-          </Button>
-        }
+        action={<NewStoreDialog />}
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stores.map((store) => (

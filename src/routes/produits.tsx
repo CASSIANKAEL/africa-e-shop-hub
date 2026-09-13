@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { NewProductDialog } from "@/components/commerce/new-product-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -14,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { commerceService } from "@/services/commerce.service";
+import { useProducts, useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/produits")({
@@ -36,18 +35,16 @@ export const Route = createFileRoute("/produits")({
 });
 
 function ProductsPage() {
-  const products = commerceService.getProducts();
+  const products = useProducts();
+  const stores = useStores();
+  const storeName = (id: string) => stores.find((s) => s.id === id)?.name ?? "Boutique";
 
   return (
     <AppShell>
       <PageHeader
         title="Produits"
         description="Catalogue partagé entre toutes vos boutiques."
-        action={
-          <Button>
-            <Plus className="mr-1 h-4 w-4" /> Ajouter un produit
-          </Button>
-        }
+        action={<NewProductDialog />}
       />
       <Card>
         <CardContent className="overflow-x-auto p-0">
@@ -70,7 +67,7 @@ function ProductsPage() {
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.sku}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {commerceService.getStoreName(p.storeId)}
+                    {storeName(p.storeId)}
                   </TableCell>
                   <TableCell className="font-medium">{formatMoney(p.price)}</TableCell>
                   <TableCell>

@@ -6,8 +6,11 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { OrderStatusBadge, paymentLabels } from "@/components/commerce/order-status-badge";
+import { paymentLabels } from "@/components/commerce/order-status-badge";
+import { OrderStatusSelect } from "@/components/commerce/order-status-select";
 import { commerceService } from "@/services/commerce.service";
+import { commerceStore, useOrder, useStoreName } from "@/services/commerce.store";
+import { toast } from "sonner";
 import { formatDate, formatMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/commandes/$orderId")({
@@ -37,7 +40,9 @@ export const Route = createFileRoute("/commandes/$orderId")({
 });
 
 function OrderDetailPage() {
-  const { order } = Route.useLoaderData();
+  const { order: loaded } = Route.useLoaderData();
+  const order = useOrder(loaded.id) ?? loaded;
+  const storeName = useStoreName(order.storeId);
 
   return (
     <AppShell>
@@ -49,16 +54,31 @@ function OrderDetailPage() {
 
       <PageHeader
         title={order.reference}
-        description={`${commerceService.getStoreName(order.storeId)} · ${formatDate(order.createdAt)}`}
+        description={`${storeName} · ${formatDate(order.createdAt)}`}
         action={
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline">
-              <PhoneCall className="mr-1 h-4 w-4" /> Appeler le client
+            <Button variant="outline" asChild>
+              <a href={`tel:${order.customer.phone.replace(/\s/g, "")}`}>
+                <PhoneCall className="mr-1 h-4 w-4" /> Appeler le client
+              </a>
             </Button>
-            <Button variant="outline" className="text-destructive">
+            <OrderStatusSelect orderId={order.id} status={order.status} className="h-9 w-[170px]" />
+            <Button
+              variant="outline"
+              className="text-destructive"
+              onClick={() => {
+                commerceStore.updateOrderStatus(order.id, "cancelled");
+                toast.success("Commande annulée");
+              }}
+            >
               <XCircle className="mr-1 h-4 w-4" /> Annuler
             </Button>
-            <Button>
+            <Button
+              onClick={() => {
+                commerceStore.updateOrderStatus(order.id, "confirmed");
+                toast.success("Commande confirmée");
+              }}
+            >
               <CheckCircle2 className="mr-1 h-4 w-4" /> Confirmer
             </Button>
           </div>
@@ -69,7 +89,7 @@ function OrderDetailPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-base">Articles</CardTitle>
-            <OrderStatusBadge status={order.status} />
+            <OrderStatusSelect orderId={order.id} status={order.status} />
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
