@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
+import { OrderStats } from "@/components/commerce/order-stats";
 import {
   commerceStore,
   useActiveStoreId,
