@@ -42,7 +42,7 @@ function OrdersPage() {
   const allOrders = useOrders();
   const activeStoreId = useActiveStoreId();
   const orders = useMemo(
-    () => (activeStoreId ? allOrders.filter((o) => o.storeId === activeStoreId) : allOrders),
+    () => allOrders.filter((o) => o.storeId === activeStoreId),
     [allOrders, activeStoreId],
   );
   const [now, setNow] = useState(() => Date.now());
