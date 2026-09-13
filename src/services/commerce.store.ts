@@ -256,6 +256,54 @@ export const commerceStore = {
       ),
     });
   },
+
+  /* ---------- Équipe ---------- */
+  addTeamMember(storeId: string, input: NewTeamMemberInput): TeamMember {
+    const member: TeamMember = {
+      id: `tm-${Date.now()}`,
+      storeId,
+      fullName: input.fullName.trim(),
+      email: input.email.trim(),
+      ...(input.phone?.trim() ? { phone: input.phone.trim() } : {}),
+      role: input.role,
+      status: input.status,
+      createdAt: new Date().toISOString(),
+    };
+    setState({ team: [...state.team, member] });
+    return member;
+  },
+  setMemberStatus(memberId: string, status: "invited" | "active") {
+    setState({
+      team: state.team.map((m) => (m.id === memberId ? { ...m, status } : m)),
+    });
+  },
+  removeTeamMember(memberId: string) {
+    setState({
+      team: state.team.filter((m) => m.id !== memberId),
+      orders: state.orders.map((o) => {
+        if (o.courierId !== memberId) return o;
+        const next = { ...o };
+        delete next.courierId;
+        return next;
+      }),
+    });
+  },
+  /** Attribue (ou retire) une commande confirmée à un livreur. */
+  assignCourier(orderId: string, courierId: string | null) {
+    setState({
+      orders: state.orders.map((o) => {
+        if (o.id !== orderId) return o;
+        const next: Order = { ...o };
+        if (courierId) {
+          next.courierId = courierId;
+          if (next.status === "confirmed") next.status = "shipped";
+        } else {
+          delete next.courierId;
+        }
+        return next;
+      }),
+    });
+  },
 };
 
 /** Une commande injoignable/programmée dont l'heure de rappel est arrivée. */
