@@ -9,6 +9,8 @@ import {
   CreditCard,
   Settings,
   Sparkles,
+  FileText,
+  Plug,
 } from "lucide-react";
 
 import {
@@ -40,6 +42,11 @@ const mainItems = [
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
+] as const;
+
+const formItems = [
+  { title: "Formulaires", url: "/formulaires", icon: FileText },
+  { title: "Intégrations & pixels", url: "/formulaires/integrations", icon: Plug },
 ] as const;
 
 const accountItems = [
