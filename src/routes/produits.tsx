@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useProducts, useStores } from "@/services/commerce.store";
+import { useActiveStoreId, useProducts, useStores } from "@/services/commerce.store";
 import { formatMoney, formatNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/produits")({
@@ -35,7 +35,11 @@ export const Route = createFileRoute("/produits")({
 });
 
 function ProductsPage() {
-  const products = useProducts();
+  const allProducts = useProducts();
+  const activeStoreId = useActiveStoreId();
+  const products = activeStoreId
+    ? allProducts.filter((p) => p.storeId === activeStoreId)
+    : allProducts;
   const stores = useStores();
   const storeName = (id: string) => stores.find((s) => s.id === id)?.name ?? "Boutique";
 

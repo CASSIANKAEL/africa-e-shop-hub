@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { paymentLabels } from "@/components/commerce/order-status-badge";
 import { OrderStatusSelect } from "@/components/commerce/order-status-select";
-import { isFollowUpDue, useOrders } from "@/services/commerce.store";
+import { isFollowUpDue, useActiveStoreId, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/commandes/")({
@@ -39,7 +39,12 @@ export const Route = createFileRoute("/commandes/")({
 });
 
 function OrdersPage() {
-  const orders = useOrders();
+  const allOrders = useOrders();
+  const activeStoreId = useActiveStoreId();
+  const orders = useMemo(
+    () => (activeStoreId ? allOrders.filter((o) => o.storeId === activeStoreId) : allOrders),
+    [allOrders, activeStoreId],
+  );
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
