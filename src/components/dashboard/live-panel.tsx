@@ -22,6 +22,7 @@ import {
   useRealtime,
 } from "@/services/realtime";
 import type { Currency } from "@/types";
+import { useLanguage } from "@/lib/i18n";
 
 function timeAgo(ms: number) {
   const s = Math.max(0, Math.round(ms / 1000));
@@ -38,6 +39,7 @@ export function LivePanel({
   currency?: Currency;
   title?: string;
 }) {
+  const { t } = useLanguage();
   const { events, now } = useRealtime(storeId);
   const series = perMinuteSeries(events, now);
   const active = activeVisitors(events, now);
@@ -59,13 +61,13 @@ export function LivePanel({
           {title}
         </CardTitle>
         <Badge variant="secondary" className="gap-1">
-          <Radio className="h-3 w-3" /> 30 dernières minutes
+          <Radio className="h-3 w-3" /> {t("last30Minutes")}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="rounded-xl border p-4">
-            <p className="text-xs text-muted-foreground">Visiteurs actifs (5 min)</p>
+            <p className="text-xs text-muted-foreground">{t("activeVisitors")}</p>
             <p className="mt-1 font-display text-3xl font-semibold tracking-tight">
               {formatNumber(active)}
             </p>
@@ -73,14 +75,14 @@ export function LivePanel({
               {formatNumber(events.length)} évènements captés · {formatNumber(purchases.length)}{" "}
               commandes
             </p>
-            <p className="mt-3 text-xs text-muted-foreground">Ventes en direct</p>
+            <p className="mt-3 text-xs text-muted-foreground">{t("liveSales")}</p>
             <p className="font-display text-lg font-semibold">
               {formatMoney(liveRevenue, currency)}
             </p>
           </div>
 
           <div className="lg:col-span-2">
-            <ResponsiveContainer width="100%" height={170}>
+            <ResponsiveContainer width="100%" height={150}>
               <AreaChart data={series} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
                 <defs>
                   <linearGradient id="liveGradient" x1="0" y1="0" x2="0" y2="1">
@@ -119,7 +121,7 @@ export function LivePanel({
 
         <div className="grid gap-5 lg:grid-cols-2">
           <div className="space-y-3">
-            <p className="text-sm font-medium">Évènements déclenchés</p>
+            <p className="text-sm font-medium">{t("triggeredEvents")}</p>
             {byType.map((t) => (
               <div key={t.type}>
                 <div className="flex items-center justify-between text-sm">
@@ -131,7 +133,7 @@ export function LivePanel({
             ))}
           </div>
           <div className="space-y-3">
-            <p className="text-sm font-medium">Sources de trafic</p>
+            <p className="text-sm font-medium">{t("trafficSources")}</p>
             {bySource.map((s) => (
               <div key={s.source}>
                 <div className="flex items-center justify-between text-sm">
@@ -142,26 +144,26 @@ export function LivePanel({
               </div>
             ))}
             {bySource.length === 0 && (
-              <p className="text-sm text-muted-foreground">En attente de trafic…</p>
+              <p className="text-sm text-muted-foreground">{t("noTraffic")}</p>
             )}
           </div>
         </div>
 
         <div>
           <p className="mb-2 flex items-center gap-2 text-sm font-medium">
-            <Activity className="h-4 w-4" /> Registre en direct
+            <Activity className="h-4 w-4" /> {t("liveLog")}
           </p>
           <div className="max-h-80 overflow-auto rounded-xl border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Heure</TableHead>
-                  <TableHead>Évènement</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Ville</TableHead>
-                  <TableHead>Page</TableHead>
-                  <TableHead>Pixels</TableHead>
-                  <TableHead className="text-right">Valeur</TableHead>
+                   <TableHead>{t("time")}</TableHead>
+                   <TableHead>{t("event")}</TableHead>
+                   <TableHead className="hidden sm:table-cell">{t("source")}</TableHead>
+                   <TableHead className="hidden md:table-cell">{t("city")}</TableHead>
+                   <TableHead className="hidden lg:table-cell">{t("page")}</TableHead>
+                   <TableHead className="hidden lg:table-cell">Pixels</TableHead>
+                   <TableHead className="text-right">{t("value")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -173,12 +175,12 @@ export function LivePanel({
                     <TableCell className="whitespace-nowrap font-medium">
                       {liveEventLabels[e.type]}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{e.source}</TableCell>
-                    <TableCell className="text-muted-foreground">
+                     <TableCell className="hidden text-muted-foreground sm:table-cell">{e.source}</TableCell>
+                     <TableCell className="hidden text-muted-foreground md:table-cell">
                       {e.city} · {e.device === "mobile" ? "Mobile" : "Ordinateur"}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{e.page}</TableCell>
-                    <TableCell>
+                     <TableCell className="hidden text-muted-foreground lg:table-cell">{e.page}</TableCell>
+                     <TableCell className="hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1">
                         {e.pixels.map((p) => (
                           <Badge key={p} variant="secondary" className="text-[10px]">
@@ -195,7 +197,7 @@ export function LivePanel({
                 {events.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center text-sm text-muted-foreground">
-                      Connexion au flux en direct…
+                       {t("connectingLive")}
                     </TableCell>
                   </TableRow>
                 )}
