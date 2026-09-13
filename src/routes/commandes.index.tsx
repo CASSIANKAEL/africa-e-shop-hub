@@ -182,6 +182,13 @@ function OrdersPage() {
                       {...(order.followUpAt ? { currentFollowUpAt: order.followUpAt } : {})}
                     />
                   </TableCell>
+                  <TableCell>
+                    <CourierAssign
+                      orderId={order.id}
+                      status={order.status}
+                      {...(order.courierId ? { courierId: order.courierId } : {})}
+                    />
+                  </TableCell>
                 </TableRow>
                 );
               })}
