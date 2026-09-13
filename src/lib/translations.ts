@@ -266,4 +266,19 @@ export const dictionary: Record<string, readonly [string, string, string, string
   shake: ["Secousse", "Shake", "Sacudida", "Wackeln", "Tremor", "Scossa", "اهتزاز"],
   float: ["Flottement", "Float", "Flotación", "Schweben", "Flutuação", "Fluttuazione", "طفو"],
   shine: ["Brillance", "Shine", "Brillo", "Glanz", "Brilho", "Brillantezza", "لمعان"],
+
+  // Divers
+  items: ["Articles", "Items", "Artículos", "Artikel", "Artigos", "Articoli", "العناصر"],
+  note: ["Note", "Note", "Nota", "Notiz", "Nota", "Nota", "ملاحظة"],
+  name: ["Nom", "Name", "Nombre", "Name", "Nome", "Nome", "الاسم"],
+  confirm: ["Confirmer", "Confirm", "Confirmar", "Bestätigen", "Confirmar", "Conferma", "تأكيد"],
+  backToOrders: ["Retour aux commandes", "Back to orders", "Volver a pedidos", "Zurück zu Bestellungen", "Voltar aos pedidos", "Torna agli ordini", "العودة إلى الطلبات"],
+  backToCatalog: ["Retour au catalogue", "Back to catalogue", "Volver al catálogo", "Zurück zum Katalog", "Voltar ao catálogo", "Torna al catalogo", "العودة إلى الكتالوج"],
+  destinationStore: ["Boutique de destination", "Destination store", "Tienda de destino", "Zielshop", "Loja de destino", "Negozio di destinazione", "المتجر الوجهة"],
+  chooseStore: ["Choisissez au moins une boutique de destination.", "Choose at least one destination store.", "Elige al menos una tienda de destino.", "Wählen Sie mindestens einen Zielshop.", "Escolha pelo menos uma loja de destino.", "Scegli almeno un negozio di destinazione.", "اختر متجرًا واحدًا على الأقل."],
+  actionsFor: ["Actions pour {name}", "Actions for {name}", "Acciones para {name}", "Aktionen für {name}", "Ações para {name}", "Azioni per {name}", "إجراءات لـ {name}"],
+  deviceMobile: ["Mobile", "Mobile", "Móvil", "Mobil", "Telemóvel", "Mobile", "الهاتف"],
+  deviceDesktop: ["Ordinateur", "Desktop", "Ordenador", "Computer", "Computador", "Computer", "الحاسوب"],
+  secondsAgo: ["il y a {n} s", "{n}s ago", "hace {n} s", "vor {n} s", "há {n} s", "{n} s fa", "قبل {n} ثانية"],
+  minutesAgo: ["il y a {n} min", "{n} min ago", "hace {n} min", "vor {n} Min.", "há {n} min", "{n} min fa", "قبل {n} دقيقة"],
 };
