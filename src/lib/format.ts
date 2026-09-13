@@ -27,6 +27,7 @@ export function formatPercent(value: number): string {
 
 export function formatDate(iso: string): string {
   return new Intl.DateTimeFormat("fr-FR", {
+    timeZone: "UTC",
     day: "2-digit",
     month: "short",
     hour: "2-digit",

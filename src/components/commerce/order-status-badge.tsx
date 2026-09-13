@@ -5,6 +5,7 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
   pending: "À confirmer",
   unreachable: "Injoignable",
   scheduled: "Programmée",
+  callback: "À rappeler",
   confirmed: "Confirmée",
   shipped: "En livraison",
   delivered: "Livrée",
@@ -14,12 +15,13 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
 };
 
 /** Statuts qui demandent une date/heure de rappel. */
-export const statusesNeedingFollowUp: OrderStatus[] = ["unreachable", "scheduled"];
+export const statusesNeedingFollowUp: OrderStatus[] = ["unreachable", "scheduled", "callback"];
 
 const statusStyles: Record<OrderStatus, string> = {
   pending: "bg-warning/15 text-warning-foreground border-warning/40",
   unreachable: "bg-chart-5/15 text-chart-5 border-chart-5/40",
   scheduled: "bg-chart-2/15 text-chart-2 border-chart-2/40",
+  callback: "bg-chart-1/15 text-chart-1 border-chart-1/40",
   confirmed: "bg-success/15 text-success border-success/40",
   shipped: "bg-chart-4/15 text-chart-4 border-chart-4/40",
   delivered: "bg-success/20 text-success border-success/50",

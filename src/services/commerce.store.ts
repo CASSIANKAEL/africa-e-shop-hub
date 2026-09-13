@@ -127,6 +127,7 @@ export const commerceStore = {
 /** Une commande injoignable/programmée dont l'heure de rappel est arrivée. */
 export function isFollowUpDue(order: Order, now: number = Date.now()): boolean {
   if (!order.followUpAt) return false;
-  if (order.status !== "unreachable" && order.status !== "scheduled") return false;
+  if (order.status !== "unreachable" && order.status !== "scheduled" && order.status !== "callback")
+    return false;
   return new Date(order.followUpAt).getTime() <= now;
 }
