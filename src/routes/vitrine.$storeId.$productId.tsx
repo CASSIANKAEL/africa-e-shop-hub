@@ -35,7 +35,8 @@ function PublicProductPage() {
   const { storeId, productId } = useParams({ from: "/vitrine/$storeId/$productId" });
   const store = useStores().find((s) => s.id === storeId);
   const product = useProducts().find((p) => p.id === productId);
-  const form = useForms(storeId).find((f) => f.status === "active") ?? useForms(storeId)[0];
+  const storeForms = useForms(storeId);
+  const form = storeForms.find((f) => f.status === "active") ?? storeForms[0];
 
   if (!store || !product) {
     return (
