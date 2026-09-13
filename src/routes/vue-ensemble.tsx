@@ -220,12 +220,16 @@ function OverviewPage() {
                       {store.status === "active" ? "Active" : "En pause"}
                     </Badge>
                   </TableCell>
+                  <TableCell>{formatNumber(metrics.visits)}</TableCell>
+                  <TableCell>{formatPercent(metrics.conversionRate)}</TableCell>
                   <TableCell className="font-medium">
                     {formatMoney(metrics.revenue, store.currency)}
                   </TableCell>
                   <TableCell>{formatNumber(metrics.ordersVolume)}</TableCell>
                   <TableCell>{formatNumber(metrics.pending)}</TableCell>
                   <TableCell>{formatPercent(metrics.codConfirmationRate)}</TableCell>
+                  <TableCell>{formatPercent(metrics.deliveryRate)}</TableCell>
+                  <TableCell>{formatPercent(metrics.returnRate)}</TableCell>
                   <TableCell>{formatMoney(metrics.averageBasket, store.currency)}</TableCell>
                 </TableRow>
               ))}
