@@ -79,7 +79,7 @@ function ProductsPage() {
                         <span className="block text-xs text-muted-foreground">{p.category}</span>
                         {p.description && (
                           <span className="block max-w-xs truncate text-xs text-muted-foreground">
-                            {p.description}
+                            {stripHtml(p.description)}
                           </span>
                         )}
                       </div>

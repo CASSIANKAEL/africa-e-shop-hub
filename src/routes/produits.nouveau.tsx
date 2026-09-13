@@ -107,7 +107,9 @@ function NewProductPage() {
         trackStock,
         storeId,
         category,
-        ...(description.trim() ? { description: description.trim() } : {}),
+        ...(stripHtml(description) || /<img/i.test(description)
+          ? { description }
+          : {}),
         ...(images.length ? { images, image: images[0]! } : {}),
       });
     });
