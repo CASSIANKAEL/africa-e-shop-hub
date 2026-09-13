@@ -37,6 +37,11 @@ const messages = {
     shake: "Secousse",
     float: "Flottement",
     shine: "Brillance",
+    orderFormTitle: "Formulaire de commande",
+    orderFormDescription: "Le formulaire unique de la boutique active.",
+    back: "Retour",
+    save: "Enregistrer",
+    createForm: "Créer le formulaire",
   },
   en: {
     search: "Search orders, customers…",
@@ -66,6 +71,11 @@ const messages = {
     shake: "Shake",
     float: "Float",
     shine: "Shine",
+    orderFormTitle: "Order form",
+    orderFormDescription: "The active store's unique order form.",
+    back: "Back",
+    save: "Save",
+    createForm: "Create form",
   },
   es: {
     search: "Buscar pedidos, clientes…",
@@ -95,6 +105,11 @@ const messages = {
     shake: "Sacudida",
     float: "Flotación",
     shine: "Brillo",
+    orderFormTitle: "Formulario de pedido",
+    orderFormDescription: "El formulario único de la tienda activa.",
+    back: "Volver",
+    save: "Guardar",
+    createForm: "Crear formulario",
   },
 } as const;
 

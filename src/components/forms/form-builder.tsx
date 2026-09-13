@@ -115,7 +115,7 @@ export function FormBuilder({
     if (!draggedFieldId) return;
     const element = document.elementFromPoint(event.clientX, event.clientY);
     const row = element?.closest<HTMLElement>("[data-field-id]");
-    const targetId = row?.dataset.fieldId;
+    const targetId = row?.dataset["fieldId"];
     if (!targetId || targetId === draggedFieldId) return;
     setDragOverFieldId(targetId);
     moveFieldTo(draggedFieldId, targetId);
