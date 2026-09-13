@@ -23,6 +23,7 @@ import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaire
 import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
 import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
+import { Route as ProduitsIaRouteImport } from './routes/produits.ia'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
 import { Route as ProduitsNouveauRouteImport } from './routes/produits.nouveau'
 import { Route as VitrineStoreIdIndexRouteImport } from './routes/vitrine.$storeId.index'
@@ -98,6 +99,11 @@ const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
   path: '/produits/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProduitsIaRoute = ProduitsIaRouteImport.update({
+  id: '/produits/ia',
+  path: '/produits/ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProduitsImportRoute = ProduitsImportRouteImport.update({
   id: '/produits/import',
   path: '/produits/import',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
@@ -255,6 +267,7 @@ export interface RootRouteChildren {
   FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
   FormulairesOffresRoute: typeof FormulairesOffresRoute
   FormulairesPixelsRoute: typeof FormulairesPixelsRoute
+  ProduitsIaRoute: typeof ProduitsIaRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
   CommandesIndexRoute: typeof CommandesIndexRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProduitsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produits/ia': {
+      id: '/produits/ia'
+      path: '/produits/ia'
+      fullPath: '/produits/ia'
+      preLoaderRoute: typeof ProduitsIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produits/import': {
       id: '/produits/import'
       path: '/produits/import'
@@ -407,6 +427,7 @@ const rootRouteChildren: RootRouteChildren = {
   FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
   FormulairesOffresRoute: FormulairesOffresRoute,
   FormulairesPixelsRoute: FormulairesPixelsRoute,
+  ProduitsIaRoute: ProduitsIaRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,
   CommandesIndexRoute: CommandesIndexRoute,

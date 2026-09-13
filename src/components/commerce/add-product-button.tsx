@@ -33,6 +33,12 @@ export function AddProductButton() {
             {t("importCsv")}
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/produits/ia">
+            <Sparkles className="mr-2 h-4 w-4" />
+            {t("addProductAi")}
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
