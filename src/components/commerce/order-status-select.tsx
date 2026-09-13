@@ -69,7 +69,7 @@ export function OrderStatusSelect({
 
   function apply(next: OrderStatus) {
     commerceStore.updateOrderStatus(orderId, next, { followUpAt: null });
-    toast.success(t("orderUpdated", { status: statuses[next] }));
+    toast.success(t("orderUpdated", { status: orderStatusLabels[next] }));
   }
 
   return (
@@ -105,7 +105,7 @@ export function OrderStatusSelect({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {pending ? statuses[pending] : ""} — {t("scheduleReminder")}
+              {pending ? orderStatusLabels[pending] : ""} — {t("scheduleReminder")}
             </DialogTitle>
             <DialogDescription>
               {t("reminderHelp")}
@@ -144,8 +144,8 @@ export function OrderStatusSelect({
                 });
                 toast.success(
                   when
-                    ? `${statuses[pending]} · ${new Date(when).toLocaleString(getActiveLocale(), { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
-                    : t("orderUpdated", { status: statuses[pending] }),
+                    ? `${orderStatusLabels[pending]} · ${new Date(when).toLocaleString(getActiveLocale(), { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                    : t("orderUpdated", { status: orderStatusLabels[pending] }),
                 );
                 setPending(null);
               }}
