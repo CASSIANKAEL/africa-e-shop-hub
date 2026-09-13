@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, FileUp, Plus } from "lucide-react";
+import { ChevronDown, FileUp, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,12 @@ export function AddProductButton() {
           <Link to="/produits/import">
             <FileUp className="mr-2 h-4 w-4" />
             {t("importCsv")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/produits/ia">
+            <Sparkles className="mr-2 h-4 w-4" />
+            {t("addProductAi")}
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

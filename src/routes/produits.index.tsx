@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, FileUp, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -57,6 +57,16 @@ function ProductsPage() {
             <Button variant="outline" asChild>
               <Link to="/vitrine/$storeId" params={{ storeId: activeStoreId }} target="_blank">
                  <ExternalLink className="mr-2 h-4 w-4" /> {t("viewStore")}
+              </Link>
+            </Button>
+            <Button variant="outline" size="icon" aria-label={t("importCsv")} title={t("importCsv")} asChild>
+              <Link to="/produits/import">
+                <FileUp className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="outline" size="icon" aria-label={t("addProductAi")} title={t("addProductAi")} asChild>
+              <Link to="/produits/ia">
+                <Sparkles className="h-4 w-4" />
               </Link>
             </Button>
             <AddProductButton />
