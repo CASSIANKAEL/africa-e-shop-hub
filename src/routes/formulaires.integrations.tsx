@@ -218,7 +218,7 @@ function IntegrationsPage() {
                   </Badge>
                   <Switch
                     checked={i.connected}
-                    onCheckedChange={() => formsStore.toggleIntegration(i.key)}
+                    onCheckedChange={() => formsStore.toggleIntegration(storeId, i.key)}
                     aria-label={`Activer ${i.name}`}
                   />
                 </div>
@@ -231,7 +231,7 @@ function IntegrationsPage() {
                   id={`int-${i.key}`}
                   value={i.value}
                   placeholder={i.placeholder}
-                  onChange={(e) => formsStore.setIntegrationValue(i.key, e.target.value)}
+                  onChange={(e) => formsStore.setIntegrationValue(storeId, i.key, e.target.value)}
                 />
               </div>
             </div>
