@@ -11,15 +11,15 @@ interface CommerceState {
   stores: Store[];
   products: Product[];
   orders: Order[];
-  /** Boutique actuellement sélectionnée (null = toutes). */
-  activeStoreId: string | null;
+  /** Boutique active : chaque boutique est indépendante, une seule à la fois. */
+  activeStoreId: string;
 }
 
 let state: CommerceState = {
   stores: initialStores,
   products: initialProducts,
   orders: initialOrders,
-  activeStoreId: null,
+  activeStoreId: initialStores[0]?.id ?? "",
 };
 
 const listeners = new Set<() => void>();
@@ -58,8 +58,13 @@ export function useOrder(id: string): Order | undefined {
   return useCommerceState().orders.find((o) => o.id === id || o.reference === id);
 }
 
-export function useActiveStoreId(): string | null {
+export function useActiveStoreId(): string {
   return useCommerceState().activeStoreId;
+}
+
+export function useActiveStore(): Store | undefined {
+  const s = useCommerceState();
+  return s.stores.find((st) => st.id === s.activeStoreId);
 }
 
 export function useStoreName(storeId: string): string {
@@ -70,7 +75,7 @@ export type NewProductInput = Omit<Product, "id">;
 export type NewStoreInput = Omit<Store, "id" | "productsCount" | "monthlyRevenue">;
 
 export const commerceStore = {
-  setActiveStore(storeId: string | null) {
+  setActiveStore(storeId: string) {
     setState({ activeStoreId: storeId });
   },
   addProduct(input: NewProductInput): Product {
@@ -87,6 +92,49 @@ export const commerceStore = {
     const store: Store = { ...input, id: `st-${Date.now()}`, productsCount: 0, monthlyRevenue: 0 };
     setState({ stores: [...state.stores, store] });
     return store;
+  },
+  /** Copie un produit vers une ou plusieurs autres boutiques. */
+  duplicateProduct(productId: string, targetStoreIds: string[]): Product[] {
+    const source = state.products.find((p) => p.id === productId);
+    if (!source || targetStoreIds.length === 0) return [];
+    const copies = targetStoreIds.map((storeId, i) => ({
+      ...source,
+      id: `p-${Date.now()}-${i}`,
+      storeId,
+    }));
+    setState({
+      products: [...copies, ...state.products],
+      stores: state.stores.map((s) => {
+        const added = copies.filter((c) => c.storeId === s.id).length;
+        return added ? { ...s, productsCount: s.productsCount + added } : s;
+      }),
+    });
+    return copies;
+  },
+  /** Déplace un produit vers une autre boutique. */
+  moveProduct(productId: string, targetStoreId: string) {
+    const source = state.products.find((p) => p.id === productId);
+    if (!source || source.storeId === targetStoreId) return;
+    setState({
+      products: state.products.map((p) =>
+        p.id === productId ? { ...p, storeId: targetStoreId } : p,
+      ),
+      stores: state.stores.map((s) => {
+        if (s.id === source.storeId) return { ...s, productsCount: Math.max(0, s.productsCount - 1) };
+        if (s.id === targetStoreId) return { ...s, productsCount: s.productsCount + 1 };
+        return s;
+      }),
+    });
+  },
+  deleteProduct(productId: string) {
+    const source = state.products.find((p) => p.id === productId);
+    if (!source) return;
+    setState({
+      products: state.products.filter((p) => p.id !== productId),
+      stores: state.stores.map((s) =>
+        s.id === source.storeId ? { ...s, productsCount: Math.max(0, s.productsCount - 1) } : s,
+      ),
+    });
   },
   updateOrderStatus(
     orderId: string,

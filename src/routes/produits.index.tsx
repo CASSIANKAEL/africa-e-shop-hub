@@ -14,7 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useActiveStoreId, useProducts, useStores } from "@/services/commerce.store";
+import { useActiveStore, useActiveStoreId, useProducts } from "@/services/commerce.store";
+import { ProductActions } from "@/components/commerce/product-actions";
 import { formatMoney, formatNumber } from "@/lib/format";
 
 export const Route = createFileRoute("/produits/")({
@@ -38,17 +39,14 @@ export const Route = createFileRoute("/produits/")({
 function ProductsPage() {
   const allProducts = useProducts();
   const activeStoreId = useActiveStoreId();
-  const products = activeStoreId
-    ? allProducts.filter((p) => p.storeId === activeStoreId)
-    : allProducts;
-  const stores = useStores();
-  const storeName = (id: string) => stores.find((s) => s.id === id)?.name ?? "Boutique";
+  const products = allProducts.filter((p) => p.storeId === activeStoreId);
+  const activeStore = useActiveStore();
 
   return (
     <AppShell>
       <PageHeader
         title="Produits"
-        description="Catalogue partagé entre toutes vos boutiques."
+        description={`Catalogue de ${activeStore?.name ?? "votre boutique"}.`}
         action={<AddProductButton />}
       />
       <Card>
@@ -58,9 +56,9 @@ function ProductsPage() {
               <TableRow>
                 <TableHead>Produit</TableHead>
                 <TableHead>Référence</TableHead>
-                <TableHead>Boutique</TableHead>
                 <TableHead>Prix</TableHead>
                 <TableHead>Stock</TableHead>
+                <TableHead className="w-12 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -87,9 +85,6 @@ function ProductsPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.sku}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {storeName(p.storeId)}
-                  </TableCell>
                   <TableCell className="font-medium">{formatMoney(p.price)}</TableCell>
                   <TableCell>
                     {p.trackStock === false ? (
@@ -101,6 +96,9 @@ function ProductsPage() {
                     ) : (
                       formatNumber(p.stock)
                     )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <ProductActions product={p} />
                   </TableCell>
                 </TableRow>
               ))}

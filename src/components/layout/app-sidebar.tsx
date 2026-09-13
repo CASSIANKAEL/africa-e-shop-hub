@@ -75,14 +75,13 @@ export function AppSidebar() {
         </Link>
         {!collapsed && (
           <Select
-            value={activeStoreId ?? "all"}
-            onValueChange={(v) => commerceStore.setActiveStore(v === "all" ? null : v)}
+            value={activeStoreId}
+            onValueChange={(v) => commerceStore.setActiveStore(v)}
           >
             <SelectTrigger className="mt-3 h-9 w-full" aria-label="Changer de boutique">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Toutes les boutiques</SelectItem>
               {stores.map((s) => (
                 <SelectItem key={s.id} value={s.id}>
                   {s.name}

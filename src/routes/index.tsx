@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { commerceService } from "@/services/commerce.service";
-import { useOrders } from "@/services/commerce.store";
+import { useActiveStore, useActiveStoreId, useOrders } from "@/services/commerce.store";
 import { formatDate, formatMoney, formatNumber, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -54,14 +54,18 @@ function DashboardPage() {
   const m = commerceService.getDashboardMetrics();
   const sales = commerceService.getSalesSeries();
   const activity = commerceService.getRecentActivity();
-  const orders = useOrders().slice(0, 5);
+  const activeStoreId = useActiveStoreId();
+  const activeStore = useActiveStore();
+  const orders = useOrders()
+    .filter((o) => o.storeId === activeStoreId)
+    .slice(0, 5);
   const totalStatuses = m.pending + m.confirmed + m.cancelled;
 
   return (
     <AppShell>
       <PageHeader
         title="Bonjour Henoc"
-        description="Voici la performance de vos boutiques sur les 30 derniers jours."
+        description={`Performance de ${activeStore?.name ?? "votre boutique"} sur les 30 derniers jours.`}
         action={
           <Button asChild>
             <Link to="/commandes">Voir les commandes</Link>
