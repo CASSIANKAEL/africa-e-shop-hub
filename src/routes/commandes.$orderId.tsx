@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, PhoneCall, XCircle } from "lucide-react";
 
@@ -169,6 +170,31 @@ function OrderDetailPage() {
         </Card>
       </div>
     </AppShell>
+  );
+}
+
+function CommentForm({ orderId }: { orderId: string }) {
+  const [text, setText] = useState("");
+  return (
+    <form
+      className="space-y-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!text.trim()) return;
+        commerceStore.addComment(orderId, text);
+        setText("");
+        toast.success("Commentaire ajouté");
+      }}
+    >
+      <Textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Ajouter un commentaire (ex. : client à rappeler demain matin)."
+      />
+      <Button type="submit" size="sm" disabled={!text.trim()}>
+        Ajouter le commentaire
+      </Button>
+    </form>
   );
 }
 
