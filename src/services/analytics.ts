@@ -203,3 +203,31 @@ export function buildSeries(orders: Order[], range: DateRange): SalesPoint[] {
   });
   return buckets;
 }
+
+export interface TrafficPoint {
+  day: string;
+  visits: number;
+  orders: number;
+  conversion: number;
+}
+
+/** Série visites / commandes / taux de conversion, alignée sur buildSeries. */
+export function buildTrafficSeries(
+  orders: Order[],
+  range: DateRange,
+  storeIds: string[] = allStoreIds,
+): TrafficPoint[] {
+  const base = buildSeries(orders, range);
+  const span = range.to - range.from;
+  const bucketMs = span <= DAY ? 2 * 3_600_000 : DAY;
+  return base.map((p, i) => {
+    const from = range.from + i * bucketMs;
+    const visits = visitsInRange(storeIds, { from, to: from + bucketMs });
+    return {
+      day: p.day,
+      visits,
+      orders: p.orders,
+      conversion: visits ? Number(((p.orders / visits) * 100).toFixed(2)) : 0,
+    };
+  });
+}

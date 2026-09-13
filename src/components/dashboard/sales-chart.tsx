@@ -4,6 +4,8 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  ComposedChart,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -72,6 +74,58 @@ export function OrdersChart({ data }: { data: SalesPoint[] }) {
         />
         <Bar dataKey="orders" fill="var(--color-chart-2)" radius={[6, 6, 0, 0]} />
       </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+export function TrafficChart({
+  data,
+}: {
+  data: { day: string; visits: number; conversion: number }[];
+}) {
+  return (
+    <ResponsiveContainer width="100%" height={240}>
+      <ComposedChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+        <XAxis dataKey="day" tickLine={false} axisLine={false} fontSize={12} />
+        <YAxis yAxisId="left" tickLine={false} axisLine={false} width={44} fontSize={12} />
+        <YAxis
+          yAxisId="right"
+          orientation="right"
+          tickLine={false}
+          axisLine={false}
+          width={44}
+          fontSize={12}
+          tickFormatter={(v: number) => `${v}%`}
+        />
+        <Tooltip
+          formatter={(v: number, name) =>
+            name === "conversion"
+              ? [`${v} %`, "Taux de conversion"]
+              : [formatNumber(v), "Visites"]
+          }
+          contentStyle={{
+            borderRadius: 12,
+            border: "1px solid var(--color-border)",
+            background: "var(--color-card)",
+            color: "var(--color-card-foreground)",
+          }}
+        />
+        <Bar
+          yAxisId="left"
+          dataKey="visits"
+          fill="var(--color-chart-3)"
+          radius={[6, 6, 0, 0]}
+        />
+        <Line
+          yAxisId="right"
+          type="monotone"
+          dataKey="conversion"
+          stroke="var(--color-chart-1)"
+          strokeWidth={2.5}
+          dot={false}
+        />
+      </ComposedChart>
     </ResponsiveContainer>
   );
 }
