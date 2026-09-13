@@ -186,6 +186,30 @@ export const commerceStore = {
       ),
     });
   },
+  updateComment(orderId: string, commentId: string, text: string) {
+    if (!text.trim()) return;
+    setState({
+      orders: state.orders.map((o) =>
+        o.id === orderId
+          ? {
+              ...o,
+              comments: (o.comments ?? []).map((c) =>
+                c.id === commentId ? { ...c, text: text.trim() } : c,
+              ),
+            }
+          : o,
+      ),
+    });
+  },
+  deleteComment(orderId: string, commentId: string) {
+    setState({
+      orders: state.orders.map((o) =>
+        o.id === orderId
+          ? { ...o, comments: (o.comments ?? []).filter((c) => c.id !== commentId) }
+          : o,
+      ),
+    });
+  },
 };
 
 /** Une commande injoignable/programmée dont l'heure de rappel est arrivée. */
