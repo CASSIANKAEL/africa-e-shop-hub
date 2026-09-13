@@ -52,7 +52,7 @@ function FormsPage() {
     <AppShell>
       <PageHeader
         title="Formulaires & intégrations"
-        description="Créez vos formulaires de commande et connectez vos outils publicitaires."
+        description={`Formulaires de ${activeStore?.name ?? "la boutique active"} — chaque boutique a les siens.`}
         action={
           <div className="flex gap-2">
             <Button variant="outline" asChild>
