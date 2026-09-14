@@ -296,3 +296,14 @@ export interface AppIntegration {
   valueLabel: string;
   placeholder: string;
 }
+
+/** Bouton WhatsApp flottant affiché sur la boutique en ligne. */
+export interface WhatsappWidget {
+  enabled: boolean;
+  /** Code pays ISO (voir src/lib/countries.ts). */
+  countryCode: string;
+  phone: string;
+  label: string;
+  message: string;
+  position: "right" | "left";
+}

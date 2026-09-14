@@ -80,6 +80,12 @@ export function useAppIntegrations(storeId: string): AppIntegration[] {
   return map[storeId] ?? initialAppIntegrations;
 }
 
+/** Configuration du bouton WhatsApp de la boutique donnée. */
+export function useWhatsappWidget(storeId: string): WhatsappWidget {
+  const map = useFormsState().whatsapp;
+  return map[storeId] ?? defaultWhatsappWidget;
+}
+
 export type NewPixelInput = Omit<PixelIntegration, "id">;
 
 export const formsStore = {
