@@ -152,7 +152,12 @@ export function StorefrontCanvas({
         </div>
       </section>
     ) : null,
-    footer: theme.showFooter ? <footer className="px-5 py-8 text-center text-xs" style={{ borderTop: `1px solid ${theme.muted}22`, color: theme.muted }}>{theme.footerText}</footer> : null,
+    footer: theme.showFooter ? (
+      <footer className="space-y-5 px-5 py-8 text-center text-xs" style={{ borderTop: `1px solid ${theme.muted}22`, color: theme.muted }}>
+        <LegalPages theme={theme} />
+        <p>{theme.footerText}</p>
+      </footer>
+    ) : null,
   };
 
   return (
