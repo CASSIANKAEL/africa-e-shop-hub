@@ -12,8 +12,23 @@ import {
   ratioClass,
   themeVars,
   type StoreSectionId,
+  type StoreTextBlock,
   type StoreTheme,
 } from "@/services/theme.store";
+
+function TextBlock({ block, theme }: { block: StoreTextBlock; theme: StoreTheme }) {
+  const pair = fontPairs[theme.fontPair];
+  const shared = {
+    fontFamily: block.type === "body" || block.type === "caption" ? pair.body : pair.heading,
+    color: block.type === "body" || block.type === "caption" ? theme.muted : theme.text,
+    textTransform: block.type === "display" && theme.uppercaseHeadings ? "uppercase" as const : "none" as const,
+  };
+
+  if (block.type === "display") return <h2 className="text-3xl font-bold leading-tight sm:text-4xl" style={{ ...shared, fontSize: `${2 * theme.headingScale}rem` }}>{block.text}</h2>;
+  if (block.type === "heading") return <h3 className="text-xl font-semibold leading-snug" style={{ ...shared, fontSize: `${1.3 * theme.headingScale}rem` }}>{block.text}</h3>;
+  if (block.type === "caption") return <p className="text-xs leading-relaxed" style={shared}>{block.text}</p>;
+  return <p className="text-sm leading-relaxed sm:text-base" style={shared}>{block.text}</p>;
+}
 
 export function StorefrontCanvas({
   store,
@@ -44,11 +59,11 @@ export function StorefrontCanvas({
     ) : null,
     hero: theme.showHero ? (
       <section className={`mx-auto ${container} px-5 pt-8`}>
-        <div className="p-8 text-center" style={{ ...cardStyle, background: `${theme.accent}33` }}>
-          <h2 style={{ fontFamily: pair.heading, fontSize: `${2 * theme.headingScale}rem`, textTransform: theme.uppercaseHeadings ? "uppercase" : "none", fontWeight: 700 }}>
-            {theme.heroTitle}
-          </h2>
-          <p className="mx-auto mt-2 max-w-xl text-sm" style={{ color: theme.muted }}>{theme.heroSubtitle}</p>
+        <div className="p-6 text-center sm:p-8" style={{ ...cardStyle, background: `${theme.accent}33` }}>
+          {theme.logo && <img src={theme.logo} alt={`Logo ${store.name}`} className="mx-auto mb-5 max-h-20 max-w-[180px] object-contain" />}
+          <div className="mx-auto max-w-xl space-y-3">
+            {theme.textBlocks.map((block) => <TextBlock key={block.id} block={block} theme={theme} />)}
+          </div>
         </div>
       </section>
     ) : null,
@@ -104,8 +119,11 @@ export function StorefrontCanvas({
   return (
     <div className="min-h-full" style={themeVars(theme)}>
       <header style={{ borderBottom: `1px solid ${theme.muted}22` }}>
-        <div className={`mx-auto flex ${container} items-center justify-between gap-3 px-5 py-5`}>
-          <div><p className="text-xs uppercase" style={{ color: theme.muted }}>Boutique en ligne</p><h1 style={{ fontFamily: pair.heading, fontSize: `${1.7 * theme.headingScale}rem`, textTransform: theme.uppercaseHeadings ? "uppercase" : "none", fontWeight: 700 }}>{store.name}</h1><p className="text-sm" style={{ color: theme.muted }}>{store.city}, {store.country}</p></div>
+        <div className={`mx-auto grid ${container} grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-5`}>
+          <div className="flex min-w-0 items-center gap-3">
+            {theme.logo && <img src={theme.logo} alt="" className="h-12 w-12 shrink-0 object-contain" />}
+            <div className="min-w-0"><p className="text-xs uppercase" style={{ color: theme.muted }}>Boutique en ligne</p><h1 className="truncate" style={{ fontFamily: pair.heading, fontSize: `${1.7 * theme.headingScale}rem`, textTransform: theme.uppercaseHeadings ? "uppercase" : "none", fontWeight: 700 }}>{store.name}</h1><p className="truncate text-sm" style={{ color: theme.muted }}>{store.city}, {store.country}</p></div>
+          </div>
           <span className="rounded-full px-3 py-1 text-xs" style={{ background: `${theme.accent}55` }}>{store.status === "active" ? "Ouverte" : "En pause"}</span>
         </div>
       </header>

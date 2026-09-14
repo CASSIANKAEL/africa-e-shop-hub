@@ -18,3 +18,4 @@
 
 - [x] Espace d’édition de la boutique active (/boutique) : modèles Éclat et Sahel Market + personnalisation avancée appliquée à la vitrine
 - [x] Éditeur visuel enrichi : palettes et polices, aperçu direct téléphone/ordinateur, blocs de vitrine réorganisables
+- [x] Éditeur structuré sans chevauchement : import du logo et blocs de texte modulables par taille

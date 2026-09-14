@@ -4,6 +4,13 @@ import { useSyncExternalStore } from "react";
 
 export type StoreTemplateId = "eclat" | "sahel";
 export type StoreSectionId = "announcement" | "hero" | "benefits" | "categories" | "products" | "footer";
+export type StoreTextBlockType = "display" | "heading" | "body" | "caption";
+
+export interface StoreTextBlock {
+  id: string;
+  type: StoreTextBlockType;
+  text: string;
+}
 
 export interface StoreTheme {
   templateId: StoreTemplateId;
@@ -15,6 +22,9 @@ export interface StoreTheme {
   text: string;
   muted: string;
   accent: string;
+  /** Identité et contenu libre de la bannière. */
+  logo?: string;
+  textBlocks: StoreTextBlock[];
   /** Typographie */
   fontPair: "grotesk" | "elegant" | "modern" | "afro" | "editorial" | "friendly";
   headingScale: number;
@@ -102,6 +112,10 @@ const eclat: StoreTheme = {
   text: "#12100e",
   muted: "#6b6560",
   accent: "#e8c9a0",
+  textBlocks: [
+    { id: "eclat-title", type: "display", text: "Une sélection qui brille" },
+    { id: "eclat-copy", type: "body", text: "Des pièces choisies avec soin, livrées chez vous et payées à la réception." },
+  ],
   fontPair: "elegant",
   headingScale: 1,
   uppercaseHeadings: true,
@@ -138,6 +152,10 @@ const sahel: StoreTheme = {
   text: "#2b1a12",
   muted: "#7c6553",
   accent: "#1f7a5a",
+  textBlocks: [
+    { id: "sahel-title", type: "display", text: "Le marché, en un clic" },
+    { id: "sahel-copy", type: "body", text: "Commandez sans carte bancaire, payez à la livraison et discutez avec nous sur WhatsApp." },
+  ],
   fontPair: "afro",
   headingScale: 1.05,
   uppercaseHeadings: false,
@@ -242,6 +260,10 @@ export function useStoreTheme(storeId: string): StoreTheme {
     ...defaultStoreTheme,
     ...saved,
     sectionOrder: saved.sectionOrder ?? defaultStoreTheme.sectionOrder,
+    textBlocks: saved.textBlocks ?? [
+      { id: "legacy-title", type: "display", text: saved.heroTitle ?? defaultStoreTheme.heroTitle },
+      { id: "legacy-copy", type: "body", text: saved.heroSubtitle ?? defaultStoreTheme.heroSubtitle },
+    ],
   };
 }
 
