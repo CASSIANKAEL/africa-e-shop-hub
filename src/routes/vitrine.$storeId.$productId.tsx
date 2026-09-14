@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
 import { useForms } from "@/services/forms.store";
+import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
 
 export const Route = createFileRoute("/vitrine/$storeId/$productId")({
   head: () => ({
@@ -57,6 +58,7 @@ function PublicProductPage() {
   const fields = (form?.fields ?? []).filter((f) => f.enabled);
 
   return (
+    <>
     <main className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4">
@@ -184,5 +186,7 @@ function PublicProductPage() {
         </div>
       </div>
     </main>
+      <WhatsappFloat storeId={storeId} />
+    </>
   );
 }
