@@ -63,6 +63,7 @@ function PublicProductPage() {
   return (
     <>
     <main className="min-h-screen bg-background">
+      {theme.showAnnouncement && <AnnouncementBar theme={theme} />}
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4">
           <Button variant="ghost" size="sm" asChild>
