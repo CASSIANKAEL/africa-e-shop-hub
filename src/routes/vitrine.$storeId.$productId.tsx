@@ -189,6 +189,13 @@ function PublicProductPage() {
           </Card>
         </div>
       </div>
+
+      {theme.showFooter && (
+        <footer className="mx-auto max-w-5xl space-y-5 px-5 pb-10 text-center text-xs text-muted-foreground">
+          <LegalPages theme={theme} />
+          <p>{theme.footerText}</p>
+        </footer>
+      )}
     </main>
       <WhatsappFloat storeId={storeId} />
     </>
