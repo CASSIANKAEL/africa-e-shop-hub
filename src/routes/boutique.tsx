@@ -25,10 +25,12 @@ import {
 import { useActiveStore, useProducts } from "@/services/commerce.store";
 import {
   buttonStyleOf,
+  defaultLegalPages,
   fontPairs,
   storeTemplates,
   themeStore,
   useStoreTheme,
+  type StoreLegalPage,
   type StoreSectionId,
   type StoreTextBlock,
   type StoreTextBlockType,
