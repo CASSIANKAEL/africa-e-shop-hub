@@ -21,4 +21,4 @@
 - [x] Éditeur structuré sans chevauchement : import du logo et blocs de texte modulables par taille
 - [x] Mapping personnalisable des colonnes Google Sheets par boutique
 
-- [ ] Simplifier et agrandir l’éditeur du formulaire de commande sur mobile et ordinateur
+- [x] Simplifier et agrandir l’éditeur du formulaire de commande sur mobile et ordinateur
