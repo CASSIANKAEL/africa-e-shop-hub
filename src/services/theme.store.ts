@@ -237,7 +237,7 @@ function getSnapshot() {
 
 export function useStoreTheme(storeId: string): StoreTheme {
   const map = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const saved = map[storeId] ?? {};
+  const saved: Partial<StoreTheme> = map[storeId] ?? {};
   return {
     ...defaultStoreTheme,
     ...saved,
