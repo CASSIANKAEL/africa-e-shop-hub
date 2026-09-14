@@ -211,6 +211,25 @@ export const commerceStore = {
     });
     return product;
   },
+  /** Enregistre une commande passée depuis la boutique en ligne. */
+  addOrder(input: Omit<Order, "id" | "reference" | "createdAt">): Order {
+    const seq = state.orders.length + 1;
+    const order: Order = {
+      ...input,
+      id: `o-${Date.now()}`,
+      reference: `CMD-${String(Date.now()).slice(-6)}-${seq}`,
+      createdAt: new Date().toISOString(),
+    };
+    setState({ orders: [order, ...state.orders] });
+    notify({
+      storeId: order.storeId,
+      orderId: order.id,
+      audience: ["admin", "closer"],
+      messageKey: "notifOrderNew",
+      vars: { ref: order.reference },
+    });
+    return order;
+  },
   addStore(input: NewStoreInput): Store {
     const store: Store = { ...input, id: `st-${Date.now()}`, productsCount: 0, monthlyRevenue: 0 };
     setState({ stores: [...state.stores, store] });
