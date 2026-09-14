@@ -1,13 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Layers, Plug, Target } from "lucide-react";
+import { FileText, Layers, MessageCircle, Plug, Target } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { whatsappNumber } from "@/lib/countries";
 import { formatNumber, formatPercent } from "@/lib/format";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
-import { useAppIntegrations, useForms, usePixels } from "@/services/forms.store";
+import {
+  useAppIntegrations,
+  useForms,
+  usePixels,
+  useWhatsappWidget,
+} from "@/services/forms.store";
 
 export const Route = createFileRoute("/formulaires/")({
   head: () => ({
