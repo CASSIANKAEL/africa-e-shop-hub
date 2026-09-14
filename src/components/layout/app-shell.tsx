@@ -53,9 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="ghost" size="icon" aria-label={t("notifications")}>
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell role="admin" />
               <div className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3">
                 <Avatar className="h-7 w-7">
                   <AvatarFallback className="bg-primary text-xs text-primary-foreground">
