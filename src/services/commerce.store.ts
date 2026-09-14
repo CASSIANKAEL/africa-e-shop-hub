@@ -364,6 +364,20 @@ export const commerceStore = {
         return next;
       }),
     });
+    const order = state.orders.find((o) => o.id === orderId);
+    if (order && courierId) {
+      notify({
+        storeId: order.storeId,
+        orderId,
+        audience: ["courier"],
+        courierId,
+        messageKey: "notifOrderAssigned",
+        vars: {
+          ref: order.reference,
+          name: state.team.find((m) => m.id === courierId)?.fullName ?? "",
+        },
+      });
+    }
   },
   /** Consigne destinée au livreur attribué. */
   setCourierNote(orderId: string, note: string | null) {
