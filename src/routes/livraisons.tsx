@@ -79,19 +79,22 @@ function DeliveriesPage() {
         </Card>
       ) : (
         <>
-          <div className="mb-4 max-w-xs">
-            <Select value={selected} onValueChange={setCourierId}>
-              <SelectTrigger aria-label={t("chooseCourier")}>
-                <SelectValue placeholder={t("chooseCourier")} />
-              </SelectTrigger>
-              <SelectContent>
-                {couriers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="mb-4 flex items-center gap-2">
+            <div className="max-w-xs flex-1">
+              <Select value={selected} onValueChange={setCourierId}>
+                <SelectTrigger aria-label={t("chooseCourier")}>
+                  <SelectValue placeholder={t("chooseCourier")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {couriers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.fullName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <NotificationBell role="courier" courierId={selected} />
           </div>
 
           <OrderStats orders={orders} variant="courier" />
