@@ -40,6 +40,7 @@ function PublicProductPage() {
   const product = useProducts().find((p) => p.id === productId);
   const storeForms = useForms(storeId);
   const form = storeForms.find((f) => f.status === "active") ?? storeForms[0];
+  const theme = useStoreTheme(storeId);
 
   if (!store || !product) {
     return (
