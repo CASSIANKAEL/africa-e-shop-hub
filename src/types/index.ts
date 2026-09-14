@@ -179,12 +179,38 @@ export interface OrderFormField {
   options?: string[];
 }
 
+export type OfferDiscountType = "none" | "fixed" | "percent";
+
 export interface QuantityOffer {
   id: string;
   quantity: number;
   label: string;
   discountPercent: number;
   freeShipping: boolean;
+  /** Type de remise : aucune, montant fixe ou pourcentage. */
+  discountType?: OfferDiscountType;
+  /** Montant fixe retiré du total (si discountType = "fixed"). */
+  discountValue?: number;
+  /** Étiquette affichée sur l'offre (ex. « Le plus vendu »). */
+  tag?: string;
+  tagColor?: string;
+  /** Image illustrant l'offre. */
+  image?: string;
+  /** Offre cochée par défaut dans le formulaire. */
+  preselected?: boolean;
+}
+
+/** Campagne d'offres de quantité appliquée à des produits choisis. */
+export interface OfferCampaign {
+  id: string;
+  storeId: string;
+  name: string;
+  enabled: boolean;
+  /** Produits concernés (vide = aucun produit sélectionné). */
+  productIds: string[];
+  offers: QuantityOffer[];
+  template: "classic" | "modern" | "vertical";
+  createdAt: string;
 }
 
 export interface OrderFormUpsell {
