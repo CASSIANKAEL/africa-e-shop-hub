@@ -323,12 +323,38 @@ export interface GoogleSheetLink {
   tab: string;
 }
 
+/** Données de commande pouvant alimenter une colonne Google Sheets. */
+export type GoogleSheetOrderField =
+  | "empty"
+  | "reference"
+  | "createdAt"
+  | "customerName"
+  | "customerPhone"
+  | "customerCity"
+  | "customerAddress"
+  | "products"
+  | "quantities"
+  | "total"
+  | "currency"
+  | "paymentMethod"
+  | "status"
+  | "comments"
+  | "courierNote";
+
+export interface GoogleSheetColumnMapping {
+  id: string;
+  header: string;
+  field: GoogleSheetOrderField;
+}
+
 /** Synchronisation Google Sheets d'une boutique. */
 export interface GoogleSheetsConfig {
   account: GoogleAccountLink;
   sheet: GoogleSheetLink;
   /** Ajoute chaque nouvelle commande à la feuille. */
   autoSyncOrders: boolean;
+  /** Correspondance ordonnée entre les colonnes de la feuille et les commandes. */
+  columns: GoogleSheetColumnMapping[];
 }
 
 /** Flux produits Google Shopping d'une boutique. */

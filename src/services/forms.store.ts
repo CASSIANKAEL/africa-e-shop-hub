@@ -24,6 +24,16 @@ export const defaultGoogleSheets: GoogleSheetsConfig = {
   account: { connected: false, email: "" },
   sheet: { connected: false, url: "", tab: "Commandes" },
   autoSyncOrders: true,
+  columns: [
+    { id: "gs-reference", header: "Commande", field: "reference" },
+    { id: "gs-date", header: "Date", field: "createdAt" },
+    { id: "gs-name", header: "Client", field: "customerName" },
+    { id: "gs-phone", header: "Téléphone", field: "customerPhone" },
+    { id: "gs-city", header: "Ville", field: "customerCity" },
+    { id: "gs-products", header: "Produits", field: "products" },
+    { id: "gs-total", header: "Montant", field: "total" },
+    { id: "gs-status", header: "Statut", field: "status" },
+  ],
 };
 
 export const defaultGoogleShopping: GoogleShoppingConfig = {
@@ -154,7 +164,8 @@ export function useWhatsappWidget(storeId: string): WhatsappWidget {
 /** Connexion Google Sheets de la boutique donnée. */
 export function useGoogleSheets(storeId: string): GoogleSheetsConfig {
   const map = useFormsState().googleSheets;
-  return map[storeId] ?? defaultGoogleSheets;
+  const stored = map[storeId];
+  return stored ? { ...defaultGoogleSheets, ...stored, columns: stored.columns ?? defaultGoogleSheets.columns } : defaultGoogleSheets;
 }
 
 /** Flux Google Shopping de la boutique donnée. */
@@ -248,6 +259,7 @@ export const formsStore = {
       ...patch,
       account: { ...current.account, ...(patch.account ?? {}) },
       sheet: { ...current.sheet, ...(patch.sheet ?? {}) },
+      columns: patch.columns ?? current.columns ?? defaultGoogleSheets.columns,
     };
     setState({ googleSheets: { ...state.googleSheets, [storeId]: next } });
     persist(GS_KEY, state.googleSheets);
