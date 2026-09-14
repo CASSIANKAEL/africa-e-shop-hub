@@ -470,16 +470,6 @@ function StoreEditor({ storeId }: { storeId: string }) {
                   onChange={(e) => set({ announcement: e.target.value })}
                 />
               </Field>
-              <Field label="Titre de la bannière">
-                <Input value={theme.heroTitle} onChange={(e) => set({ heroTitle: e.target.value })} />
-              </Field>
-              <Field label="Sous-titre de la bannière">
-                <Textarea
-                  rows={3}
-                  value={theme.heroSubtitle}
-                  onChange={(e) => set({ heroSubtitle: e.target.value })}
-                />
-              </Field>
               <Field label="Texte du pied de page">
                 <Input value={theme.footerText} onChange={(e) => set({ footerText: e.target.value })} />
               </Field>
@@ -524,6 +514,131 @@ const SECTION_CONFIG: Record<StoreSectionId, { label: string; hint: string; visi
   products: { label: "Produits", hint: "Catalogue des produits disponibles.", visibility: "showProducts" },
   footer: { label: "Pied de page", hint: "Informations affichées en bas de page.", visibility: "showFooter" },
 };
+
+const TEXT_BLOCK_LABELS: Record<StoreTextBlockType, string> = {
+  display: "Grand titre",
+  heading: "Titre",
+  body: "Texte",
+  caption: "Petit texte",
+};
+
+function LogoUploader({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function importLogo(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Choisissez une image pour votre logo");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Le logo doit peser moins de 2 Mo");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
+      set({ logo: reader.result });
+      toast.success("Logo importé");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
+  return (
+    <div className="space-y-3">
+      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" className="sr-only" onChange={importLogo} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="flex min-h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border bg-muted/40 p-4 text-center transition-colors hover:bg-muted"
+      >
+        {theme.logo ? (
+          <img src={theme.logo} alt="Logo actuel" className="max-h-24 max-w-[220px] object-contain" />
+        ) : (
+          <span className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+            <ImagePlus className="h-7 w-7" />
+            <span className="font-medium text-foreground">Importer un logo</span>
+            <span className="text-xs">PNG, JPG, WebP ou SVG · 2 Mo maximum</span>
+          </span>
+        )}
+      </button>
+      {theme.logo && (
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+            <ImagePlus /> Remplacer
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => set({ logo: undefined })}>
+            <Trash2 /> Supprimer
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TextBlockManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const [dragged, setDragged] = useState<string | null>(null);
+
+  function updateBlock(id: string, patch: Partial<StoreTextBlock>) {
+    set({ textBlocks: theme.textBlocks.map((block) => block.id === id ? { ...block, ...patch } : block) });
+  }
+
+  function addBlock() {
+    const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `text-${Date.now()}`;
+    set({ textBlocks: [...theme.textBlocks, { id, type: "body", text: "Nouveau texte" }] });
+  }
+
+  function moveBlock(targetId: string, event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (!dragged || dragged === targetId) return;
+    const next = [...theme.textBlocks];
+    const from = next.findIndex((block) => block.id === dragged);
+    const to = next.findIndex((block) => block.id === targetId);
+    if (from < 0 || to < 0) return;
+    const [moved] = next.splice(from, 1);
+    if (!moved) return;
+    next.splice(to, 0, moved);
+    set({ textBlocks: next });
+    setDragged(null);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <p className="text-xs text-muted-foreground">Ajoutez, modifiez et réorganisez les textes de la bannière.</p>
+        <Button type="button" size="sm" variant="outline" onClick={addBlock}><Plus /> Ajouter</Button>
+      </div>
+      {theme.textBlocks.map((block) => (
+        <div
+          key={block.id}
+          draggable
+          onDragStart={() => setDragged(block.id)}
+          onDragEnd={() => setDragged(null)}
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => moveBlock(block.id, event)}
+          className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-md border bg-muted/30 p-3 ${dragged === block.id ? "opacity-50" : "opacity-100"}`}
+        >
+          <GripVertical className="mt-2 h-5 w-5 cursor-grab text-muted-foreground" aria-hidden="true" />
+          <div className="min-w-0 space-y-2">
+            <Select value={block.type} onValueChange={(value) => updateBlock(block.id, { type: value as StoreTextBlockType })}>
+              <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {(Object.entries(TEXT_BLOCK_LABELS) as [StoreTextBlockType, string][]).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Textarea aria-label={`Contenu du bloc ${TEXT_BLOCK_LABELS[block.type]}`} rows={2} value={block.text} onChange={(event) => updateBlock(block.id, { text: event.target.value })} />
+          </div>
+          <Button type="button" variant="ghost" size="icon" aria-label="Supprimer ce bloc" title="Supprimer" onClick={() => set({ textBlocks: theme.textBlocks.filter((item) => item.id !== block.id) })}>
+            <Trash2 />
+          </Button>
+        </div>
+      ))}
+      {theme.textBlocks.length === 0 && <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">Ajoutez un premier texte à votre bannière.</p>}
+    </div>
+  );
+}
 
 function SectionManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
   const [dragged, setDragged] = useState<StoreSectionId | null>(null);
