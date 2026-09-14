@@ -24,16 +24,16 @@ import { formsStore, useAppIntegrations, useWhatsappWidget } from "@/services/fo
 export const Route = createFileRoute("/formulaires/integrations")({
   head: () => ({
     meta: [
-      { title: "Intégrations — Sooko" },
+      { title: "WhatsApp — Sooko" },
       {
         name: "description",
         content:
-          "Connectez Google Sheets, WhatsApp, SMS, votre transporteur ou un webhook à votre boutique.",
+          "Connectez WhatsApp à votre boutique : bouton flottant sur la boutique en ligne et confirmations automatiques.",
       },
-      { property: "og:title", content: "Intégrations — Sooko" },
+      { property: "og:title", content: "WhatsApp — Sooko" },
       {
         property: "og:description",
-        content: "Automatisations et outils connectés, boutique par boutique.",
+        content: "Tous les réglages WhatsApp de la boutique, au même endroit.",
       },
     ],
   }),
