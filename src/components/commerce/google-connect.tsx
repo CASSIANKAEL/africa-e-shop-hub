@@ -12,7 +12,7 @@ import type { GoogleAccountLink, GoogleSheetLink } from "@/types";
 /** Extrait l'identifiant d'un lien Google Sheets (null si le lien est invalide). */
 export function sheetIdFromUrl(url: string): string | null {
   const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-  return match ? match[1] : null;
+  return match?.[1] ?? null;
 }
 
 export function GoogleAccountCard({
