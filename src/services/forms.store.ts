@@ -5,6 +5,7 @@ import type {
   AppIntegrationKey,
   GoogleSheetsConfig,
   GoogleShoppingConfig,
+  OfferCampaign,
   OrderForm,
   PixelIntegration,
   WhatsappWidget,
