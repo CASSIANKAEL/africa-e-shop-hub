@@ -1,5 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Layers, MessageCircle, Plug, Target } from "lucide-react";
+import {
+  FileSpreadsheet,
+  FileText,
+  Layers,
+  MessageCircle,
+  Plug,
+  ShoppingBag,
+  Target,
+} from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
@@ -87,10 +95,30 @@ function FormsHubPage() {
       detail: waNumber ? `Numéro : +${waNumber}` : "Ajoutez votre numéro WhatsApp",
     },
     {
+      to: "/formulaires/google-sheets" as const,
+      icon: FileSpreadsheet,
+      title: "Google Sheets",
+      text: "Connectez un compte Google et un fichier de calcul pour recevoir vos commandes automatiquement.",
+      status: sheets.sheet.connected
+        ? "Fichier connecté"
+        : sheets.account.connected
+          ? "Compte connecté"
+          : "Non connecté",
+      detail: sheets.account.connected ? sheets.account.email : "Aucun compte Google",
+    },
+    {
+      to: "/formulaires/google-shopping" as const,
+      icon: ShoppingBag,
+      title: "Google Shopping",
+      text: "Publiez votre flux produits sur Google Shopping via un compte Google et un fichier de calcul.",
+      status: shopping.enabled ? "Activé" : "Désactivé",
+      detail: shopping.sheet.connected ? "Flux produits connecté" : "Flux produits à connecter",
+    },
+    {
       to: "/formulaires/site" as const,
       icon: Plug,
       title: "Site",
-      text: "Google Sheets, SMS, transporteur ou webhook pour automatiser les commandes du site.",
+      text: "SMS, transporteur ou webhook pour automatiser les commandes du site.",
       status: `${connected} connectée(s)`,
       detail: `${integrations.length} disponibles`,
     },
