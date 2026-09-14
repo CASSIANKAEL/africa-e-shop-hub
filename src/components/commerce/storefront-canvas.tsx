@@ -95,11 +95,7 @@ export function StorefrontCanvas({
   };
 
   const sections: Record<StoreSectionId, React.ReactNode> = {
-    announcement: theme.showAnnouncement && theme.announcement ? (
-      <div className="px-4 py-2 text-center text-xs" style={{ background: theme.primary, color: theme.primaryText }}>
-        {theme.announcement}
-      </div>
-    ) : null,
+    announcement: theme.showAnnouncement ? <AnnouncementBar theme={theme} /> : null,
     hero: theme.showHero ? (
       <section className={`mx-auto ${container} px-5 pt-8`}>
         <div className="p-6 text-center sm:p-8" style={{ ...cardStyle, background: `${theme.accent}33` }}>
