@@ -461,15 +461,37 @@ function StoreEditor({ storeId }: { storeId: string }) {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Textes fixes</CardTitle>
+              <CardTitle className="text-base">Bandeau d'annonces</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Field label="Bandeau d'annonce">
-                <Input
-                  value={theme.announcement}
-                  onChange={(e) => set({ announcement: e.target.value })}
-                />
-              </Field>
+              <AnnouncementManager theme={theme} set={set} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Pages légales</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ToggleRow
+                label="Afficher les pages légales"
+                hint="Visibles dans le pied de page et sur chaque fiche produit."
+                checked={theme.showLegalPages}
+                onChange={(v) => set({ showLegalPages: v })}
+              />
+              <LegalPagesManager theme={theme} set={set} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Pied de page</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ToggleRow
+                label="Afficher le pied de page"
+                hint="Masquez-le pour une page plus courte sur téléphone."
+                checked={theme.showFooter}
+                onChange={(v) => set({ showFooter: v })}
+              />
               <Field label="Texte du pied de page">
                 <Input value={theme.footerText} onChange={(e) => set({ footerText: e.target.value })} />
               </Field>
