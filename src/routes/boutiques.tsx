@@ -1,83 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink, Store as StoreIcon } from "lucide-react";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { Button } from "@/components/ui/button";
-
-import { AppShell } from "@/components/layout/app-shell";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardContent } from "@/components/ui/card";
-import { NewStoreDialog } from "@/components/commerce/new-store-dialog";
-import { Badge } from "@/components/ui/badge";
-import { useStores } from "@/services/commerce.store";
-import { formatMoney, formatNumber } from "@/lib/format";
-import { useLanguage } from "@/lib/i18n";
-
+/** Ancienne page « Boutiques » : l'édition se fait désormais sur la boutique active. */
 export const Route = createFileRoute("/boutiques")({
-  head: () => ({
-    meta: [
-      { title: "Boutiques — Sooko" },
-      {
-        name: "description",
-        content: "Gérez vos boutiques en ligne, leur devise et leur chiffre d'affaires mensuel.",
-      },
-      { property: "og:title", content: "Boutiques — Sooko" },
-      {
-        property: "og:description",
-        content: "Vue d'ensemble de vos boutiques et de leurs performances mensuelles en FCFA.",
-      },
-    ],
-  }),
-  component: StoresPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/boutique" });
+  },
 });
-
-function StoresPage() {
-  const stores = useStores();
-  const { t } = useLanguage();
-
-  return (
-    <AppShell>
-      <PageHeader
-        title={t("stores")}
-        description={t("storesDescription")}
-        action={<NewStoreDialog />}
-      />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {stores.map((store) => (
-          <Card key={store.id}>
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground">
-                  <StoreIcon className="h-5 w-5" />
-                </span>
-                <Badge variant={store.status === "active" ? "default" : "secondary"}>
-                  {store.status === "active" ? t("statusActive") : t("statusPaused")}
-                </Badge>
-              </div>
-              <h2 className="mt-4 text-lg font-semibold">{store.name}</h2>
-              <p className="text-sm text-muted-foreground">
-                {store.city}, {store.country} · {store.currency}
-              </p>
-              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-lg bg-muted p-3">
-                     <dt className="text-xs text-muted-foreground">{t("products")}</dt>
-                  <dd className="font-semibold">{formatNumber(store.productsCount)}</dd>
-                </div>
-                <div className="rounded-lg bg-muted p-3">
-                  <dt className="text-xs text-muted-foreground">{t("monthlyRevenue")}</dt>
-                  <dd className="font-semibold">
-                    {formatMoney(store.monthlyRevenue, store.currency)}
-                  </dd>
-                </div>
-              </dl>
-              <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-                <Link to="/vitrine/$storeId" params={{ storeId: store.id }} target="_blank">
-                   <ExternalLink className="mr-2 h-4 w-4" /> {t("viewStore")}
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </AppShell>
-  );
-}

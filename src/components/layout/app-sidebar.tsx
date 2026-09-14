@@ -47,7 +47,7 @@ import { useLanguage } from "@/lib/i18n";
 const mainItems = [
   { title: "Tableau de bord", url: "/", icon: LayoutDashboard, exact: true },
   { title: "Vue d'ensemble", url: "/vue-ensemble", icon: Globe },
-  { title: "Boutiques", url: "/boutiques", icon: Store },
+  { title: "Boutique", url: "/boutique", icon: Store },
   { title: "Produits", url: "/produits", icon: Package },
   { title: "Commandes", url: "/commandes", icon: ShoppingCart },
   { title: "Clients", url: "/clients", icon: Users },
@@ -86,7 +86,7 @@ export function AppSidebar() {
   const translatedMainItems = [
     { ...mainItems[0], title: t("dashboard") },
     { ...mainItems[1], title: t("overview") },
-    { ...mainItems[2], title: t("stores") },
+    { ...mainItems[2], title: t("store") },
     { ...mainItems[3], title: t("products") },
     { ...mainItems[4], title: t("orders") },
     { ...mainItems[5], title: t("customers") },

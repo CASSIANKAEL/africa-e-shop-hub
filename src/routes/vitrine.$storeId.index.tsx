@@ -1,14 +1,19 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ShieldCheck, Truck, Wallet } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { stripHtml } from "@/components/commerce/rich-text-editor";
 import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
-import { useForms } from "@/services/forms.store";
 import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
+import {
+  buttonStyleOf,
+  columnsClass,
+  containerClass,
+  fontPairs,
+  ratioClass,
+  themeVars,
+  useStoreTheme,
+} from "@/services/theme.store";
 
 export const Route = createFileRoute("/vitrine/$storeId/")({
   head: () => ({
@@ -35,7 +40,9 @@ function StorefrontPage() {
   const { storeId } = useParams({ from: "/vitrine/$storeId/" });
   const store = useStores().find((s) => s.id === storeId);
   const products = useProducts().filter((p) => p.storeId === storeId);
-  const forms = useForms(storeId).filter((f) => f.status === "active");
+  const theme = useStoreTheme(storeId);
+  const pair = fontPairs[theme.fontPair];
+  const categories = Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
 
   if (!store) {
     return (
@@ -46,93 +53,185 @@ function StorefrontPage() {
     );
   }
 
+  const container = containerClass[theme.containerWidth];
+  const cardStyle = {
+    background: theme.surface,
+    borderRadius: `${theme.cornerRadius}px`,
+    border: theme.cardStyle === "border" ? `1px solid ${theme.muted}33` : undefined,
+    boxShadow: theme.cardStyle === "shadow" ? "0 10px 30px rgba(0,0,0,0.08)" : undefined,
+  };
+
   return (
     <>
-    <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-6">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Boutique en ligne
-            </p>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">{store.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              {store.city}, {store.country}
+      <main className="min-h-screen" style={themeVars(theme)}>
+        {theme.showAnnouncement && theme.announcement && (
+          <div
+            className="px-4 py-2 text-center text-xs"
+            style={{ background: theme.primary, color: theme.primaryText }}
+          >
+            {theme.announcement}
+          </div>
+        )}
+
+        <header style={{ borderBottom: `1px solid ${theme.muted}22` }}>
+          <div
+            className={`mx-auto flex ${container} flex-wrap items-center justify-between gap-3 px-5 py-6`}
+          >
+            <div>
+              <p className="text-xs uppercase tracking-wide" style={{ color: theme.muted }}>
+                Boutique en ligne
+              </p>
+              <h1
+                style={{
+                  fontFamily: pair.heading,
+                  fontSize: `${1.7 * theme.headingScale}rem`,
+                  textTransform: theme.uppercaseHeadings ? "uppercase" : "none",
+                  fontWeight: 700,
+                }}
+              >
+                {store.name}
+              </h1>
+              <p className="text-sm" style={{ color: theme.muted }}>
+                {store.city}, {store.country}
+              </p>
+            </div>
+            <span
+              className="rounded-full px-3 py-1 text-xs"
+              style={{ background: `${theme.accent}55` }}
+            >
+              {store.status === "active" ? "Ouverte" : "En pause"}
+            </span>
+          </div>
+        </header>
+
+        {theme.showHero && (
+          <section className={`mx-auto ${container} px-5 pt-10`}>
+            <div className="p-8 text-center" style={{ ...cardStyle, background: `${theme.accent}33` }}>
+              <h2
+                style={{
+                  fontFamily: pair.heading,
+                  fontSize: `${2 * theme.headingScale}rem`,
+                  textTransform: theme.uppercaseHeadings ? "uppercase" : "none",
+                  fontWeight: 700,
+                }}
+              >
+                {theme.heroTitle}
+              </h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm" style={{ color: theme.muted }}>
+                {theme.heroSubtitle}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {theme.showBenefits && (
+          <section className={`mx-auto grid ${container} gap-3 px-5 py-6 sm:grid-cols-3`}>
+            {[
+              { icon: Wallet, title: "Paiement à la livraison", text: "Vous payez à la réception." },
+              { icon: Truck, title: "Livraison rapide", text: "Partout en ville sous 48 h." },
+              { icon: ShieldCheck, title: "Produits vérifiés", text: "Échange en cas de problème." },
+            ].map((b) => (
+              <div key={b.title} className="flex items-start gap-3 p-4" style={cardStyle}>
+                <b.icon className="mt-0.5 h-5 w-5" style={{ color: theme.primary }} />
+                <div>
+                  <p className="text-sm font-medium">{b.title}</p>
+                  <p className="text-xs" style={{ color: theme.muted }}>
+                    {b.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        <section className={`mx-auto ${container} px-5 pb-16`}>
+          {theme.showCategories && categories.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {categories.map((c) => (
+                <span
+                  key={c}
+                  className="rounded-full px-3 py-1 text-xs"
+                  style={{ background: `${theme.primary}14`, color: theme.primary }}
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="mb-4 flex items-center justify-between">
+            <h2
+              style={{
+                fontFamily: pair.heading,
+                fontSize: `${1.2 * theme.headingScale}rem`,
+                textTransform: theme.uppercaseHeadings ? "uppercase" : "none",
+                fontWeight: 700,
+              }}
+            >
+              Produits disponibles
+            </h2>
+            <p className="text-sm" style={{ color: theme.muted }}>
+              {products.length} produit{products.length > 1 ? "s" : ""}
             </p>
           </div>
-          <Badge variant={store.status === "active" ? "default" : "secondary"}>
-            {store.status === "active" ? "Ouverte" : "En pause"}
-          </Badge>
-        </div>
-      </header>
-
-      <section className="mx-auto grid max-w-5xl gap-3 px-5 py-6 sm:grid-cols-3">
-        {[
-          { icon: Wallet, title: "Paiement à la livraison", text: "Vous payez à la réception." },
-          { icon: Truck, title: "Livraison rapide", text: "Partout en ville sous 48 h." },
-          { icon: ShieldCheck, title: "Produits vérifiés", text: "Échange en cas de problème." },
-        ].map((b) => (
-          <Card key={b.title}>
-            <CardContent className="flex items-start gap-3 p-4">
-              <b.icon className="mt-0.5 h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">{b.title}</p>
-                <p className="text-xs text-muted-foreground">{b.text}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
-
-      <section className="mx-auto max-w-5xl px-5 pb-16">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold">Produits disponibles</h2>
-          <p className="text-sm text-muted-foreground">
-            {products.length} produit{products.length > 1 ? "s" : ""} ·{" "}
-            {forms.length} formulaire{forms.length > 1 ? "s" : ""} de commande actif
-            {forms.length > 1 ? "s" : ""}
-          </p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Card key={p.id} className="overflow-hidden">
-              {p.image ? (
-                <img src={p.image} alt={p.name} className="h-44 w-full object-cover" />
-              ) : (
-                <div className="h-44 w-full bg-muted" />
-              )}
-              <CardContent className="space-y-2 p-4">
-                <p className="text-xs text-muted-foreground">{p.category}</p>
-                <p className="font-medium">{p.name}</p>
-                {p.description && (
-                  <p className="line-clamp-2 text-xs text-muted-foreground">
-                    {stripHtml(p.description)}
-                  </p>
+          <div className={`grid gap-4 ${columnsClass[theme.columns]}`}>
+            {products.map((p) => (
+              <div key={p.id} className="overflow-hidden" style={cardStyle}>
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className={`w-full object-cover ${ratioClass[theme.imageRatio]}`}
+                  />
+                ) : (
+                  <div
+                    className={`w-full ${ratioClass[theme.imageRatio]}`}
+                    style={{ background: `${theme.accent}44` }}
+                  />
                 )}
-                <div className="flex items-center justify-between pt-1">
-                  <span className="font-display text-lg font-semibold">
-                    {formatMoney(p.price, store.currency)}
-                  </span>
-                  <Button size="sm" asChild>
+                <div className="space-y-2 p-4">
+                  <p className="text-xs" style={{ color: theme.muted }}>
+                    {p.category}
+                  </p>
+                  <p className="font-medium">{p.name}</p>
+                  {p.description && (
+                    <p className="line-clamp-2 text-xs" style={{ color: theme.muted }}>
+                      {stripHtml(p.description)}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <span
+                      style={{ fontFamily: pair.heading, fontWeight: 700, fontSize: "1.05rem" }}
+                    >
+                      {formatMoney(p.price, store.currency)}
+                    </span>
                     <Link
                       to="/vitrine/$storeId/$productId"
                       params={{ storeId, productId: p.id }}
+                      style={{ ...buttonStyleOf(theme), height: Math.min(theme.buttonHeight, 44) }}
                     >
-                      Commander
+                      {theme.buttonLabel}
                     </Link>
-                  </Button>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-          {products.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              Aucun produit publié dans cette boutique.
-            </p>
-          )}
-        </div>
-      </section>
-    </main>
+              </div>
+            ))}
+            {products.length === 0 && (
+              <p className="text-sm" style={{ color: theme.muted }}>
+                Aucun produit publié dans cette boutique.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {theme.showFooter && (
+          <footer
+            className="px-5 py-8 text-center text-xs"
+            style={{ borderTop: `1px solid ${theme.muted}22`, color: theme.muted }}
+          >
+            {theme.footerText}
+          </footer>
+        )}
+      </main>
       <WhatsappFloat storeId={storeId} />
     </>
   );

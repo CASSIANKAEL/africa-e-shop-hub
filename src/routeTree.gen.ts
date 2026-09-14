@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AbonnementRouteImport } from './routes/abonnement'
+import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as BoutiquesRouteImport } from './routes/boutiques'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as EquipeRouteImport } from './routes/equipe'
@@ -39,6 +40,11 @@ const IndexRoute = IndexRouteImport.update({
 const AbonnementRoute = AbonnementRouteImport.update({
   id: '/abonnement',
   path: '/abonnement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiqueRoute = BoutiqueRouteImport.update({
+  id: '/boutique',
+  path: '/boutique',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoutiquesRoute = BoutiquesRouteImport.update({
@@ -140,6 +146,7 @@ const VitrineStoreIdProductIdRoute = VitrineStoreIdProductIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/abonnement': typeof AbonnementRoute
+  '/boutique': typeof BoutiqueRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
   '/equipe': typeof EquipeRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/abonnement': typeof AbonnementRoute
+  '/boutique': typeof BoutiqueRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
   '/equipe': typeof EquipeRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/abonnement': typeof AbonnementRoute
+  '/boutique': typeof BoutiqueRoute
   '/boutiques': typeof BoutiquesRoute
   '/clients': typeof ClientsRoute
   '/equipe': typeof EquipeRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/abonnement'
+    | '/boutique'
     | '/boutiques'
     | '/clients'
     | '/equipe'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/abonnement'
+    | '/boutique'
     | '/boutiques'
     | '/clients'
     | '/equipe'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/abonnement'
+    | '/boutique'
     | '/boutiques'
     | '/clients'
     | '/equipe'
@@ -282,6 +294,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AbonnementRoute: typeof AbonnementRoute
+  BoutiqueRoute: typeof BoutiqueRoute
   BoutiquesRoute: typeof BoutiquesRoute
   ClientsRoute: typeof ClientsRoute
   EquipeRoute: typeof EquipeRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/abonnement'
       fullPath: '/abonnement'
       preLoaderRoute: typeof AbonnementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique': {
+      id: '/boutique'
+      path: '/boutique'
+      fullPath: '/boutique'
+      preLoaderRoute: typeof BoutiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/boutiques': {
@@ -458,6 +478,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AbonnementRoute: AbonnementRoute,
+  BoutiqueRoute: BoutiqueRoute,
   BoutiquesRoute: BoutiquesRoute,
   ClientsRoute: ClientsRoute,
   EquipeRoute: EquipeRoute,
