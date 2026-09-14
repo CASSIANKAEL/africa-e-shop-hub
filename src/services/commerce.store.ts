@@ -119,6 +119,27 @@ export function useCouriers(storeId?: string): TeamMember[] {
   return useTeam(storeId).filter((m) => m.role === "courier");
 }
 
+/** Notifications destinées à un rôle (et, pour un livreur, à lui seul). */
+export function useNotifications(role: TeamRole = "admin", courierId?: string): AppNotification[] {
+  const s = useCommerceState();
+  return s.notifications.filter(
+    (n) =>
+      n.storeId === s.activeStoreId &&
+      n.audience.includes(role) &&
+      (role !== "courier" || !n.courierId || n.courierId === courierId),
+  );
+}
+
+function notify(input: Omit<AppNotification, "id" | "createdAt" | "read">) {
+  const notification: AppNotification = {
+    ...input,
+    id: `nt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    createdAt: new Date().toISOString(),
+    read: false,
+  };
+  setState({ notifications: [notification, ...state.notifications].slice(0, 100) });
+}
+
 export type NewTeamMemberInput = {
   fullName: string;
   email: string;
