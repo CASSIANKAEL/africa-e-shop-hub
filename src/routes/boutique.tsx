@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type DragEvent } from "react";
-import { Check, ExternalLink, GripVertical, Monitor, Palette, RotateCcw, Smartphone, Store as StoreIcon } from "lucide-react";
+import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { Check, ExternalLink, GripVertical, ImagePlus, Monitor, Palette, Plus, RotateCcw, Smartphone, Store as StoreIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -30,6 +30,8 @@ import {
   themeStore,
   useStoreTheme,
   type StoreSectionId,
+  type StoreTextBlock,
+  type StoreTextBlockType,
   type StoreTheme,
 } from "@/services/theme.store";
 import { formatMoney, formatNumber } from "@/lib/format";
@@ -134,9 +136,10 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </CardContent>
       </Card>
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,5fr)_minmax(420px,4fr)]">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(360px,2fr)_minmax(0,3fr)]">
       <Tabs defaultValue="templates" className="min-w-0">
-        <TabsList className="flex w-full flex-wrap justify-start gap-1 sm:w-auto">
+        <div className="w-full overflow-x-auto pb-1">
+        <TabsList className="inline-flex min-w-max justify-start gap-1">
           <TabsTrigger value="templates">Modèles</TabsTrigger>
           <TabsTrigger value="layout">Mise en page</TabsTrigger>
           <TabsTrigger value="colors">Couleurs</TabsTrigger>
@@ -144,9 +147,10 @@ function StoreEditor({ storeId }: { storeId: string }) {
           <TabsTrigger value="buttons">Boutons</TabsTrigger>
           <TabsTrigger value="content">Contenus</TabsTrigger>
         </TabsList>
+        </div>
 
         {/* -------- Modèles -------- */}
-        <TabsContent value="templates" className="mt-4 grid gap-4 md:grid-cols-2">
+        <TabsContent value="templates" className="mt-4 grid gap-4 2xl:grid-cols-2">
           {storeTemplates.map((tpl) => {
             const active = theme.templateId === tpl.id;
             return (
@@ -185,8 +189,8 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
 
         {/* -------- Mise en page -------- */}
-        <TabsContent value="layout" className="mt-4 grid gap-4 lg:grid-cols-2">
-          <Card className="lg:col-span-2">
+        <TabsContent value="layout" className="mt-4 grid gap-4">
+          <Card>
             <CardHeader>
               <CardTitle className="text-base">Grille des produits</CardTitle>
             </CardHeader>
@@ -265,7 +269,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
 
         {/* -------- Couleurs -------- */}
-        <TabsContent value="colors" className="mt-4 grid gap-4 lg:grid-cols-2">
+        <TabsContent value="colors" className="mt-4 grid gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Palette</CardTitle>
@@ -304,7 +308,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
 
         {/* -------- Typographie -------- */}
-        <TabsContent value="fonts" className="mt-4 grid gap-4 lg:grid-cols-2">
+        <TabsContent value="fonts" className="mt-4 grid gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Polices</CardTitle>
@@ -369,7 +373,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
 
         {/* -------- Boutons -------- */}
-        <TabsContent value="buttons" className="mt-4 grid gap-4 lg:grid-cols-2">
+        <TabsContent value="buttons" className="mt-4 grid gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Style des boutons</CardTitle>
@@ -438,10 +442,26 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
 
         {/* -------- Contenus -------- */}
-        <TabsContent value="content" className="mt-4 grid gap-4 lg:grid-cols-2">
+        <TabsContent value="content" className="mt-4 grid gap-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Textes de la boutique</CardTitle>
+              <CardTitle className="text-base">Logo de la boutique</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <LogoUploader theme={theme} set={set} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Blocs de texte</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <TextBlockManager theme={theme} set={set} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Textes fixes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Field label="Bandeau d'annonce">
@@ -450,43 +470,25 @@ function StoreEditor({ storeId }: { storeId: string }) {
                   onChange={(e) => set({ announcement: e.target.value })}
                 />
               </Field>
-              <Field label="Titre de la bannière">
-                <Input value={theme.heroTitle} onChange={(e) => set({ heroTitle: e.target.value })} />
-              </Field>
-              <Field label="Sous-titre de la bannière">
-                <Textarea
-                  rows={3}
-                  value={theme.heroSubtitle}
-                  onChange={(e) => set({ heroSubtitle: e.target.value })}
-                />
-              </Field>
               <Field label="Texte du pied de page">
                 <Input value={theme.footerText} onChange={(e) => set({ footerText: e.target.value })} />
               </Field>
               <Button onClick={() => toast.success("Boutique enregistrée")}>Enregistrer</Button>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Rendu</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TemplatePreview theme={theme} />
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
 
-      <aside className="xl:sticky xl:top-4">
-        <div className="mb-3 flex items-center justify-between">
+      <aside className="min-w-0 rounded-lg border bg-muted/40 p-3 xl:sticky xl:top-4">
+        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <div><p className="font-semibold">Aperçu en direct</p><p className="text-xs text-muted-foreground">Les changements apparaissent immédiatement.</p></div>
           <div className="flex rounded-md border bg-background p-1">
             <Button size="icon" variant={previewDevice === "desktop" ? "secondary" : "ghost"} aria-label="Aperçu ordinateur" title="Ordinateur" onClick={() => setPreviewDevice("desktop")}><Monitor /></Button>
             <Button size="icon" variant={previewDevice === "mobile" ? "secondary" : "ghost"} aria-label="Aperçu téléphone" title="Téléphone" onClick={() => setPreviewDevice("mobile")}><Smartphone /></Button>
           </div>
         </div>
-        <div className="flex max-h-[calc(100vh-8rem)] justify-center overflow-auto rounded-lg border bg-muted p-3">
-          <div className={previewDevice === "mobile" ? "w-[390px] shrink-0 overflow-hidden rounded-lg bg-background shadow-sm" : "w-full overflow-hidden rounded-lg bg-background shadow-sm"}>
+        <div className="flex max-h-[calc(100vh-10rem)] min-h-[520px] justify-center overflow-auto rounded-md border bg-background/50 p-2 sm:p-4">
+          <div className={previewDevice === "mobile" ? "w-full max-w-[390px] shrink-0 overflow-hidden rounded-lg border bg-background shadow-sm" : "w-full min-w-0 overflow-hidden rounded-lg border bg-background shadow-sm"}>
             <StorefrontCanvas store={store} products={products} theme={theme} preview />
           </div>
         </div>
@@ -512,6 +514,131 @@ const SECTION_CONFIG: Record<StoreSectionId, { label: string; hint: string; visi
   products: { label: "Produits", hint: "Catalogue des produits disponibles.", visibility: "showProducts" },
   footer: { label: "Pied de page", hint: "Informations affichées en bas de page.", visibility: "showFooter" },
 };
+
+const TEXT_BLOCK_LABELS: Record<StoreTextBlockType, string> = {
+  display: "Grand titre",
+  heading: "Titre",
+  body: "Texte",
+  caption: "Petit texte",
+};
+
+function LogoUploader({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function importLogo(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Choisissez une image pour votre logo");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Le logo doit peser moins de 2 Mo");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
+      set({ logo: reader.result });
+      toast.success("Logo importé");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
+  return (
+    <div className="space-y-3">
+      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" className="sr-only" onChange={importLogo} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="flex min-h-32 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border bg-muted/40 p-4 text-center transition-colors hover:bg-muted"
+      >
+        {theme.logo ? (
+          <img src={theme.logo} alt="Logo actuel" className="max-h-24 max-w-[220px] object-contain" />
+        ) : (
+          <span className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+            <ImagePlus className="h-7 w-7" />
+            <span className="font-medium text-foreground">Importer un logo</span>
+            <span className="text-xs">PNG, JPG, WebP ou SVG · 2 Mo maximum</span>
+          </span>
+        )}
+      </button>
+      {theme.logo && (
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+            <ImagePlus /> Remplacer
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => set({ logo: "" })}>
+            <Trash2 /> Supprimer
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TextBlockManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const [dragged, setDragged] = useState<string | null>(null);
+
+  function updateBlock(id: string, patch: Partial<StoreTextBlock>) {
+    set({ textBlocks: theme.textBlocks.map((block) => block.id === id ? { ...block, ...patch } : block) });
+  }
+
+  function addBlock() {
+    const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `text-${Date.now()}`;
+    set({ textBlocks: [...theme.textBlocks, { id, type: "body", text: "Nouveau texte" }] });
+  }
+
+  function moveBlock(targetId: string, event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (!dragged || dragged === targetId) return;
+    const next = [...theme.textBlocks];
+    const from = next.findIndex((block) => block.id === dragged);
+    const to = next.findIndex((block) => block.id === targetId);
+    if (from < 0 || to < 0) return;
+    const [moved] = next.splice(from, 1);
+    if (!moved) return;
+    next.splice(to, 0, moved);
+    set({ textBlocks: next });
+    setDragged(null);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <p className="text-xs text-muted-foreground">Ajoutez, modifiez et réorganisez les textes de la bannière.</p>
+        <Button type="button" size="sm" variant="outline" onClick={addBlock}><Plus /> Ajouter</Button>
+      </div>
+      {theme.textBlocks.map((block) => (
+        <div
+          key={block.id}
+          draggable
+          onDragStart={() => setDragged(block.id)}
+          onDragEnd={() => setDragged(null)}
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => moveBlock(block.id, event)}
+          className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-md border bg-muted/30 p-3 ${dragged === block.id ? "opacity-50" : "opacity-100"}`}
+        >
+          <GripVertical className="mt-2 h-5 w-5 cursor-grab text-muted-foreground" aria-hidden="true" />
+          <div className="min-w-0 space-y-2">
+            <Select value={block.type} onValueChange={(value) => updateBlock(block.id, { type: value as StoreTextBlockType })}>
+              <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {(Object.entries(TEXT_BLOCK_LABELS) as [StoreTextBlockType, string][]).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Textarea aria-label={`Contenu du bloc ${TEXT_BLOCK_LABELS[block.type]}`} rows={2} value={block.text} onChange={(event) => updateBlock(block.id, { text: event.target.value })} />
+          </div>
+          <Button type="button" variant="ghost" size="icon" aria-label="Supprimer ce bloc" title="Supprimer" onClick={() => set({ textBlocks: theme.textBlocks.filter((item) => item.id !== block.id) })}>
+            <Trash2 />
+          </Button>
+        </div>
+      ))}
+      {theme.textBlocks.length === 0 && <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">Ajoutez un premier texte à votre bannière.</p>}
+    </div>
+  );
+}
 
 function SectionManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
   const [dragged, setDragged] = useState<StoreSectionId | null>(null);
