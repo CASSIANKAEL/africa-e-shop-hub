@@ -337,6 +337,14 @@ export function useStoreTheme(storeId: string): StoreTheme {
     ...defaultStoreTheme,
     ...saved,
     sectionOrder: saved.sectionOrder ?? defaultStoreTheme.sectionOrder,
+    announcements:
+      saved.announcements && saved.announcements.length > 0
+        ? saved.announcements
+        : [saved.announcement ?? defaultStoreTheme.announcement],
+    announcementScroll: saved.announcementScroll ?? defaultStoreTheme.announcementScroll,
+    announcementSpeed: saved.announcementSpeed ?? defaultStoreTheme.announcementSpeed,
+    showLegalPages: saved.showLegalPages ?? defaultStoreTheme.showLegalPages,
+    legalPages: saved.legalPages ?? defaultLegalPages,
     textBlocks: saved.textBlocks ?? [
       { id: "legacy-title", type: "display", text: saved.heroTitle ?? defaultStoreTheme.heroTitle },
       { id: "legacy-copy", type: "body", text: saved.heroSubtitle ?? defaultStoreTheme.heroSubtitle },
