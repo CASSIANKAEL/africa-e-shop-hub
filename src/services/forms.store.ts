@@ -57,6 +57,8 @@ interface FormsState {
   googleSheets: Record<string, GoogleSheetsConfig>;
   /** Flux Google Shopping, propre à chaque boutique. */
   googleShopping: Record<string, GoogleShoppingConfig>;
+  /** Campagnes d'offres de quantité, toutes boutiques confondues. */
+  offerCampaigns: OfferCampaign[];
 }
 
 let state: FormsState = {
@@ -66,6 +68,7 @@ let state: FormsState = {
   whatsapp: {},
   googleSheets: {},
   googleShopping: {},
+  offerCampaigns: [],
 };
 
 const listeners = new Set<() => void>();
@@ -78,6 +81,7 @@ function setState(next: Partial<FormsState>) {
 const WA_KEY = "sooko-whatsapp-widgets";
 const GS_KEY = "sooko-google-sheets";
 const GSHOP_KEY = "sooko-google-shopping";
+const OFFERS_KEY = "sooko-offer-campaigns";
 let hydrated = false;
 
 function readMap<T>(key: string): Record<string, T> | null {
