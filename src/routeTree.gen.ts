@@ -22,6 +22,8 @@ import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
 import { Route as FormulairesIndexRouteImport } from './routes/formulaires.index'
 import { Route as FormulairesCommandeRouteImport } from './routes/formulaires.commande'
+import { Route as FormulairesGoogleSheetsRouteImport } from './routes/formulaires.google-sheets'
+import { Route as FormulairesGoogleShoppingRouteImport } from './routes/formulaires.google-shopping'
 import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaires.integrations'
 import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
 import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
@@ -98,6 +100,17 @@ const FormulairesCommandeRoute = FormulairesCommandeRouteImport.update({
   path: '/formulaires/commande',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormulairesGoogleSheetsRoute = FormulairesGoogleSheetsRouteImport.update({
+  id: '/formulaires/google-sheets',
+  path: '/formulaires/google-sheets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FormulairesGoogleShoppingRoute =
+  FormulairesGoogleShoppingRouteImport.update({
+    id: '/formulaires/google-shopping',
+    path: '/formulaires/google-shopping',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FormulairesIntegrationsRoute = FormulairesIntegrationsRouteImport.update({
   id: '/formulaires/integrations',
   path: '/formulaires/integrations',
@@ -161,6 +174,8 @@ export interface FileRoutesByFullPath {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
+  '/formulaires/google-sheets': typeof FormulairesGoogleSheetsRoute
+  '/formulaires/google-shopping': typeof FormulairesGoogleShoppingRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
@@ -186,6 +201,8 @@ export interface FileRoutesByTo {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
+  '/formulaires/google-sheets': typeof FormulairesGoogleSheetsRoute
+  '/formulaires/google-shopping': typeof FormulairesGoogleShoppingRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
@@ -212,6 +229,8 @@ export interface FileRoutesById {
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
+  '/formulaires/google-sheets': typeof FormulairesGoogleSheetsRoute
+  '/formulaires/google-shopping': typeof FormulairesGoogleShoppingRoute
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
@@ -239,6 +258,8 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
+    | '/formulaires/google-sheets'
+    | '/formulaires/google-shopping'
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
@@ -264,6 +285,8 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
+    | '/formulaires/google-sheets'
+    | '/formulaires/google-shopping'
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
@@ -289,6 +312,8 @@ export interface FileRouteTypes {
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
+    | '/formulaires/google-sheets'
+    | '/formulaires/google-shopping'
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
@@ -315,6 +340,8 @@ export interface RootRouteChildren {
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
   FormulairesCommandeRoute: typeof FormulairesCommandeRoute
+  FormulairesGoogleSheetsRoute: typeof FormulairesGoogleSheetsRoute
+  FormulairesGoogleShoppingRoute: typeof FormulairesGoogleShoppingRoute
   FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
   FormulairesOffresRoute: typeof FormulairesOffresRoute
   FormulairesPixelsRoute: typeof FormulairesPixelsRoute
@@ -422,6 +449,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesCommandeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formulaires/google-sheets': {
+      id: '/formulaires/google-sheets'
+      path: '/formulaires/google-sheets'
+      fullPath: '/formulaires/google-sheets'
+      preLoaderRoute: typeof FormulairesGoogleSheetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/formulaires/google-shopping': {
+      id: '/formulaires/google-shopping'
+      path: '/formulaires/google-shopping'
+      fullPath: '/formulaires/google-shopping'
+      preLoaderRoute: typeof FormulairesGoogleShoppingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/formulaires/integrations': {
       id: '/formulaires/integrations'
       path: '/formulaires/integrations'
@@ -507,6 +548,8 @@ const rootRouteChildren: RootRouteChildren = {
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
   FormulairesCommandeRoute: FormulairesCommandeRoute,
+  FormulairesGoogleSheetsRoute: FormulairesGoogleSheetsRoute,
+  FormulairesGoogleShoppingRoute: FormulairesGoogleShoppingRoute,
   FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
   FormulairesOffresRoute: FormulairesOffresRoute,
   FormulairesPixelsRoute: FormulairesPixelsRoute,

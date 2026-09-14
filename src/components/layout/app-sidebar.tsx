@@ -65,7 +65,10 @@ const formsSubItems = [
   { title: "Formulaire de commande", url: "/formulaires/commande" },
   { title: "Offres de quantité", url: "/formulaires/offres" },
   { title: "Pixels publicitaires", url: "/formulaires/pixels" },
-  { title: "Intégrations", url: "/formulaires/integrations" },
+  { title: "WhatsApp", url: "/formulaires/integrations" },
+  { title: "Google Sheets", url: "/formulaires/google-sheets" },
+  { title: "Google Shopping", url: "/formulaires/google-shopping" },
+  { title: "Site", url: "/formulaires/site" },
 ] as const;
 
 
@@ -97,7 +100,10 @@ export function AppSidebar() {
     { ...formsSubItems[0], title: t("orderForm") },
     { ...formsSubItems[1], title: t("offers") },
     { ...formsSubItems[2], title: t("pixels") },
-    { ...formsSubItems[3], title: t("integrations") },
+    formsSubItems[3],
+    formsSubItems[4],
+    formsSubItems[5],
+    formsSubItems[6],
   ];
 
   const isActive = (url: string, exact?: boolean) =>

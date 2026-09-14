@@ -34,7 +34,9 @@ export const Route = createFileRoute("/formulaires/site")({
 function SitePage() {
   const storeId = useActiveStoreId();
   const activeStore = useActiveStore();
-  const integrations = useAppIntegrations(storeId).filter((i) => i.key !== "whatsapp");
+  const integrations = useAppIntegrations(storeId).filter(
+    (i) => i.key !== "whatsapp" && i.key !== "google_sheets",
+  );
 
   return (
     <AppShell>

@@ -3,6 +3,8 @@ import { useSyncExternalStore } from "react";
 import type {
   AppIntegration,
   AppIntegrationKey,
+  GoogleSheetsConfig,
+  GoogleShoppingConfig,
   OrderForm,
   PixelIntegration,
   WhatsappWidget,
@@ -18,6 +20,21 @@ export const defaultWhatsappWidget: WhatsappWidget = {
   position: "right",
 };
 
+export const defaultGoogleSheets: GoogleSheetsConfig = {
+  account: { connected: false, email: "" },
+  sheet: { connected: false, url: "", tab: "Commandes" },
+  autoSyncOrders: true,
+};
+
+export const defaultGoogleShopping: GoogleShoppingConfig = {
+  enabled: false,
+  account: { connected: false, email: "" },
+  sheet: { connected: false, url: "", tab: "Flux produits" },
+  merchantId: "",
+  country: "CI",
+  autoSyncFeed: true,
+};
+
 interface FormsState {
   forms: OrderForm[];
   pixels: PixelIntegration[];
@@ -25,6 +42,10 @@ interface FormsState {
   integrations: Record<string, AppIntegration[]>;
   /** Bouton WhatsApp de la boutique en ligne, propre à chaque boutique. */
   whatsapp: Record<string, WhatsappWidget>;
+  /** Connexion Google Sheets, propre à chaque boutique. */
+  googleSheets: Record<string, GoogleSheetsConfig>;
+  /** Flux Google Shopping, propre à chaque boutique. */
+  googleShopping: Record<string, GoogleShoppingConfig>;
 }
 
 let state: FormsState = {
@@ -32,6 +53,8 @@ let state: FormsState = {
   pixels: initialPixels,
   integrations: {},
   whatsapp: {},
+  googleSheets: {},
+  googleShopping: {},
 };
 
 const listeners = new Set<() => void>();
@@ -42,27 +65,44 @@ function setState(next: Partial<FormsState>) {
 }
 
 const WA_KEY = "sooko-whatsapp-widgets";
+const GS_KEY = "sooko-google-sheets";
+const GSHOP_KEY = "sooko-google-shopping";
 let hydrated = false;
 
-/** Charge les boutons WhatsApp enregistrés (après l'hydratation, côté navigateur). */
+function readMap<T>(key: string): Record<string, T> | null {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as Record<string, T>) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Charge les réglages enregistrés (après l'hydratation, côté navigateur). */
 function hydrateWhatsapp() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
+  const wa = readMap<WhatsappWidget>(WA_KEY);
+  const gs = readMap<GoogleSheetsConfig>(GS_KEY);
+  const gshop = readMap<GoogleShoppingConfig>(GSHOP_KEY);
+  setState({
+    ...(wa ? { whatsapp: wa } : {}),
+    ...(gs ? { googleSheets: gs } : {}),
+    ...(gshop ? { googleShopping: gshop } : {}),
+  });
+}
+
+function persist(key: string, value: unknown) {
+  if (typeof window === "undefined") return;
   try {
-    const raw = window.localStorage.getItem(WA_KEY);
-    if (raw) setState({ whatsapp: JSON.parse(raw) as Record<string, WhatsappWidget> });
+    window.localStorage.setItem(key, JSON.stringify(value));
   } catch {
     /* stockage indisponible */
   }
 }
 
 function persistWhatsapp() {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(WA_KEY, JSON.stringify(state.whatsapp));
-  } catch {
-    /* stockage indisponible */
-  }
+  persist(WA_KEY, state.whatsapp);
 }
 
 function subscribe(listener: () => void) {
@@ -109,6 +149,18 @@ export function useAppIntegrations(storeId: string): AppIntegration[] {
 export function useWhatsappWidget(storeId: string): WhatsappWidget {
   const map = useFormsState().whatsapp;
   return map[storeId] ?? defaultWhatsappWidget;
+}
+
+/** Connexion Google Sheets de la boutique donnée. */
+export function useGoogleSheets(storeId: string): GoogleSheetsConfig {
+  const map = useFormsState().googleSheets;
+  return map[storeId] ?? defaultGoogleSheets;
+}
+
+/** Flux Google Shopping de la boutique donnée. */
+export function useGoogleShopping(storeId: string): GoogleShoppingConfig {
+  const map = useFormsState().googleShopping;
+  return map[storeId] ?? defaultGoogleShopping;
 }
 
 export type NewPixelInput = Omit<PixelIntegration, "id">;
@@ -188,5 +240,27 @@ export const formsStore = {
       },
     });
     persistWhatsapp();
+  },
+  setGoogleSheets(storeId: string, patch: Partial<GoogleSheetsConfig>) {
+    const current = state.googleSheets[storeId] ?? defaultGoogleSheets;
+    const next = {
+      ...current,
+      ...patch,
+      account: { ...current.account, ...(patch.account ?? {}) },
+      sheet: { ...current.sheet, ...(patch.sheet ?? {}) },
+    };
+    setState({ googleSheets: { ...state.googleSheets, [storeId]: next } });
+    persist(GS_KEY, state.googleSheets);
+  },
+  setGoogleShopping(storeId: string, patch: Partial<GoogleShoppingConfig>) {
+    const current = state.googleShopping[storeId] ?? defaultGoogleShopping;
+    const next = {
+      ...current,
+      ...patch,
+      account: { ...current.account, ...(patch.account ?? {}) },
+      sheet: { ...current.sheet, ...(patch.sheet ?? {}) },
+    };
+    setState({ googleShopping: { ...state.googleShopping, [storeId]: next } });
+    persist(GSHOP_KEY, state.googleShopping);
   },
 };
