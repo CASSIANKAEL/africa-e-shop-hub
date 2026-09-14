@@ -44,6 +44,8 @@ function IntegrationsPage() {
   const storeId = useActiveStoreId();
   const activeStore = useActiveStore();
   const integrations = useAppIntegrations(storeId);
+  const wa = useWhatsappWidget(storeId);
+  const waNumber = whatsappNumber(wa.countryCode, wa.phone);
 
   return (
     <AppShell>
