@@ -25,6 +25,7 @@ import { Route as FormulairesCommandeRouteImport } from './routes/formulaires.co
 import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaires.integrations'
 import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
 import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
+import { Route as FormulairesSiteRouteImport } from './routes/formulaires.site'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsIaRouteImport } from './routes/produits.ia'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
@@ -112,6 +113,11 @@ const FormulairesPixelsRoute = FormulairesPixelsRouteImport.update({
   path: '/formulaires/pixels',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormulairesSiteRoute = FormulairesSiteRouteImport.update({
+  id: '/formulaires/site',
+  path: '/formulaires/site',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
   id: '/produits/',
   path: '/produits/',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/formulaires/site': typeof FormulairesSiteRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/formulaires/site': typeof FormulairesSiteRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/formulaires/integrations': typeof FormulairesIntegrationsRoute
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
+  '/formulaires/site': typeof FormulairesSiteRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/formulaires/site'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/formulaires/site'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/formulaires/integrations'
     | '/formulaires/offres'
     | '/formulaires/pixels'
+    | '/formulaires/site'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -306,6 +318,7 @@ export interface RootRouteChildren {
   FormulairesIntegrationsRoute: typeof FormulairesIntegrationsRoute
   FormulairesOffresRoute: typeof FormulairesOffresRoute
   FormulairesPixelsRoute: typeof FormulairesPixelsRoute
+  FormulairesSiteRoute: typeof FormulairesSiteRoute
   ProduitsIaRoute: typeof ProduitsIaRoute
   ProduitsImportRoute: typeof ProduitsImportRoute
   ProduitsNouveauRoute: typeof ProduitsNouveauRoute
@@ -430,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesPixelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/formulaires/site': {
+      id: '/formulaires/site'
+      path: '/formulaires/site'
+      fullPath: '/formulaires/site'
+      preLoaderRoute: typeof FormulairesSiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produits/': {
       id: '/produits/'
       path: '/produits'
@@ -490,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   FormulairesIntegrationsRoute: FormulairesIntegrationsRoute,
   FormulairesOffresRoute: FormulairesOffresRoute,
   FormulairesPixelsRoute: FormulairesPixelsRoute,
+  FormulairesSiteRoute: FormulairesSiteRoute,
   ProduitsIaRoute: ProduitsIaRoute,
   ProduitsImportRoute: ProduitsImportRoute,
   ProduitsNouveauRoute: ProduitsNouveauRoute,
