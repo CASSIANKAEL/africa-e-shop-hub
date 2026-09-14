@@ -22,6 +22,7 @@ interface CommerceState {
   team: TeamMember[];
   /** Boutique active : chaque boutique est indépendante, une seule à la fois. */
   activeStoreId: string;
+  notifications: AppNotification[];
 }
 
 const firstStoreId = initialStores[0]?.id ?? "";
