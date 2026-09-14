@@ -247,6 +247,34 @@ export const commerceStore = {
         return next;
       }),
     });
+    if (!before || before.status === status) return;
+    const base = { storeId: before.storeId, orderId, audience: ["admin", "closer"] as TeamRole[] };
+    if (status === "delivered") {
+      notify({ ...base, messageKey: "notifOrderDelivered", vars: { ref: before.reference } });
+    } else if (before.status === "delivered") {
+      notify({ ...base, messageKey: "notifOrderReopened", vars: { ref: before.reference } });
+    } else if (options?.byCourier) {
+      notify({
+        ...base,
+        messageKey: "notifOrderNotDelivered",
+        vars: { ref: before.reference, status },
+      });
+    }
+  },
+  /** Notifie l'équipe d'une nouvelle commande entrante. */
+  notifyNewOrder(orderId: string) {
+    const order = state.orders.find((o) => o.id === orderId);
+    if (!order) return;
+    notify({
+      storeId: order.storeId,
+      orderId,
+      audience: ["admin", "closer"],
+      messageKey: "notifOrderNew",
+      vars: { ref: order.reference },
+    });
+  },
+  markNotificationsRead() {
+    setState({ notifications: state.notifications.map((n) => ({ ...n, read: true })) });
   },
   addComment(orderId: string, text: string) {
     if (!text.trim()) return;
