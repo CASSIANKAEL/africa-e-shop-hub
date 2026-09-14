@@ -100,10 +100,18 @@ function hydrateWhatsapp() {
   const wa = readMap<WhatsappWidget>(WA_KEY);
   const gs = readMap<GoogleSheetsConfig>(GS_KEY);
   const gshop = readMap<GoogleShoppingConfig>(GSHOP_KEY);
+  let campaigns: OfferCampaign[] | null = null;
+  try {
+    const raw = window.localStorage.getItem(OFFERS_KEY);
+    campaigns = raw ? (JSON.parse(raw) as OfferCampaign[]) : null;
+  } catch {
+    campaigns = null;
+  }
   setState({
     ...(wa ? { whatsapp: wa } : {}),
     ...(gs ? { googleSheets: gs } : {}),
     ...(gshop ? { googleShopping: gshop } : {}),
+    ...(campaigns ? { offerCampaigns: campaigns } : {}),
   });
 }
 
