@@ -61,13 +61,59 @@ let state: CommerceState = {
 
 const listeners = new Set<() => void>();
 
+/** Les boutiques, produits et commandes sont conservés d'une visite à l'autre. */
+const STORAGE_KEY = "sooko-commerce";
+let hydrated = false;
+
+type PersistedState = Pick<
+  CommerceState,
+  "stores" | "products" | "orders" | "team" | "activeStoreId"
+>;
+
+function hydrate() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw) as Partial<PersistedState>;
+    setState({
+      ...(saved.stores ? { stores: saved.stores } : {}),
+      ...(saved.products ? { products: saved.products } : {}),
+      ...(saved.orders ? { orders: saved.orders } : {}),
+      ...(saved.team ? { team: saved.team } : {}),
+      ...(saved.activeStoreId ? { activeStoreId: saved.activeStoreId } : {}),
+    });
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function persist() {
+  if (typeof window === "undefined") return;
+  try {
+    const payload: PersistedState = {
+      stores: state.stores,
+      products: state.products,
+      orders: state.orders,
+      team: state.team,
+      activeStoreId: state.activeStoreId,
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
 function setState(next: Partial<CommerceState>) {
   state = { ...state, ...next };
+  if (hydrated) persist();
   listeners.forEach((l) => l());
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
+  hydrate();
   return () => listeners.delete(listener);
 }
 

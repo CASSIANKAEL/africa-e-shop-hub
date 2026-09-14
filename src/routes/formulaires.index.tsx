@@ -1,12 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  FileSpreadsheet,
-  FileText,
-  Layers,
-  MessageCircle,
-  ShoppingBag,
-  Target,
-} from "lucide-react";
+import { FileSpreadsheet, FileText, Layers, MessageCircle, Target } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
@@ -17,7 +10,6 @@ import { formatNumber, formatPercent } from "@/lib/format";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
 import {
   useGoogleSheets,
-  useGoogleShopping,
   useForms,
   useOfferCampaigns,
   usePixels,
@@ -52,7 +44,6 @@ function FormsHubPage() {
   const campaigns = useOfferCampaigns(activeStoreId);
   const wa = useWhatsappWidget(activeStoreId);
   const sheets = useGoogleSheets(activeStoreId);
-  const shopping = useGoogleShopping(activeStoreId);
   const waEnabled = wa.enabled;
   const waNumber = whatsappNumber(wa.countryCode, wa.phone);
   const form = forms[0];
@@ -107,14 +98,6 @@ function FormsHubPage() {
           ? "Compte connecté"
           : "Non connecté",
       detail: sheets.account.connected ? sheets.account.email : "Aucun compte Google",
-    },
-    {
-      to: "/formulaires/google-shopping" as const,
-      icon: ShoppingBag,
-      title: "Google Shopping",
-      text: "Publiez votre flux produits sur Google Shopping via un compte Google et un fichier de calcul.",
-      status: shopping.enabled ? "Activé" : "Désactivé",
-      detail: shopping.sheet.connected ? "Flux produits connecté" : "Flux produits à connecter",
     },
   ];
 
