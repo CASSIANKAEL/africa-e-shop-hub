@@ -241,4 +241,26 @@ export const formsStore = {
     });
     persistWhatsapp();
   },
+  setGoogleSheets(storeId: string, patch: Partial<GoogleSheetsConfig>) {
+    const current = state.googleSheets[storeId] ?? defaultGoogleSheets;
+    const next = {
+      ...current,
+      ...patch,
+      account: { ...current.account, ...(patch.account ?? {}) },
+      sheet: { ...current.sheet, ...(patch.sheet ?? {}) },
+    };
+    setState({ googleSheets: { ...state.googleSheets, [storeId]: next } });
+    persist(GS_KEY, state.googleSheets);
+  },
+  setGoogleShopping(storeId: string, patch: Partial<GoogleShoppingConfig>) {
+    const current = state.googleShopping[storeId] ?? defaultGoogleShopping;
+    const next = {
+      ...current,
+      ...patch,
+      account: { ...current.account, ...(patch.account ?? {}) },
+      sheet: { ...current.sheet, ...(patch.sheet ?? {}) },
+    };
+    setState({ googleShopping: { ...state.googleShopping, [storeId]: next } });
+    persist(GSHOP_KEY, state.googleShopping);
+  },
 };
