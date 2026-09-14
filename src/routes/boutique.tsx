@@ -569,7 +569,7 @@ function LogoUploader({ theme, set }: { theme: StoreTheme; set: (patch: Partial<
           <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
             <ImagePlus /> Remplacer
           </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={() => set({ logo: undefined })}>
+          <Button type="button" variant="ghost" size="sm" onClick={() => set({ logo: "" })}>
             <Trash2 /> Supprimer
           </Button>
         </div>
