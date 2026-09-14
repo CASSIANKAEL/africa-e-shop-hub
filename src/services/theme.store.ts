@@ -1,0 +1,306 @@
+import { useSyncExternalStore } from "react";
+
+/* ---------- Types ---------- */
+
+export type StoreTemplateId = "eclat" | "sahel";
+
+export interface StoreTheme {
+  templateId: StoreTemplateId;
+  /** Couleurs (valeurs hexadécimales). */
+  primary: string;
+  primaryText: string;
+  background: string;
+  surface: string;
+  text: string;
+  muted: string;
+  accent: string;
+  /** Typographie */
+  fontPair: "grotesk" | "elegant" | "modern" | "afro";
+  headingScale: number;
+  uppercaseHeadings: boolean;
+  /** Boutons */
+  buttonRadius: number;
+  buttonHeight: number;
+  buttonBold: boolean;
+  buttonUppercase: boolean;
+  buttonStyle: "solid" | "outline" | "soft";
+  buttonLabel: string;
+  /** Mise en page */
+  columns: 2 | 3 | 4;
+  containerWidth: "narrow" | "normal" | "wide";
+  cardStyle: "shadow" | "border" | "flat";
+  imageRatio: "square" | "portrait" | "landscape";
+  cornerRadius: number;
+  /** Éléments affichés */
+  showAnnouncement: boolean;
+  announcement: string;
+  showHero: boolean;
+  heroTitle: string;
+  heroSubtitle: string;
+  showBenefits: boolean;
+  showCategories: boolean;
+  showFooter: boolean;
+  footerText: string;
+}
+
+export interface StoreTemplate {
+  id: StoreTemplateId;
+  name: string;
+  tagline: string;
+  description: string;
+  theme: StoreTheme;
+}
+
+export const fontPairs: Record<
+  StoreTheme["fontPair"],
+  { label: string; heading: string; body: string }
+> = {
+  grotesk: {
+    label: "Space Grotesk / DM Sans",
+    heading: '"Space Grotesk", ui-sans-serif, system-ui, sans-serif',
+    body: '"DM Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  elegant: {
+    label: "Playfair Display / Poppins",
+    heading: '"Playfair Display", Georgia, serif',
+    body: '"Poppins", ui-sans-serif, system-ui, sans-serif',
+  },
+  modern: {
+    label: "Outfit / DM Sans",
+    heading: '"Outfit", ui-sans-serif, system-ui, sans-serif',
+    body: '"DM Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  afro: {
+    label: "Sora / Work Sans",
+    heading: '"Sora", ui-sans-serif, system-ui, sans-serif',
+    body: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+};
+
+/* ---------- Modèles prêts à l'emploi ---------- */
+
+const eclat: StoreTheme = {
+  templateId: "eclat",
+  primary: "#111111",
+  primaryText: "#ffffff",
+  background: "#ffffff",
+  surface: "#f7f6f3",
+  text: "#12100e",
+  muted: "#6b6560",
+  accent: "#e8c9a0",
+  fontPair: "elegant",
+  headingScale: 1,
+  uppercaseHeadings: true,
+  buttonRadius: 4,
+  buttonHeight: 48,
+  buttonBold: false,
+  buttonUppercase: true,
+  buttonStyle: "solid",
+  buttonLabel: "Commander",
+  columns: 3,
+  containerWidth: "wide",
+  cardStyle: "flat",
+  imageRatio: "portrait",
+  cornerRadius: 4,
+  showAnnouncement: true,
+  announcement: "Livraison offerte dès 50 000 F CFA",
+  showHero: true,
+  heroTitle: "Une sélection qui brille",
+  heroSubtitle: "Des pièces choisies avec soin, livrées chez vous et payées à la réception.",
+  showBenefits: true,
+  showCategories: true,
+  showFooter: true,
+  footerText: "Paiement à la livraison · Service client 7j/7",
+};
+
+const sahel: StoreTheme = {
+  templateId: "sahel",
+  primary: "#c1440e",
+  primaryText: "#fff8f0",
+  background: "#fdf6ec",
+  surface: "#ffffff",
+  text: "#2b1a12",
+  muted: "#7c6553",
+  accent: "#1f7a5a",
+  fontPair: "afro",
+  headingScale: 1.05,
+  uppercaseHeadings: false,
+  buttonRadius: 999,
+  buttonHeight: 52,
+  buttonBold: true,
+  buttonUppercase: false,
+  buttonStyle: "solid",
+  buttonLabel: "Je commande",
+  columns: 2,
+  containerWidth: "normal",
+  cardStyle: "shadow",
+  imageRatio: "square",
+  cornerRadius: 20,
+  showAnnouncement: true,
+  announcement: "Paiement à la livraison partout en ville 🚚",
+  showHero: true,
+  heroTitle: "Le marché, en un clic",
+  heroSubtitle:
+    "Commandez sans carte bancaire, payez à la livraison et discutez avec nous sur WhatsApp.",
+  showBenefits: true,
+  showCategories: true,
+  showFooter: true,
+  footerText: "Commandez sur WhatsApp · Livraison 24-48 h · Paiement à la réception",
+};
+
+export const storeTemplates: StoreTemplate[] = [
+  {
+    id: "eclat",
+    name: "Éclat",
+    tagline: "Élégant et minimal",
+    description:
+      "Grandes images, typographie éditoriale et beaucoup d'espace blanc. Idéal pour la mode, la beauté et les marques haut de gamme.",
+    theme: eclat,
+  },
+  {
+    id: "sahel",
+    name: "Sahel Market",
+    tagline: "Pensé pour l'Afrique",
+    description:
+      "Couleurs chaudes, gros boutons tactiles, paiement à la livraison et WhatsApp mis en avant. Optimisé pour le mobile et les connexions lentes.",
+    theme: sahel,
+  },
+];
+
+export const defaultStoreTheme: StoreTheme = sahel;
+
+export function templateOf(id: StoreTemplateId): StoreTemplate {
+  return storeTemplates.find((t) => t.id === id) ?? storeTemplates[1]!;
+}
+
+/* ---------- Store réactif ---------- */
+
+const KEY = "sooko-store-themes";
+let themes: Record<string, StoreTheme> = {};
+let hydrated = false;
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((l) => l());
+}
+
+function hydrate() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  try {
+    const raw = window.localStorage.getItem(KEY);
+    if (raw) {
+      themes = JSON.parse(raw) as Record<string, StoreTheme>;
+      emit();
+    }
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function persist() {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(themes));
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  hydrate();
+  return () => listeners.delete(listener);
+}
+
+function getSnapshot() {
+  return themes;
+}
+
+export function useStoreTheme(storeId: string): StoreTheme {
+  const map = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return { ...defaultStoreTheme, ...(map[storeId] ?? {}) };
+}
+
+export const themeStore = {
+  update(storeId: string, patch: Partial<StoreTheme>) {
+    themes = {
+      ...themes,
+      [storeId]: { ...defaultStoreTheme, ...(themes[storeId] ?? {}), ...patch },
+    };
+    persist();
+    emit();
+  },
+  applyTemplate(storeId: string, templateId: StoreTemplateId) {
+    themes = { ...themes, [storeId]: { ...templateOf(templateId).theme } };
+    persist();
+    emit();
+  },
+  reset(storeId: string) {
+    const current = themes[storeId]?.templateId ?? defaultStoreTheme.templateId;
+    this.applyTemplate(storeId, current);
+  },
+};
+
+/* ---------- Aide au rendu de la vitrine ---------- */
+
+export function themeVars(theme: StoreTheme): React.CSSProperties {
+  const pair = fontPairs[theme.fontPair];
+  return {
+    ["--sv-primary" as string]: theme.primary,
+    ["--sv-primary-text" as string]: theme.primaryText,
+    ["--sv-bg" as string]: theme.background,
+    ["--sv-surface" as string]: theme.surface,
+    ["--sv-text" as string]: theme.text,
+    ["--sv-muted" as string]: theme.muted,
+    ["--sv-accent" as string]: theme.accent,
+    ["--sv-heading" as string]: pair.heading,
+    ["--sv-body" as string]: pair.body,
+    ["--sv-radius" as string]: `${theme.cornerRadius}px`,
+    backgroundColor: theme.background,
+    color: theme.text,
+    fontFamily: pair.body,
+  };
+}
+
+export function buttonStyleOf(theme: StoreTheme): React.CSSProperties {
+  const base: React.CSSProperties = {
+    borderRadius: `${theme.buttonRadius}px`,
+    height: `${theme.buttonHeight}px`,
+    fontWeight: theme.buttonBold ? 700 : 500,
+    textTransform: theme.buttonUppercase ? "uppercase" : "none",
+    letterSpacing: theme.buttonUppercase ? "0.05em" : undefined,
+    padding: "0 1.25rem",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: "var(--sv-body)",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+  };
+  if (theme.buttonStyle === "outline") {
+    return { ...base, border: `1.5px solid ${theme.primary}`, color: theme.primary, background: "transparent" };
+  }
+  if (theme.buttonStyle === "soft") {
+    return { ...base, background: `${theme.primary}1f`, color: theme.primary };
+  }
+  return { ...base, background: theme.primary, color: theme.primaryText };
+}
+
+export const containerClass: Record<StoreTheme["containerWidth"], string> = {
+  narrow: "max-w-3xl",
+  normal: "max-w-5xl",
+  wide: "max-w-7xl",
+};
+
+export const columnsClass: Record<number, string> = {
+  2: "grid-cols-2",
+  3: "grid-cols-2 md:grid-cols-3",
+  4: "grid-cols-2 md:grid-cols-4",
+};
+
+export const ratioClass: Record<StoreTheme["imageRatio"], string> = {
+  square: "aspect-square",
+  portrait: "aspect-[3/4]",
+  landscape: "aspect-[4/3]",
+};
