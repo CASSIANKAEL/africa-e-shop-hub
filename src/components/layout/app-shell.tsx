@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { Bell, Languages, Search } from "lucide-react";
+import { Languages, Search } from "lucide-react";
 
 import { AppSidebar } from "./app-sidebar";
 import { MobileBottomNav } from "./mobile-bottom-nav";
+import { NotificationBell } from "./notification-bell";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
