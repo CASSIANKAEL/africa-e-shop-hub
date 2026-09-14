@@ -9,8 +9,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MessageCircle } from "lucide-react";
+import { countryDials, whatsappNumber } from "@/lib/countries";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
-import { formsStore, useAppIntegrations } from "@/services/forms.store";
+import { formsStore, useAppIntegrations, useWhatsappWidget } from "@/services/forms.store";
 
 export const Route = createFileRoute("/formulaires/integrations")({
   head: () => ({
