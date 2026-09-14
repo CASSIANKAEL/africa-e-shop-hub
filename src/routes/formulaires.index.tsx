@@ -21,6 +21,7 @@ import {
   useGoogleSheets,
   useGoogleShopping,
   useForms,
+  useOfferCampaigns,
   usePixels,
   useWhatsappWidget,
 } from "@/services/forms.store";
@@ -50,6 +51,7 @@ function FormsHubPage() {
   const activeStore = useActiveStore();
   const forms = useForms(activeStoreId);
   const pixels = usePixels(activeStoreId);
+  const campaigns = useOfferCampaigns(activeStoreId);
   const integrations = useAppIntegrations(activeStoreId).filter(
     (i) => i.key !== "whatsapp" && i.key !== "google_sheets",
   );
@@ -80,9 +82,9 @@ function FormsHubPage() {
       to: "/formulaires/offres" as const,
       icon: Layers,
       title: "Offres de quantité",
-      text: "Remises par lot, livraison offerte et ventes additionnelles proposées dans le formulaire.",
-      status: `${form?.offers.length ?? 0} offre(s)`,
-      detail: `${form?.upsells.length ?? 0} vente(s) additionnelle(s)`,
+      text: "Créez des offres par quantité sur les produits de votre choix : remises, étiquettes, livraison offerte.",
+      status: `${campaigns.length} offre(s)`,
+      detail: `${campaigns.filter((c) => c.enabled).length} active(s) · ${form?.upsells.length ?? 0} vente(s) additionnelle(s)`,
     },
     {
       to: "/formulaires/pixels" as const,
