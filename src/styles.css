@@ -209,3 +209,22 @@
     font-family: var(--font-sans);
   }
 }
+
+@keyframes store-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.store-marquee { overflow: hidden; }
+.store-marquee-track {
+  display: flex;
+  width: max-content;
+  animation-name: store-marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.store-marquee:hover .store-marquee-track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .store-marquee-track { animation: none; }
+}
