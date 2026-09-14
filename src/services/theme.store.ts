@@ -12,6 +12,53 @@ export interface StoreTextBlock {
   text: string;
 }
 
+/** Page légale affichée dans le pied de page et sur chaque fiche produit. */
+export interface StoreLegalPage {
+  id: string;
+  title: string;
+  content: string;
+  enabled: boolean;
+}
+
+export const defaultLegalPages: StoreLegalPage[] = [
+  {
+    id: "confidentialite",
+    title: "Politique de confidentialité",
+    content:
+      "Nous collectons uniquement votre nom, votre numéro de téléphone et votre adresse de livraison pour traiter votre commande. Ces informations ne sont jamais revendues. Vous pouvez demander leur suppression à tout moment en nous écrivant sur WhatsApp.",
+    enabled: true,
+  },
+  {
+    id: "retours",
+    title: "Retours et remboursements",
+    content:
+      "Vous disposez de 7 jours après la réception pour demander un échange ou un retour si le produit est défectueux ou ne correspond pas à la description. Le produit doit être non utilisé et dans son emballage d'origine. Le remboursement est effectué en espèces ou par mobile money sous 72 heures.",
+    enabled: true,
+  },
+  {
+    id: "livraison",
+    title: "Livraison",
+    content:
+      "Livraison en 24 à 48 heures en ville et 2 à 5 jours à l'intérieur du pays. Vous payez le produit à la réception, après vérification. Le livreur vous appelle avant de passer.",
+    enabled: true,
+  },
+  {
+    id: "cgv",
+    title: "Conditions générales de vente",
+    content:
+      "Toute commande passée sur cette boutique vaut acceptation des présentes conditions. Les prix sont affichés toutes taxes comprises. Une commande peut être annulée gratuitement tant que le livreur n'est pas parti.",
+    enabled: true,
+  },
+  {
+    id: "contact",
+    title: "Contact et mentions légales",
+    content:
+      "Pour toute question, écrivez-nous sur WhatsApp ou appelez le numéro affiché sur la boutique. Notre service client répond 7j/7 de 8h à 20h.",
+    enabled: true,
+  },
+];
+
+
 export interface StoreTheme {
   templateId: StoreTemplateId;
   /** Couleurs (valeurs hexadécimales). */
