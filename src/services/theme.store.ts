@@ -92,6 +92,12 @@ export interface StoreTheme {
   /** Éléments affichés */
   showAnnouncement: boolean;
   announcement: string;
+  /** Plusieurs messages affichés dans le bandeau. */
+  announcements: string[];
+  /** Fait défiler les messages du bandeau en continu. */
+  announcementScroll: boolean;
+  /** Durée d'un cycle de défilement, en secondes. */
+  announcementSpeed: number;
   showHero: boolean;
   heroTitle: string;
   heroSubtitle: string;
@@ -100,6 +106,10 @@ export interface StoreTheme {
   showProducts: boolean;
   showFooter: boolean;
   footerText: string;
+  /** Pages légales affichées dans le pied de page et sur chaque produit. */
+  showLegalPages: boolean;
+  legalPages: StoreLegalPage[];
+
   /** Ordre visuel des blocs de la vitrine. */
   sectionOrder: StoreSectionId[];
 }
