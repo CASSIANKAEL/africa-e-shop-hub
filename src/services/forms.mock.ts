@@ -128,10 +128,7 @@ export const initialForms: OrderForm[] = [
     createdAt: "2026-08-21T09:00:00.000Z",
     views: 4820,
     submissions: 612,
-    upsells: [
-      { id: "u-1", title: "Bracelet de rechange", price: 4000, enabled: true },
-      { id: "u-2", title: "Garantie 12 mois", price: 3000, enabled: false },
-    ],
+    upsells: [],
   },
   {
     ...emptyForm("st-2"),
