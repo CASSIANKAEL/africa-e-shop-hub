@@ -16,7 +16,7 @@ export interface StoreTheme {
   muted: string;
   accent: string;
   /** Typographie */
-  fontPair: "grotesk" | "elegant" | "modern" | "afro";
+  fontPair: "grotesk" | "elegant" | "modern" | "afro" | "editorial" | "friendly";
   headingScale: number;
   uppercaseHeadings: boolean;
   /** Boutons */
@@ -40,6 +40,7 @@ export interface StoreTheme {
   heroSubtitle: string;
   showBenefits: boolean;
   showCategories: boolean;
+  showProducts: boolean;
   showFooter: boolean;
   footerText: string;
   /** Ordre visuel des blocs de la vitrine. */
@@ -122,8 +123,10 @@ const eclat: StoreTheme = {
   heroSubtitle: "Des pièces choisies avec soin, livrées chez vous et payées à la réception.",
   showBenefits: true,
   showCategories: true,
+  showProducts: true,
   showFooter: true,
   footerText: "Paiement à la livraison · Service client 7j/7",
+  sectionOrder: ["announcement", "hero", "benefits", "categories", "products", "footer"],
 };
 
 const sahel: StoreTheme = {
@@ -157,8 +160,10 @@ const sahel: StoreTheme = {
     "Commandez sans carte bancaire, payez à la livraison et discutez avec nous sur WhatsApp.",
   showBenefits: true,
   showCategories: true,
+  showProducts: true,
   showFooter: true,
   footerText: "Commandez sur WhatsApp · Livraison 24-48 h · Paiement à la réception",
+  sectionOrder: ["announcement", "hero", "categories", "products", "benefits", "footer"],
 };
 
 export const storeTemplates: StoreTemplate[] = [
@@ -232,7 +237,12 @@ function getSnapshot() {
 
 export function useStoreTheme(storeId: string): StoreTheme {
   const map = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return { ...defaultStoreTheme, ...(map[storeId] ?? {}) };
+  const saved = map[storeId] ?? {};
+  return {
+    ...defaultStoreTheme,
+    ...saved,
+    sectionOrder: saved.sectionOrder ?? defaultStoreTheme.sectionOrder,
+  };
 }
 
 export const themeStore = {
