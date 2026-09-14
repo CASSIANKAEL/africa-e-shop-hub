@@ -144,17 +144,39 @@ function DeliveriesPage() {
                         {order.courierNote}
                       </p>
                     )}
+                    {(order.comments ?? []).slice(-2).map((c) => (
+                      <p key={c.id} className="rounded-lg border border-border p-2 text-xs">
+                        {c.text}
+                      </p>
+                    ))}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Badge variant={order.status === "delivered" ? "default" : "secondary"}>
                         <Truck className="mr-1 h-3.5 w-3.5" />
                         {statusLabels[order.status]}
                       </Badge>
-                      {order.status !== "delivered" && (
+                      <CourierStatusSelect orderId={order.id} status={order.status} />
+                      {order.status === "delivered" ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => {
+                            commerceStore.updateOrderStatus(order.id, "shipped", {
+                              byCourier: true,
+                            });
+                            toast.success(t("statusUpdated"));
+                          }}
+                        >
+                          {t("markNotDelivered")}
+                        </Button>
+                      ) : (
                         <Button
                           size="sm"
                           className="gap-2"
                           onClick={() => {
-                            commerceStore.updateOrderStatus(order.id, "delivered");
+                            commerceStore.updateOrderStatus(order.id, "delivered", {
+                              byCourier: true,
+                            });
                             toast.success(t("orderDelivered"));
                           }}
                         >
