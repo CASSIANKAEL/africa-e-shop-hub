@@ -24,16 +24,16 @@ import { formsStore, useAppIntegrations, useWhatsappWidget } from "@/services/fo
 export const Route = createFileRoute("/formulaires/integrations")({
   head: () => ({
     meta: [
-      { title: "Intégrations — Sooko" },
+      { title: "WhatsApp — Sooko" },
       {
         name: "description",
         content:
-          "Connectez Google Sheets, WhatsApp, SMS, votre transporteur ou un webhook à votre boutique.",
+          "Connectez WhatsApp à votre boutique : bouton flottant sur la boutique en ligne et confirmations automatiques.",
       },
-      { property: "og:title", content: "Intégrations — Sooko" },
+      { property: "og:title", content: "WhatsApp — Sooko" },
       {
         property: "og:description",
-        content: "Automatisations et outils connectés, boutique par boutique.",
+        content: "Tous les réglages WhatsApp de la boutique, au même endroit.",
       },
     ],
   }),
@@ -43,15 +43,15 @@ export const Route = createFileRoute("/formulaires/integrations")({
 function IntegrationsPage() {
   const storeId = useActiveStoreId();
   const activeStore = useActiveStore();
-  const integrations = useAppIntegrations(storeId);
+  const integrations = useAppIntegrations(storeId).filter((i) => i.key === "whatsapp");
   const wa = useWhatsappWidget(storeId);
   const waNumber = whatsappNumber(wa.countryCode, wa.phone);
 
   return (
     <AppShell>
       <PageHeader
-        title="Intégrations"
-        description={`Outils connectés à ${activeStore?.name ?? "la boutique active"}.`}
+        title="WhatsApp"
+        description={`Tous les réglages WhatsApp de ${activeStore?.name ?? "la boutique active"} : bouton sur la boutique en ligne et confirmations automatiques.`}
         action={
           <Button variant="outline" asChild>
             <Link to="/formulaires">
@@ -170,7 +170,7 @@ function IntegrationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Outils disponibles</CardTitle>
+          <CardTitle className="text-base">Confirmation automatique WhatsApp</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {integrations.map((i) => (

@@ -1,13 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Layers, Plug, Target } from "lucide-react";
+import { FileText, Layers, MessageCircle, Plug, Target } from "lucide-react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { whatsappNumber } from "@/lib/countries";
 import { formatNumber, formatPercent } from "@/lib/format";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
-import { useAppIntegrations, useForms, usePixels } from "@/services/forms.store";
+import {
+  useAppIntegrations,
+  useForms,
+  usePixels,
+  useWhatsappWidget,
+} from "@/services/forms.store";
 
 export const Route = createFileRoute("/formulaires/")({
   head: () => ({
@@ -34,7 +40,10 @@ function FormsHubPage() {
   const activeStore = useActiveStore();
   const forms = useForms(activeStoreId);
   const pixels = usePixels(activeStoreId);
-  const integrations = useAppIntegrations(activeStoreId);
+  const integrations = useAppIntegrations(activeStoreId).filter((i) => i.key !== "whatsapp");
+  const wa = useWhatsappWidget(activeStoreId);
+  const waEnabled = wa.enabled;
+  const waNumber = whatsappNumber(wa.countryCode, wa.phone);
   const form = forms[0];
   const connected = integrations.filter((i) => i.connected).length;
 
@@ -71,9 +80,17 @@ function FormsHubPage() {
     },
     {
       to: "/formulaires/integrations" as const,
+      icon: MessageCircle,
+      title: "WhatsApp",
+      text: "Bouton WhatsApp affiché sur la boutique en ligne et confirmation automatique envoyée au client.",
+      status: `${waEnabled ? "Bouton activé" : "Bouton désactivé"}`,
+      detail: waNumber ? `Numéro : +${waNumber}` : "Ajoutez votre numéro WhatsApp",
+    },
+    {
+      to: "/formulaires/site" as const,
       icon: Plug,
-      title: "Intégrations",
-      text: "Google Sheets, WhatsApp, SMS, transporteur ou webhook pour automatiser vos commandes.",
+      title: "Site",
+      text: "Google Sheets, SMS, transporteur ou webhook pour automatiser les commandes du site.",
       status: `${connected} connectée(s)`,
       detail: `${integrations.length} disponibles`,
     },
