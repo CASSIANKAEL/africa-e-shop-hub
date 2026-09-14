@@ -43,15 +43,15 @@ export const Route = createFileRoute("/formulaires/integrations")({
 function IntegrationsPage() {
   const storeId = useActiveStoreId();
   const activeStore = useActiveStore();
-  const integrations = useAppIntegrations(storeId);
+  const integrations = useAppIntegrations(storeId).filter((i) => i.key === "whatsapp");
   const wa = useWhatsappWidget(storeId);
   const waNumber = whatsappNumber(wa.countryCode, wa.phone);
 
   return (
     <AppShell>
       <PageHeader
-        title="Intégrations"
-        description={`Outils connectés à ${activeStore?.name ?? "la boutique active"}.`}
+        title="WhatsApp"
+        description={`Tous les réglages WhatsApp de ${activeStore?.name ?? "la boutique active"} : bouton sur la boutique en ligne et confirmations automatiques.`}
         action={
           <Button variant="outline" asChild>
             <Link to="/formulaires">
