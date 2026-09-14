@@ -197,14 +197,16 @@ function ColumnMappingCard({
               onDragEnd={() => setDraggedId(null)}
               className="grid grid-cols-[32px_minmax(0,1fr)_40px] items-end gap-2 rounded-lg border p-3 sm:grid-cols-[32px_64px_minmax(140px,1fr)_minmax(190px,1.2fr)_40px]"
             >
-              <button
+              <Button
                 type="button"
-                className="flex h-10 cursor-grab items-center justify-center text-muted-foreground disabled:cursor-not-allowed"
+                variant="ghost"
+                size="icon"
+                className="cursor-grab text-muted-foreground disabled:cursor-not-allowed"
                 disabled={disabled}
                 aria-label={`Déplacer la colonne ${columnLetter(index)}`}
               >
                 <GripVertical className="h-4 w-4" />
-              </button>
+              </Button>
               <div className="col-span-2 sm:col-span-1">
                 <Label className="text-xs">Colonne</Label>
                 <div className="mt-2 flex h-10 items-center justify-center rounded-md bg-muted font-semibold">
