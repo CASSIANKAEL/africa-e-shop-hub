@@ -187,6 +187,20 @@ export function useGoogleShopping(storeId: string): GoogleShoppingConfig {
   return map[storeId] ?? defaultGoogleShopping;
 }
 
+/** Campagnes d'offres de quantité de la boutique donnée. */
+export function useOfferCampaigns(storeId?: string): OfferCampaign[] {
+  const campaigns = useFormsState().offerCampaigns;
+  return storeId ? campaigns.filter((c) => c.storeId === storeId) : campaigns;
+}
+
+/** Offres applicables à un produit précis (campagnes actives uniquement). */
+export function useProductOffers(storeId: string, productId: string): OfferCampaign | undefined {
+  const campaigns = useFormsState().offerCampaigns;
+  return campaigns.find(
+    (c) => c.storeId === storeId && c.enabled && c.productIds.includes(productId),
+  );
+}
+
 export type NewPixelInput = Omit<PixelIntegration, "id">;
 
 export const formsStore = {
