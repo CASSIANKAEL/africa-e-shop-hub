@@ -239,6 +239,13 @@ const sahel: StoreTheme = {
   cornerRadius: 20,
   showAnnouncement: true,
   announcement: "Paiement à la livraison partout en ville 🚚",
+  announcements: [
+    "Paiement à la livraison partout en ville 🚚",
+    "Commandez sur WhatsApp en 30 secondes",
+    "Livraison 24-48 h · Retour possible sous 7 jours",
+  ],
+  announcementScroll: true,
+  announcementSpeed: 20,
   showHero: true,
   heroTitle: "Le marché, en un clic",
   heroSubtitle:
@@ -248,6 +255,9 @@ const sahel: StoreTheme = {
   showProducts: true,
   showFooter: true,
   footerText: "Commandez sur WhatsApp · Livraison 24-48 h · Paiement à la réception",
+  showLegalPages: true,
+  legalPages: defaultLegalPages,
+
   sectionOrder: ["announcement", "hero", "categories", "products", "benefits", "footer"],
 };
 
