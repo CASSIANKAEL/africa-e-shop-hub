@@ -1,6 +1,14 @@
 import { useSyncExternalStore } from "react";
 
-import type { Order, OrderStatus, Product, Store, TeamMember, TeamRole } from "@/types";
+import type {
+  AppNotification,
+  Order,
+  OrderStatus,
+  Product,
+  Store,
+  TeamMember,
+  TeamRole,
+} from "@/types";
 import {
   orders as initialOrders,
   products as initialProducts,
