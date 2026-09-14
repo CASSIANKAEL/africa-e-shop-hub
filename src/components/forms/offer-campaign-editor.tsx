@@ -17,7 +17,13 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { Currency, OfferCampaign, Product, QuantityOffer } from "@/types";
+import type {
+  Currency,
+  OfferCampaign,
+  OfferDiscountType,
+  Product,
+  QuantityOffer,
+} from "@/types";
 
 export function offerPrice(unitPrice: number, offer: QuantityOffer): number {
   const base = unitPrice * Math.max(1, offer.quantity);
@@ -269,7 +275,7 @@ export function OfferCampaignEditor({
                       <Select
                         value={o.discountType ?? (o.discountPercent > 0 ? "percent" : "none")}
                         onValueChange={(v) =>
-                          patchOffer(o.id, { discountType: v as QuantityOffer["discountType"] })
+                          patchOffer(o.id, { discountType: v as OfferDiscountType })
                         }
                       >
                         <SelectTrigger className="h-9">
@@ -358,7 +364,7 @@ export function OfferCampaignEditor({
                             ...c,
                             offers: c.offers.map((x) => ({
                               ...x,
-                              preselected: x.id === o.id ? v : v ? false : x.preselected,
+                              preselected: x.id === o.id ? v : v ? false : (x.preselected ?? false),
                             })),
                           }))
                         }
