@@ -151,6 +151,18 @@ export function useWhatsappWidget(storeId: string): WhatsappWidget {
   return map[storeId] ?? defaultWhatsappWidget;
 }
 
+/** Connexion Google Sheets de la boutique donnée. */
+export function useGoogleSheets(storeId: string): GoogleSheetsConfig {
+  const map = useFormsState().googleSheets;
+  return map[storeId] ?? defaultGoogleSheets;
+}
+
+/** Flux Google Shopping de la boutique donnée. */
+export function useGoogleShopping(storeId: string): GoogleShoppingConfig {
+  const map = useFormsState().googleShopping;
+  return map[storeId] ?? defaultGoogleShopping;
+}
+
 export type NewPixelInput = Omit<PixelIntegration, "id">;
 
 export const formsStore = {
