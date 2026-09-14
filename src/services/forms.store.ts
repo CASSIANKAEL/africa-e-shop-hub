@@ -155,4 +155,12 @@ export const formsStore = {
       },
     });
   },
+  setWhatsappWidget(storeId: string, patch: Partial<WhatsappWidget>) {
+    setState({
+      whatsapp: {
+        ...state.whatsapp,
+        [storeId]: { ...(state.whatsapp[storeId] ?? defaultWhatsappWidget), ...patch },
+      },
+    });
+  },
 };
