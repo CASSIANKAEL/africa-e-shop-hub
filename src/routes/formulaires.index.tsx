@@ -40,7 +40,10 @@ function FormsHubPage() {
   const activeStore = useActiveStore();
   const forms = useForms(activeStoreId);
   const pixels = usePixels(activeStoreId);
-  const integrations = useAppIntegrations(activeStoreId);
+  const integrations = useAppIntegrations(activeStoreId).filter((i) => i.key !== "whatsapp");
+  const wa = useWhatsappWidget(activeStoreId);
+  const waEnabled = wa.enabled;
+  const waNumber = whatsappNumber(wa.countryCode, wa.phone);
   const form = forms[0];
   const connected = integrations.filter((i) => i.connected).length;
 
