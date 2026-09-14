@@ -10,6 +10,8 @@ import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
 import { useForms } from "@/services/forms.store";
 import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
+import { AnnouncementBar, LegalPages } from "@/components/commerce/storefront-canvas";
+import { useStoreTheme } from "@/services/theme.store";
 
 export const Route = createFileRoute("/vitrine/$storeId/$productId")({
   head: () => ({
