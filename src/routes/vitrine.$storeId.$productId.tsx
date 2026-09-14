@@ -10,6 +10,8 @@ import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
 import { useForms } from "@/services/forms.store";
 import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
+import { AnnouncementBar, LegalPages } from "@/components/commerce/storefront-canvas";
+import { useStoreTheme } from "@/services/theme.store";
 
 export const Route = createFileRoute("/vitrine/$storeId/$productId")({
   head: () => ({
@@ -38,6 +40,7 @@ function PublicProductPage() {
   const product = useProducts().find((p) => p.id === productId);
   const storeForms = useForms(storeId);
   const form = storeForms.find((f) => f.status === "active") ?? storeForms[0];
+  const theme = useStoreTheme(storeId);
 
   if (!store || !product) {
     return (
@@ -60,6 +63,7 @@ function PublicProductPage() {
   return (
     <>
     <main className="min-h-screen bg-background">
+      {theme.showAnnouncement && <AnnouncementBar theme={theme} />}
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4">
           <Button variant="ghost" size="sm" asChild>
@@ -185,6 +189,13 @@ function PublicProductPage() {
           </Card>
         </div>
       </div>
+
+      {theme.showFooter && (
+        <footer className="mx-auto max-w-5xl space-y-5 px-5 pb-10 text-center text-xs text-muted-foreground">
+          <LegalPages theme={theme} />
+          <p>{theme.footerText}</p>
+        </footer>
+      )}
     </main>
       <WhatsappFloat storeId={storeId} />
     </>

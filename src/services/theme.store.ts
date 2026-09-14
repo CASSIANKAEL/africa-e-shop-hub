@@ -12,6 +12,53 @@ export interface StoreTextBlock {
   text: string;
 }
 
+/** Page légale affichée dans le pied de page et sur chaque fiche produit. */
+export interface StoreLegalPage {
+  id: string;
+  title: string;
+  content: string;
+  enabled: boolean;
+}
+
+export const defaultLegalPages: StoreLegalPage[] = [
+  {
+    id: "confidentialite",
+    title: "Politique de confidentialité",
+    content:
+      "Nous collectons uniquement votre nom, votre numéro de téléphone et votre adresse de livraison pour traiter votre commande. Ces informations ne sont jamais revendues. Vous pouvez demander leur suppression à tout moment en nous écrivant sur WhatsApp.",
+    enabled: true,
+  },
+  {
+    id: "retours",
+    title: "Retours et remboursements",
+    content:
+      "Vous disposez de 7 jours après la réception pour demander un échange ou un retour si le produit est défectueux ou ne correspond pas à la description. Le produit doit être non utilisé et dans son emballage d'origine. Le remboursement est effectué en espèces ou par mobile money sous 72 heures.",
+    enabled: true,
+  },
+  {
+    id: "livraison",
+    title: "Livraison",
+    content:
+      "Livraison en 24 à 48 heures en ville et 2 à 5 jours à l'intérieur du pays. Vous payez le produit à la réception, après vérification. Le livreur vous appelle avant de passer.",
+    enabled: true,
+  },
+  {
+    id: "cgv",
+    title: "Conditions générales de vente",
+    content:
+      "Toute commande passée sur cette boutique vaut acceptation des présentes conditions. Les prix sont affichés toutes taxes comprises. Une commande peut être annulée gratuitement tant que le livreur n'est pas parti.",
+    enabled: true,
+  },
+  {
+    id: "contact",
+    title: "Contact et mentions légales",
+    content:
+      "Pour toute question, écrivez-nous sur WhatsApp ou appelez le numéro affiché sur la boutique. Notre service client répond 7j/7 de 8h à 20h.",
+    enabled: true,
+  },
+];
+
+
 export interface StoreTheme {
   templateId: StoreTemplateId;
   /** Couleurs (valeurs hexadécimales). */
@@ -45,6 +92,12 @@ export interface StoreTheme {
   /** Éléments affichés */
   showAnnouncement: boolean;
   announcement: string;
+  /** Plusieurs messages affichés dans le bandeau. */
+  announcements: string[];
+  /** Fait défiler les messages du bandeau en continu. */
+  announcementScroll: boolean;
+  /** Durée d'un cycle de défilement, en secondes. */
+  announcementSpeed: number;
   showHero: boolean;
   heroTitle: string;
   heroSubtitle: string;
@@ -53,6 +106,10 @@ export interface StoreTheme {
   showProducts: boolean;
   showFooter: boolean;
   footerText: string;
+  /** Pages légales affichées dans le pied de page et sur chaque produit. */
+  showLegalPages: boolean;
+  legalPages: StoreLegalPage[];
+
   /** Ordre visuel des blocs de la vitrine. */
   sectionOrder: StoreSectionId[];
 }
@@ -132,6 +189,13 @@ const eclat: StoreTheme = {
   cornerRadius: 4,
   showAnnouncement: true,
   announcement: "Livraison offerte dès 50 000 F CFA",
+  announcements: [
+    "Livraison offerte dès 50 000 F CFA",
+    "Paiement à la livraison partout en ville",
+    "Nouvelle collection disponible cette semaine",
+  ],
+  announcementScroll: true,
+  announcementSpeed: 22,
   showHero: true,
   heroTitle: "Une sélection qui brille",
   heroSubtitle: "Des pièces choisies avec soin, livrées chez vous et payées à la réception.",
@@ -140,6 +204,9 @@ const eclat: StoreTheme = {
   showProducts: true,
   showFooter: true,
   footerText: "Paiement à la livraison · Service client 7j/7",
+  showLegalPages: true,
+  legalPages: defaultLegalPages,
+
   sectionOrder: ["announcement", "hero", "benefits", "categories", "products", "footer"],
 };
 
@@ -172,6 +239,13 @@ const sahel: StoreTheme = {
   cornerRadius: 20,
   showAnnouncement: true,
   announcement: "Paiement à la livraison partout en ville 🚚",
+  announcements: [
+    "Paiement à la livraison partout en ville 🚚",
+    "Commandez sur WhatsApp en 30 secondes",
+    "Livraison 24-48 h · Retour possible sous 7 jours",
+  ],
+  announcementScroll: true,
+  announcementSpeed: 20,
   showHero: true,
   heroTitle: "Le marché, en un clic",
   heroSubtitle:
@@ -181,6 +255,9 @@ const sahel: StoreTheme = {
   showProducts: true,
   showFooter: true,
   footerText: "Commandez sur WhatsApp · Livraison 24-48 h · Paiement à la réception",
+  showLegalPages: true,
+  legalPages: defaultLegalPages,
+
   sectionOrder: ["announcement", "hero", "categories", "products", "benefits", "footer"],
 };
 
@@ -260,6 +337,14 @@ export function useStoreTheme(storeId: string): StoreTheme {
     ...defaultStoreTheme,
     ...saved,
     sectionOrder: saved.sectionOrder ?? defaultStoreTheme.sectionOrder,
+    announcements:
+      saved.announcements && saved.announcements.length > 0
+        ? saved.announcements
+        : [saved.announcement ?? defaultStoreTheme.announcement],
+    announcementScroll: saved.announcementScroll ?? defaultStoreTheme.announcementScroll,
+    announcementSpeed: saved.announcementSpeed ?? defaultStoreTheme.announcementSpeed,
+    showLegalPages: saved.showLegalPages ?? defaultStoreTheme.showLegalPages,
+    legalPages: saved.legalPages ?? defaultLegalPages,
     textBlocks: saved.textBlocks ?? [
       { id: "legacy-title", type: "display", text: saved.heroTitle ?? defaultStoreTheme.heroTitle },
       { id: "legacy-copy", type: "body", text: saved.heroSubtitle ?? defaultStoreTheme.heroSubtitle },
