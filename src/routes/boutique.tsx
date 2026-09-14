@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ExternalLink, Palette, RotateCcw, Store as StoreIcon } from "lucide-react";
+import { useState, type DragEvent } from "react";
+import { Check, ExternalLink, GripVertical, Monitor, Palette, RotateCcw, Smartphone, Store as StoreIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { StorefrontCanvas } from "@/components/commerce/storefront-canvas";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,13 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useActiveStore } from "@/services/commerce.store";
+import { useActiveStore, useProducts } from "@/services/commerce.store";
 import {
   buttonStyleOf,
   fontPairs,
   storeTemplates,
   themeStore,
   useStoreTheme,
+  type StoreSectionId,
   type StoreTheme,
 } from "@/services/theme.store";
 import { formatMoney, formatNumber } from "@/lib/format";
@@ -71,9 +74,13 @@ function StoreEditorPage() {
 }
 
 function StoreEditor({ storeId }: { storeId: string }) {
-  const store = useActiveStore()!;
+  const store = useActiveStore();
+  const products = useProducts().filter((product) => product.storeId === storeId);
   const theme = useStoreTheme(storeId);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const set = (patch: Partial<StoreTheme>) => themeStore.update(storeId, patch);
+
+  if (!store) return null;
 
   return (
     <>
@@ -127,7 +134,8 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="templates">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,5fr)_minmax(420px,4fr)]">
+      <Tabs defaultValue="templates" className="min-w-0">
         <TabsList className="flex w-full flex-wrap justify-start gap-1 sm:w-auto">
           <TabsTrigger value="templates">Modèles</TabsTrigger>
           <TabsTrigger value="layout">Mise en page</TabsTrigger>
@@ -178,7 +186,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
 
         {/* -------- Mise en page -------- */}
         <TabsContent value="layout" className="mt-4 grid gap-4 lg:grid-cols-2">
-          <Card>
+          <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="text-base">Grille des produits</CardTitle>
             </CardHeader>
@@ -250,37 +258,8 @@ function StoreEditor({ storeId }: { storeId: string }) {
             <CardHeader>
               <CardTitle className="text-base">Sections affichées</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <ToggleRow
-                label="Bandeau d'annonce"
-                hint="Message défilant en haut de la boutique."
-                checked={theme.showAnnouncement}
-                onChange={(v) => set({ showAnnouncement: v })}
-              />
-              <ToggleRow
-                label="Bannière d'accueil"
-                hint="Grand titre de présentation au-dessus des produits."
-                checked={theme.showHero}
-                onChange={(v) => set({ showHero: v })}
-              />
-              <ToggleRow
-                label="Arguments de confiance"
-                hint="Paiement à la livraison, livraison rapide, produits vérifiés."
-                checked={theme.showBenefits}
-                onChange={(v) => set({ showBenefits: v })}
-              />
-              <ToggleRow
-                label="Filtres par catégorie"
-                hint="Liste des catégories au-dessus des produits."
-                checked={theme.showCategories}
-                onChange={(v) => set({ showCategories: v })}
-              />
-              <ToggleRow
-                label="Pied de page"
-                hint="Texte rassurant en bas de la boutique."
-                checked={theme.showFooter}
-                onChange={(v) => set({ showFooter: v })}
-              />
+            <CardContent>
+              <SectionManager theme={theme} set={set} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -292,6 +271,19 @@ function StoreEditor({ storeId }: { storeId: string }) {
               <CardTitle className="text-base">Palette</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <Label>Palettes prêtes à l'emploi</Label>
+                <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                  {COLOR_PALETTES.map((palette) => (
+                    <Button key={palette.name} variant="outline" className="h-auto justify-start p-3" onClick={() => set(palette.colors)}>
+                      <span className="flex gap-1" aria-hidden="true">
+                        {[palette.colors.primary, palette.colors.accent, palette.colors.background].map((color) => <span key={color} className="h-5 w-5 rounded-full border" style={{ background: color }} />)}
+                      </span>
+                      <span className="text-xs">{palette.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
               <ColorField label="Couleur principale" value={theme.primary} onChange={(v) => set({ primary: v })} />
               <ColorField label="Texte sur la couleur principale" value={theme.primaryText} onChange={(v) => set({ primaryText: v })} />
               <ColorField label="Fond de la page" value={theme.background} onChange={(v) => set({ background: v })} />
@@ -327,7 +319,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
                   <SelectContent>
                     {(Object.entries(fontPairs) as [StoreTheme["fontPair"], { label: string }][]).map(
                       ([key, pair]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} value={key} style={{ fontFamily: pair.heading }}>
                           {pair.label}
                         </SelectItem>
                       ),
@@ -484,6 +476,22 @@ function StoreEditor({ storeId }: { storeId: string }) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <aside className="sticky top-4 hidden xl:block">
+        <div className="mb-3 flex items-center justify-between">
+          <div><p className="font-semibold">Aperçu en direct</p><p className="text-xs text-muted-foreground">Les changements apparaissent immédiatement.</p></div>
+          <div className="flex rounded-md border bg-background p-1">
+            <Button size="icon" variant={previewDevice === "desktop" ? "secondary" : "ghost"} aria-label="Aperçu ordinateur" title="Ordinateur" onClick={() => setPreviewDevice("desktop")}><Monitor /></Button>
+            <Button size="icon" variant={previewDevice === "mobile" ? "secondary" : "ghost"} aria-label="Aperçu téléphone" title="Téléphone" onClick={() => setPreviewDevice("mobile")}><Smartphone /></Button>
+          </div>
+        </div>
+        <div className="flex max-h-[calc(100vh-8rem)] justify-center overflow-auto rounded-lg border bg-muted p-3">
+          <div className={previewDevice === "mobile" ? "w-[390px] shrink-0 overflow-hidden rounded-lg bg-background shadow-sm" : "w-full overflow-hidden rounded-lg bg-background shadow-sm"}>
+            <StorefrontCanvas store={store} products={products} theme={theme} preview />
+          </div>
+        </div>
+      </aside>
+      </div>
     </>
   );
 }
