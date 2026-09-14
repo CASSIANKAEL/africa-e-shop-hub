@@ -52,16 +52,12 @@ function FormsHubPage() {
   const forms = useForms(activeStoreId);
   const pixels = usePixels(activeStoreId);
   const campaigns = useOfferCampaigns(activeStoreId);
-  const integrations = useAppIntegrations(activeStoreId).filter(
-    (i) => i.key !== "whatsapp" && i.key !== "google_sheets",
-  );
   const wa = useWhatsappWidget(activeStoreId);
   const sheets = useGoogleSheets(activeStoreId);
   const shopping = useGoogleShopping(activeStoreId);
   const waEnabled = wa.enabled;
   const waNumber = whatsappNumber(wa.countryCode, wa.phone);
   const form = forms[0];
-  const connected = integrations.filter((i) => i.connected).length;
 
   const sections = [
     {
