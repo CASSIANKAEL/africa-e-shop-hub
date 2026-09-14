@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
-import { useForms } from "@/services/forms.store";
+import { useForms, useProductOffers } from "@/services/forms.store";
+import { offerPrice, offerSavings } from "@/components/forms/offer-campaign-editor";
 import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
 import { AnnouncementBar, LegalPages } from "@/components/commerce/storefront-canvas";
 import { useStoreTheme } from "@/services/theme.store";
@@ -41,6 +42,7 @@ function PublicProductPage() {
   const storeForms = useForms(storeId);
   const form = storeForms.find((f) => f.status === "active") ?? storeForms[0];
   const theme = useStoreTheme(storeId);
+  const campaign = useProductOffers(storeId, productId);
 
   if (!store || !product) {
     return (
@@ -56,7 +58,7 @@ function PublicProductPage() {
   }
 
   const design = form?.design;
-  const offers = form?.offers ?? [];
+  const offers = campaign ? campaign.offers : (form?.offers ?? []);
   const upsells = (form?.upsells ?? []).filter((u) => u.enabled);
   const fields = (form?.fields ?? []).filter((f) => f.enabled);
 
@@ -123,20 +125,47 @@ function PublicProductPage() {
             <Card>
               <CardContent className="space-y-2 p-4">
                 <p className="text-sm font-medium">Offres par quantité</p>
-                {offers.map((o) => (
-                  <div
-                    key={o.id}
-                    className="flex items-center justify-between rounded-xl border p-3 text-sm"
-                  >
-                    <span>{o.label}</span>
-                    <span className="font-semibold">
-                      {formatMoney(
-                        product.price * o.quantity * (1 - o.discountPercent / 100),
-                        store.currency,
-                      )}
-                    </span>
-                  </div>
-                ))}
+                {offers.map((o) => {
+                  const price = offerPrice(product.price, o);
+                  const saving = offerSavings(product.price, o);
+                  return (
+                    <div
+                      key={o.id}
+                      className="flex items-center justify-between gap-3 rounded-xl border p-3 text-sm"
+                      style={o.preselected ? { borderColor: o.tagColor ?? undefined } : undefined}
+                    >
+                      <span className="flex min-w-0 items-center gap-2">
+                        {o.image && (
+                          <img src={o.image} alt="" className="h-9 w-9 rounded object-cover" />
+                        )}
+                        <span className="min-w-0">
+                          <span className="block truncate">{o.label}</span>
+                          {o.tag && (
+                            <span
+                              className="mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium text-white"
+                              style={{ backgroundColor: o.tagColor ?? "#e2703f" }}
+                            >
+                              {o.tag}
+                            </span>
+                          )}
+                          {o.freeShipping && (
+                            <span className="block text-xs text-muted-foreground">
+                              Livraison offerte
+                            </span>
+                          )}
+                        </span>
+                      </span>
+                      <span className="text-right">
+                        {saving > 0 && (
+                          <span className="block text-xs text-muted-foreground line-through">
+                            {formatMoney(product.price * o.quantity, store.currency)}
+                          </span>
+                        )}
+                        <span className="font-semibold">{formatMoney(price, store.currency)}</span>
+                      </span>
+                    </div>
+                  );
+                })}
               </CardContent>
             </Card>
           )}

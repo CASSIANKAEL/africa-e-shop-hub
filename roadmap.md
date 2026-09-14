@@ -20,3 +20,4 @@
 - [x] Éditeur visuel enrichi : palettes et polices, aperçu direct téléphone/ordinateur, blocs de vitrine réorganisables
 - [x] Éditeur structuré sans chevauchement : import du logo et blocs de texte modulables par taille
 - [x] Mapping personnalisable des colonnes Google Sheets par boutique
+- [x] Offres de quantité multiples par produits choisis (remise fixe/pourcentage, étiquette, image, présélection, duplication, aperçu direct)
