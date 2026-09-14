@@ -189,6 +189,13 @@ const eclat: StoreTheme = {
   cornerRadius: 4,
   showAnnouncement: true,
   announcement: "Livraison offerte dès 50 000 F CFA",
+  announcements: [
+    "Livraison offerte dès 50 000 F CFA",
+    "Paiement à la livraison partout en ville",
+    "Nouvelle collection disponible cette semaine",
+  ],
+  announcementScroll: true,
+  announcementSpeed: 22,
   showHero: true,
   heroTitle: "Une sélection qui brille",
   heroSubtitle: "Des pièces choisies avec soin, livrées chez vous et payées à la réception.",
@@ -197,6 +204,9 @@ const eclat: StoreTheme = {
   showProducts: true,
   showFooter: true,
   footerText: "Paiement à la livraison · Service client 7j/7",
+  showLegalPages: true,
+  legalPages: defaultLegalPages,
+
   sectionOrder: ["announcement", "hero", "benefits", "categories", "products", "footer"],
 };
 
