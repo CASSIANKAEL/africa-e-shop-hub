@@ -41,8 +41,33 @@ function setState(next: Partial<FormsState>) {
   listeners.forEach((l) => l());
 }
 
+const WA_KEY = "sooko-whatsapp-widgets";
+let hydrated = false;
+
+/** Charge les boutons WhatsApp enregistrés (après l'hydratation, côté navigateur). */
+function hydrateWhatsapp() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  try {
+    const raw = window.localStorage.getItem(WA_KEY);
+    if (raw) setState({ whatsapp: JSON.parse(raw) as Record<string, WhatsappWidget> });
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
+function persistWhatsapp() {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(WA_KEY, JSON.stringify(state.whatsapp));
+  } catch {
+    /* stockage indisponible */
+  }
+}
+
 function subscribe(listener: () => void) {
   listeners.add(listener);
+  hydrateWhatsapp();
   return () => listeners.delete(listener);
 }
 
