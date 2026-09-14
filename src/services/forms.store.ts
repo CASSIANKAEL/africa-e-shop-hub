@@ -1,19 +1,37 @@
 import { useSyncExternalStore } from "react";
 
-import type { AppIntegration, AppIntegrationKey, OrderForm, PixelIntegration } from "@/types";
+import type {
+  AppIntegration,
+  AppIntegrationKey,
+  OrderForm,
+  PixelIntegration,
+  WhatsappWidget,
+} from "@/types";
 import { emptyForm, initialAppIntegrations, initialForms, initialPixels } from "./forms.mock";
+
+export const defaultWhatsappWidget: WhatsappWidget = {
+  enabled: false,
+  countryCode: "CI",
+  phone: "",
+  label: "Écrivez-nous",
+  message: "Bonjour, j'ai une question sur un produit.",
+  position: "right",
+};
 
 interface FormsState {
   forms: OrderForm[];
   pixels: PixelIntegration[];
   /** Intégrations propres à chaque boutique. */
   integrations: Record<string, AppIntegration[]>;
+  /** Bouton WhatsApp de la boutique en ligne, propre à chaque boutique. */
+  whatsapp: Record<string, WhatsappWidget>;
 }
 
 let state: FormsState = {
   forms: initialForms,
   pixels: initialPixels,
   integrations: {},
+  whatsapp: {},
 };
 
 const listeners = new Set<() => void>();
