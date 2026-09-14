@@ -4,7 +4,6 @@ import {
   FileText,
   Layers,
   MessageCircle,
-  Plug,
   ShoppingBag,
   Target,
 } from "lucide-react";
@@ -17,7 +16,6 @@ import { whatsappNumber } from "@/lib/countries";
 import { formatNumber, formatPercent } from "@/lib/format";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
 import {
-  useAppIntegrations,
   useGoogleSheets,
   useGoogleShopping,
   useForms,
@@ -52,16 +50,12 @@ function FormsHubPage() {
   const forms = useForms(activeStoreId);
   const pixels = usePixels(activeStoreId);
   const campaigns = useOfferCampaigns(activeStoreId);
-  const integrations = useAppIntegrations(activeStoreId).filter(
-    (i) => i.key !== "whatsapp" && i.key !== "google_sheets",
-  );
   const wa = useWhatsappWidget(activeStoreId);
   const sheets = useGoogleSheets(activeStoreId);
   const shopping = useGoogleShopping(activeStoreId);
   const waEnabled = wa.enabled;
   const waNumber = whatsappNumber(wa.countryCode, wa.phone);
   const form = forms[0];
-  const connected = integrations.filter((i) => i.connected).length;
 
   const sections = [
     {
@@ -121,14 +115,6 @@ function FormsHubPage() {
       text: "Publiez votre flux produits sur Google Shopping via un compte Google et un fichier de calcul.",
       status: shopping.enabled ? "Activé" : "Désactivé",
       detail: shopping.sheet.connected ? "Flux produits connecté" : "Flux produits à connecter",
-    },
-    {
-      to: "/formulaires/site" as const,
-      icon: Plug,
-      title: "Site",
-      text: "SMS, transporteur ou webhook pour automatiser les commandes du site.",
-      status: `${connected} connectée(s)`,
-      detail: `${integrations.length} disponibles`,
     },
   ];
 

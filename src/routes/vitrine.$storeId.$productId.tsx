@@ -58,7 +58,7 @@ function PublicProductPage() {
   }
 
   const design = form?.design;
-  const offers = campaign ? campaign.offers : (form?.offers ?? []);
+  const offers = campaign?.offers ?? [];
   const upsells = (form?.upsells ?? []).filter((u) => u.enabled);
   const fields = (form?.fields ?? []).filter((f) => f.enabled);
 
