@@ -21,3 +21,4 @@
 - [x] Éditeur structuré sans chevauchement : import du logo et blocs de texte modulables par taille
 - [x] Mapping personnalisable des colonnes Google Sheets par boutique
 - [x] Offres de quantité multiples par produits choisis (remise fixe/pourcentage, étiquette, image, présélection, duplication, aperçu direct)
+- [x] Landing page de présentation à l'accueil (/) ; tableau de bord déplacé sur /tableau-de-bord

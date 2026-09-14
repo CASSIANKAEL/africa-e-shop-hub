@@ -45,7 +45,7 @@ import { commerceStore, useActiveStoreId, useStores } from "@/services/commerce.
 import { useLanguage } from "@/lib/i18n";
 
 const mainItems = [
-  { title: "Tableau de bord", url: "/", icon: LayoutDashboard, exact: true },
+  { title: "Tableau de bord", url: "/tableau-de-bord", icon: LayoutDashboard, exact: true },
   { title: "Vue d'ensemble", url: "/vue-ensemble", icon: Globe },
   { title: "Boutique", url: "/boutique", icon: Store },
   { title: "Produits", url: "/produits", icon: Package },
@@ -112,7 +112,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
-        <Link to="/" onClick={close} className="flex items-center gap-3">
+        <Link to="/tableau-de-bord" onClick={close} className="flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
             <Sparkles className="h-4 w-4" />
           </span>
