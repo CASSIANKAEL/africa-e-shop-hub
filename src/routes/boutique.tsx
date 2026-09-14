@@ -863,3 +863,154 @@ function TemplatePreview({ theme }: { theme: StoreTheme }) {
     </div>
   );
 }
+
+function AnnouncementManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const messages = theme.announcements;
+
+  function updateMessage(index: number, value: string) {
+    const next = messages.map((message, i) => (i === index ? value : message));
+    set({ announcements: next, announcement: next[0] ?? "" });
+  }
+
+  return (
+    <div className="space-y-3">
+      <ToggleRow
+        label="Afficher le bandeau"
+        hint="Bandeau placé tout en haut de la boutique."
+        checked={theme.showAnnouncement}
+        onChange={(v) => set({ showAnnouncement: v })}
+      />
+      <ToggleRow
+        label="Faire défiler les messages"
+        hint="Les messages défilent en continu, l'un après l'autre."
+        checked={theme.announcementScroll}
+        onChange={(v) => set({ announcementScroll: v })}
+      />
+      {theme.announcementScroll && (
+        <SliderField
+          label="Vitesse du défilement"
+          value={theme.announcementSpeed}
+          min={8}
+          max={60}
+          suffix=" s"
+          onChange={(v) => set({ announcementSpeed: v })}
+        />
+      )}
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <p className="text-xs text-muted-foreground">Ajoutez plusieurs messages : ils s'enchaînent dans le bandeau.</p>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => set({ announcements: [...messages, "Nouveau message"] })}
+        >
+          <Plus /> Ajouter
+        </Button>
+      </div>
+      {messages.map((message, index) => (
+        <div key={index} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+          <Input
+            aria-label={`Message ${index + 1} du bandeau`}
+            value={message}
+            onChange={(event) => updateMessage(index, event.target.value)}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={`Supprimer le message ${index + 1}`}
+            onClick={() => {
+              const next = messages.filter((_, i) => i !== index);
+              set({ announcements: next, announcement: next[0] ?? "" });
+            }}
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      ))}
+      {messages.length === 0 && (
+        <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+          Ajoutez un premier message d'annonce.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function LegalPagesManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const pages = theme.legalPages;
+
+  function updatePage(id: string, patch: Partial<StoreLegalPage>) {
+    set({ legalPages: pages.map((page) => (page.id === id ? { ...page, ...patch } : page)) });
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <p className="text-xs text-muted-foreground">
+          Des textes d'exemple sont déjà remplis : modifiez-les librement.
+        </p>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              set({ legalPages: defaultLegalPages });
+              toast.success("Textes d'exemple restaurés");
+            }}
+          >
+            <RotateCcw /> Exemples
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `legal-${Date.now()}`;
+              set({ legalPages: [...pages, { id, title: "Nouvelle page", content: "", enabled: true }] });
+            }}
+          >
+            <Plus /> Ajouter
+          </Button>
+        </div>
+      </div>
+      {pages.map((page) => (
+        <div key={page.id} className="space-y-2 rounded-md border bg-muted/30 p-3">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2">
+            <Input
+              aria-label="Titre de la page légale"
+              value={page.title}
+              onChange={(event) => updatePage(page.id, { title: event.target.value })}
+            />
+            <Switch
+              aria-label={`${page.enabled ? "Masquer" : "Afficher"} ${page.title}`}
+              checked={page.enabled}
+              onCheckedChange={(checked) => updatePage(page.id, { enabled: checked })}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={`Supprimer ${page.title}`}
+              onClick={() => set({ legalPages: pages.filter((item) => item.id !== page.id) })}
+            >
+              <Trash2 />
+            </Button>
+          </div>
+          <Textarea
+            aria-label={`Contenu de ${page.title}`}
+            rows={4}
+            value={page.content}
+            onChange={(event) => updatePage(page.id, { content: event.target.value })}
+          />
+        </div>
+      ))}
+      {pages.length === 0 && (
+        <p className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+          Aucune page légale. Ajoutez-en une ou restaurez les exemples.
+        </p>
+      )}
+    </div>
+  );
+}
