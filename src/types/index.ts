@@ -307,3 +307,38 @@ export interface WhatsappWidget {
   message: string;
   position: "right" | "left";
 }
+
+/** Compte Google connecté à la boutique (feuilles de calcul, Google Shopping). */
+export interface GoogleAccountLink {
+  connected: boolean;
+  email: string;
+}
+
+/** Connexion à un fichier Google Sheets. */
+export interface GoogleSheetLink {
+  connected: boolean;
+  /** Lien complet du fichier Google Sheets. */
+  url: string;
+  /** Nom de l'onglet utilisé. */
+  tab: string;
+}
+
+/** Synchronisation Google Sheets d'une boutique. */
+export interface GoogleSheetsConfig {
+  account: GoogleAccountLink;
+  sheet: GoogleSheetLink;
+  /** Ajoute chaque nouvelle commande à la feuille. */
+  autoSyncOrders: boolean;
+}
+
+/** Flux produits Google Shopping d'une boutique. */
+export interface GoogleShoppingConfig {
+  enabled: boolean;
+  account: GoogleAccountLink;
+  /** Feuille de calcul servant de flux produits. */
+  sheet: GoogleSheetLink;
+  merchantId: string;
+  country: string;
+  /** Met à jour le flux automatiquement. */
+  autoSyncFeed: boolean;
+}
