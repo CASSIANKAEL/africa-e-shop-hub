@@ -17,3 +17,4 @@
 - [x] Section Équipe par boutique (admin, closeuse, livreur), invitations/accès, attribution des commandes aux livreurs et espace Livraisons
 
 - [x] Espace d’édition de la boutique active (/boutique) : modèles Éclat et Sahel Market + personnalisation avancée appliquée à la vitrine
+- [x] Éditeur visuel enrichi : palettes et polices, aperçu direct téléphone/ordinateur, blocs de vitrine réorganisables

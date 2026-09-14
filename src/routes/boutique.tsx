@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ExternalLink, Palette, RotateCcw, Store as StoreIcon } from "lucide-react";
+import { useState, type DragEvent } from "react";
+import { Check, ExternalLink, GripVertical, Monitor, Palette, RotateCcw, Smartphone, Store as StoreIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { StorefrontCanvas } from "@/components/commerce/storefront-canvas";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,13 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useActiveStore } from "@/services/commerce.store";
+import { useActiveStore, useProducts } from "@/services/commerce.store";
 import {
   buttonStyleOf,
   fontPairs,
   storeTemplates,
   themeStore,
   useStoreTheme,
+  type StoreSectionId,
   type StoreTheme,
 } from "@/services/theme.store";
 import { formatMoney, formatNumber } from "@/lib/format";
@@ -71,9 +74,13 @@ function StoreEditorPage() {
 }
 
 function StoreEditor({ storeId }: { storeId: string }) {
-  const store = useActiveStore()!;
+  const store = useActiveStore();
+  const products = useProducts().filter((product) => product.storeId === storeId);
   const theme = useStoreTheme(storeId);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const set = (patch: Partial<StoreTheme>) => themeStore.update(storeId, patch);
+
+  if (!store) return null;
 
   return (
     <>
@@ -127,7 +134,8 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="templates">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,5fr)_minmax(420px,4fr)]">
+      <Tabs defaultValue="templates" className="min-w-0">
         <TabsList className="flex w-full flex-wrap justify-start gap-1 sm:w-auto">
           <TabsTrigger value="templates">Modèles</TabsTrigger>
           <TabsTrigger value="layout">Mise en page</TabsTrigger>
@@ -178,7 +186,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
 
         {/* -------- Mise en page -------- */}
         <TabsContent value="layout" className="mt-4 grid gap-4 lg:grid-cols-2">
-          <Card>
+          <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="text-base">Grille des produits</CardTitle>
             </CardHeader>
@@ -250,37 +258,8 @@ function StoreEditor({ storeId }: { storeId: string }) {
             <CardHeader>
               <CardTitle className="text-base">Sections affichées</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <ToggleRow
-                label="Bandeau d'annonce"
-                hint="Message défilant en haut de la boutique."
-                checked={theme.showAnnouncement}
-                onChange={(v) => set({ showAnnouncement: v })}
-              />
-              <ToggleRow
-                label="Bannière d'accueil"
-                hint="Grand titre de présentation au-dessus des produits."
-                checked={theme.showHero}
-                onChange={(v) => set({ showHero: v })}
-              />
-              <ToggleRow
-                label="Arguments de confiance"
-                hint="Paiement à la livraison, livraison rapide, produits vérifiés."
-                checked={theme.showBenefits}
-                onChange={(v) => set({ showBenefits: v })}
-              />
-              <ToggleRow
-                label="Filtres par catégorie"
-                hint="Liste des catégories au-dessus des produits."
-                checked={theme.showCategories}
-                onChange={(v) => set({ showCategories: v })}
-              />
-              <ToggleRow
-                label="Pied de page"
-                hint="Texte rassurant en bas de la boutique."
-                checked={theme.showFooter}
-                onChange={(v) => set({ showFooter: v })}
-              />
+            <CardContent>
+              <SectionManager theme={theme} set={set} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -292,6 +271,19 @@ function StoreEditor({ storeId }: { storeId: string }) {
               <CardTitle className="text-base">Palette</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <Label>Palettes prêtes à l'emploi</Label>
+                <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                  {COLOR_PALETTES.map((palette) => (
+                    <Button key={palette.name} variant="outline" className="h-auto justify-start p-3" onClick={() => set(palette.colors)}>
+                      <span className="flex gap-1" aria-hidden="true">
+                        {[palette.colors.primary, palette.colors.accent, palette.colors.background].map((color) => <span key={color} className="h-5 w-5 rounded-full border" style={{ background: color }} />)}
+                      </span>
+                      <span className="text-xs">{palette.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
               <ColorField label="Couleur principale" value={theme.primary} onChange={(v) => set({ primary: v })} />
               <ColorField label="Texte sur la couleur principale" value={theme.primaryText} onChange={(v) => set({ primaryText: v })} />
               <ColorField label="Fond de la page" value={theme.background} onChange={(v) => set({ background: v })} />
@@ -325,9 +317,9 @@ function StoreEditor({ storeId }: { storeId: string }) {
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {(Object.entries(fontPairs) as [StoreTheme["fontPair"], { label: string }][]).map(
+                    {(Object.entries(fontPairs) as [StoreTheme["fontPair"], { label: string; heading: string }][]).map(
                       ([key, pair]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem key={key} value={key} style={{ fontFamily: pair.heading }}>
                           {pair.label}
                         </SelectItem>
                       ),
@@ -484,11 +476,91 @@ function StoreEditor({ storeId }: { storeId: string }) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <aside className="xl:sticky xl:top-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div><p className="font-semibold">Aperçu en direct</p><p className="text-xs text-muted-foreground">Les changements apparaissent immédiatement.</p></div>
+          <div className="flex rounded-md border bg-background p-1">
+            <Button size="icon" variant={previewDevice === "desktop" ? "secondary" : "ghost"} aria-label="Aperçu ordinateur" title="Ordinateur" onClick={() => setPreviewDevice("desktop")}><Monitor /></Button>
+            <Button size="icon" variant={previewDevice === "mobile" ? "secondary" : "ghost"} aria-label="Aperçu téléphone" title="Téléphone" onClick={() => setPreviewDevice("mobile")}><Smartphone /></Button>
+          </div>
+        </div>
+        <div className="flex max-h-[calc(100vh-8rem)] justify-center overflow-auto rounded-lg border bg-muted p-3">
+          <div className={previewDevice === "mobile" ? "w-[390px] shrink-0 overflow-hidden rounded-lg bg-background shadow-sm" : "w-full overflow-hidden rounded-lg bg-background shadow-sm"}>
+            <StorefrontCanvas store={store} products={products} theme={theme} preview />
+          </div>
+        </div>
+      </aside>
+      </div>
     </>
   );
 }
 
 /* ---------- Petits composants ---------- */
+
+const COLOR_PALETTES: { name: string; colors: Pick<StoreTheme, "primary" | "primaryText" | "background" | "surface" | "text" | "muted" | "accent"> }[] = [
+  { name: "Savane", colors: { primary: "#b54708", primaryText: "#fffaf5", background: "#fffaf2", surface: "#ffffff", text: "#2b1b12", muted: "#795f50", accent: "#2f7d64" } },
+  { name: "Lagune", colors: { primary: "#075985", primaryText: "#f0f9ff", background: "#f8fafc", surface: "#ffffff", text: "#172033", muted: "#64748b", accent: "#f2bd48" } },
+  { name: "Ébène", colors: { primary: "#171717", primaryText: "#ffffff", background: "#fafafa", surface: "#ffffff", text: "#171717", muted: "#737373", accent: "#dc9f54" } },
+];
+
+const SECTION_CONFIG: Record<StoreSectionId, { label: string; hint: string; visibility: keyof StoreTheme }> = {
+  announcement: { label: "Bandeau d'annonce", hint: "Message placé en haut de la boutique.", visibility: "showAnnouncement" },
+  hero: { label: "Bannière d'accueil", hint: "Titre et présentation de la boutique.", visibility: "showHero" },
+  benefits: { label: "Arguments de confiance", hint: "Paiement, livraison et garanties.", visibility: "showBenefits" },
+  categories: { label: "Catégories", hint: "Accès rapide aux catégories de produits.", visibility: "showCategories" },
+  products: { label: "Produits", hint: "Catalogue des produits disponibles.", visibility: "showProducts" },
+  footer: { label: "Pied de page", hint: "Informations affichées en bas de page.", visibility: "showFooter" },
+};
+
+function SectionManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const [dragged, setDragged] = useState<StoreSectionId | null>(null);
+
+  function dropOn(target: StoreSectionId, event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (!dragged || dragged === target) return;
+    const next = [...theme.sectionOrder];
+    const from = next.indexOf(dragged);
+    const to = next.indexOf(target);
+    if (from < 0 || to < 0) return;
+    next.splice(from, 1);
+    next.splice(to, 0, dragged);
+    set({ sectionOrder: next });
+    setDragged(null);
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="mb-3 text-xs text-muted-foreground">Saisissez un bloc par sa poignée puis déposez-le à la position souhaitée.</p>
+      {theme.sectionOrder.map((id) => {
+        const config = SECTION_CONFIG[id];
+        const enabled = Boolean(theme[config.visibility]);
+        return (
+          <div
+            key={id}
+            draggable
+            onDragStart={() => setDragged(id)}
+            onDragEnd={() => setDragged(null)}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => dropOn(id, event)}
+            className={`flex items-center gap-3 rounded-md border bg-card p-3 transition-opacity ${dragged === id ? "opacity-50" : "opacity-100"}`}
+          >
+            <GripVertical className="h-5 w-5 shrink-0 cursor-grab text-muted-foreground" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">{config.label}</p>
+              <p className="text-xs text-muted-foreground">{config.hint}</p>
+            </div>
+            <Switch
+              aria-label={`${enabled ? "Masquer" : "Afficher"} ${config.label}`}
+              checked={enabled}
+              onCheckedChange={(checked) => set({ [config.visibility]: checked } as Partial<StoreTheme>)}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

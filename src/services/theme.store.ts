@@ -3,6 +3,7 @@ import { useSyncExternalStore } from "react";
 /* ---------- Types ---------- */
 
 export type StoreTemplateId = "eclat" | "sahel";
+export type StoreSectionId = "announcement" | "hero" | "benefits" | "categories" | "products" | "footer";
 
 export interface StoreTheme {
   templateId: StoreTemplateId;
@@ -15,7 +16,7 @@ export interface StoreTheme {
   muted: string;
   accent: string;
   /** Typographie */
-  fontPair: "grotesk" | "elegant" | "modern" | "afro";
+  fontPair: "grotesk" | "elegant" | "modern" | "afro" | "editorial" | "friendly";
   headingScale: number;
   uppercaseHeadings: boolean;
   /** Boutons */
@@ -39,8 +40,11 @@ export interface StoreTheme {
   heroSubtitle: string;
   showBenefits: boolean;
   showCategories: boolean;
+  showProducts: boolean;
   showFooter: boolean;
   footerText: string;
+  /** Ordre visuel des blocs de la vitrine. */
+  sectionOrder: StoreSectionId[];
 }
 
 export interface StoreTemplate {
@@ -74,6 +78,16 @@ export const fontPairs: Record<
     label: "Sora / Work Sans",
     heading: '"Sora", ui-sans-serif, system-ui, sans-serif',
     body: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  editorial: {
+    label: "Libre Baskerville / Work Sans",
+    heading: '"Libre Baskerville", Georgia, serif',
+    body: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  friendly: {
+    label: "Lora / Nunito Sans",
+    heading: '"Lora", Georgia, serif',
+    body: '"Nunito Sans", ui-sans-serif, system-ui, sans-serif',
   },
 };
 
@@ -109,8 +123,10 @@ const eclat: StoreTheme = {
   heroSubtitle: "Des pièces choisies avec soin, livrées chez vous et payées à la réception.",
   showBenefits: true,
   showCategories: true,
+  showProducts: true,
   showFooter: true,
   footerText: "Paiement à la livraison · Service client 7j/7",
+  sectionOrder: ["announcement", "hero", "benefits", "categories", "products", "footer"],
 };
 
 const sahel: StoreTheme = {
@@ -144,8 +160,10 @@ const sahel: StoreTheme = {
     "Commandez sans carte bancaire, payez à la livraison et discutez avec nous sur WhatsApp.",
   showBenefits: true,
   showCategories: true,
+  showProducts: true,
   showFooter: true,
   footerText: "Commandez sur WhatsApp · Livraison 24-48 h · Paiement à la réception",
+  sectionOrder: ["announcement", "hero", "categories", "products", "benefits", "footer"],
 };
 
 export const storeTemplates: StoreTemplate[] = [
@@ -219,7 +237,12 @@ function getSnapshot() {
 
 export function useStoreTheme(storeId: string): StoreTheme {
   const map = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return { ...defaultStoreTheme, ...(map[storeId] ?? {}) };
+  const saved: Partial<StoreTheme> = map[storeId] ?? {};
+  return {
+    ...defaultStoreTheme,
+    ...saved,
+    sectionOrder: saved.sectionOrder ?? defaultStoreTheme.sectionOrder,
+  };
 }
 
 export const themeStore = {
