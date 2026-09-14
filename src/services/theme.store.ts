@@ -3,6 +3,7 @@ import { useSyncExternalStore } from "react";
 /* ---------- Types ---------- */
 
 export type StoreTemplateId = "eclat" | "sahel";
+export type StoreSectionId = "announcement" | "hero" | "benefits" | "categories" | "products" | "footer";
 
 export interface StoreTheme {
   templateId: StoreTemplateId;
@@ -41,6 +42,8 @@ export interface StoreTheme {
   showCategories: boolean;
   showFooter: boolean;
   footerText: string;
+  /** Ordre visuel des blocs de la vitrine. */
+  sectionOrder: StoreSectionId[];
 }
 
 export interface StoreTemplate {
@@ -74,6 +77,16 @@ export const fontPairs: Record<
     label: "Sora / Work Sans",
     heading: '"Sora", ui-sans-serif, system-ui, sans-serif',
     body: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  editorial: {
+    label: "Libre Baskerville / Work Sans",
+    heading: '"Libre Baskerville", Georgia, serif',
+    body: '"Work Sans", ui-sans-serif, system-ui, sans-serif',
+  },
+  friendly: {
+    label: "Lora / Nunito Sans",
+    heading: '"Lora", Georgia, serif',
+    body: '"Nunito Sans", ui-sans-serif, system-ui, sans-serif',
   },
 };
 
