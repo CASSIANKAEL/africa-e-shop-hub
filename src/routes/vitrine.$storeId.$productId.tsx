@@ -1,18 +1,21 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, CheckCircle2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { formatMoney } from "@/lib/format";
-import { useProducts, useStores } from "@/services/commerce.store";
+import { commerceStore, useProducts, useStores } from "@/services/commerce.store";
 import { useForms, useProductOffers } from "@/services/forms.store";
 import { offerPrice, offerSavings } from "@/components/forms/offer-campaign-editor";
 import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
 import { AnnouncementBar, LegalPages } from "@/components/commerce/storefront-canvas";
 import { useStoreTheme } from "@/services/theme.store";
+import type { Order, OrderFormField, QuantityOffer } from "@/types";
 
 export const Route = createFileRoute("/vitrine/$storeId/$productId")({
   head: () => ({
@@ -44,6 +47,18 @@ function PublicProductPage() {
   const theme = useStoreTheme(storeId);
   const campaign = useProductOffers(storeId, productId);
 
+  const offers = useMemo(() => campaign?.offers ?? [], [campaign]);
+  const fields = useMemo(
+    () => (form?.fields ?? []).filter((f) => f.enabled),
+    [form],
+  );
+  const upsells = (form?.upsells ?? []).filter((u) => u.enabled);
+
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const [placed, setPlaced] = useState<Order | null>(null);
+
   if (!store || !product) {
     return (
       <main className="mx-auto max-w-3xl p-10 text-center">
@@ -58,9 +73,122 @@ function PublicProductPage() {
   }
 
   const design = form?.design;
-  const offers = campaign?.offers ?? [];
-  const upsells = (form?.upsells ?? []).filter((u) => u.enabled);
-  const fields = (form?.fields ?? []).filter((f) => f.enabled);
+  const preselected = offers.find((o) => o.preselected) ?? offers[0];
+  const activeOffer: QuantityOffer | undefined =
+    offers.find((o) => o.id === selectedOfferId) ?? preselected;
+  const quantity = Math.max(1, activeOffer?.quantity ?? 1);
+  const subtotal = activeOffer
+    ? offerPrice(product.price, activeOffer)
+    : product.price;
+  const shipping = activeOffer?.freeShipping ? 0 : (form?.settings.shippingFee ?? 0);
+  const total = subtotal + shipping;
+
+  function fieldValue(kind: OrderFormField["type"]): string {
+    const field = fields.find((f) => f.type === kind);
+    return field ? (values[field.id] ?? "").trim() : "";
+  }
+
+  function submit() {
+    if (!store || !product) return;
+    const nextErrors: Record<string, boolean> = {};
+    fields.forEach((f) => {
+      if (f.required && !(values[f.id] ?? "").trim()) nextErrors[f.id] = true;
+    });
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    const fullName = fieldValue("text") || "Client boutique";
+    const phone = fieldValue("phone");
+    const city = fieldValue("city");
+    const address = fieldValue("address");
+    const note = fieldValue("note");
+
+    const order = commerceStore.addOrder({
+      customer: { id: `c-${Date.now()}`, fullName, phone, city },
+      storeId,
+      items: [
+        {
+          productId: product.id,
+          name: product.name,
+          quantity,
+          unitPrice: Math.round(subtotal / quantity),
+        },
+      ],
+      total,
+      currency: store.currency,
+      status: "pending",
+      paymentMethod: "cod",
+      ...(address || note
+        ? { note: [address ? `Adresse : ${address}` : "", note].filter(Boolean).join(" — ") }
+        : {}),
+    });
+
+    setPlaced(order);
+    setValues({});
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  if (placed) {
+    const thanks = form?.thankYou;
+    return (
+      <>
+        <main className="min-h-screen bg-background">
+          {theme.showAnnouncement && <AnnouncementBar theme={theme} />}
+          <div className="mx-auto max-w-lg px-5 py-16">
+            <Card>
+              <CardContent className="space-y-4 p-8 text-center">
+                <div className="text-4xl">{thanks?.emoji ?? "🎉"}</div>
+                <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
+                <h1 className="font-display text-2xl font-semibold">
+                  {thanks?.title ?? "Commande confirmée"}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {thanks?.message ??
+                    "Merci ! Votre commande est enregistrée, nous vous appelons pour confirmer."}
+                </p>
+                {thanks?.showOrderNumber !== false && (
+                  <p className="text-sm font-medium">Numéro de commande : {placed.reference}</p>
+                )}
+                {thanks?.showSummary !== false && (
+                  <div className="space-y-1 rounded-xl border p-4 text-left text-sm">
+                    <div className="flex justify-between">
+                      <span>
+                        {product.name} × {placed.items[0]?.quantity ?? 1}
+                      </span>
+                      <span>{formatMoney(subtotal, store.currency)}</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Livraison</span>
+                      <span>{formatMoney(shipping, store.currency)}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold">
+                      <span>Total à payer</span>
+                      <span>{formatMoney(placed.total, store.currency)}</span>
+                    </div>
+                  </div>
+                )}
+                {thanks?.supportNote && (
+                  <p className="text-xs text-muted-foreground">{thanks.supportNote}</p>
+                )}
+                {thanks?.ctaLabel && thanks.ctaUrl ? (
+                  <Button className="w-full" asChild>
+                    <a href={thanks.ctaUrl}>{thanks.ctaLabel}</a>
+                  </Button>
+                ) : (
+                  <Button className="w-full" asChild>
+                    <Link to="/vitrine/$storeId" params={{ storeId }}>
+                      Continuer mes achats
+                    </Link>
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <WhatsappFloat storeId={storeId} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -128,11 +256,17 @@ function PublicProductPage() {
                 {offers.map((o) => {
                   const price = offerPrice(product.price, o);
                   const saving = offerSavings(product.price, o);
+                  const selected = activeOffer?.id === o.id;
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={o.id}
-                      className="flex items-center justify-between gap-3 rounded-xl border p-3 text-sm"
-                      style={o.preselected ? { borderColor: o.tagColor ?? undefined } : undefined}
+                      onClick={() => setSelectedOfferId(o.id)}
+                      aria-pressed={selected}
+                      className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left text-sm transition ${
+                        selected ? "border-primary ring-2 ring-primary/30" : "hover:bg-muted/50"
+                      }`}
+                      style={selected && o.tagColor ? { borderColor: o.tagColor } : undefined}
                     >
                       <span className="flex min-w-0 items-center gap-2">
                         {o.image && (
@@ -163,7 +297,7 @@ function PublicProductPage() {
                         )}
                         <span className="font-semibold">{formatMoney(price, store.currency)}</span>
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </CardContent>
@@ -198,7 +332,30 @@ function PublicProductPage() {
                     {f.label}
                     {f.required ? " *" : ""}
                   </Label>
-                  <Input id={`pub-${f.id}`} placeholder={f.placeholder ?? ""} />
+                  {f.type === "note" || f.type === "address" ? (
+                    <Textarea
+                      id={`pub-${f.id}`}
+                      rows={2}
+                      placeholder={f.placeholder ?? ""}
+                      value={values[f.id] ?? ""}
+                      aria-invalid={errors[f.id] ? true : undefined}
+                      className={errors[f.id] ? "border-destructive" : ""}
+                      onChange={(e) => setValues((v) => ({ ...v, [f.id]: e.target.value }))}
+                    />
+                  ) : (
+                    <Input
+                      id={`pub-${f.id}`}
+                      type={f.type === "email" ? "email" : f.type === "phone" ? "tel" : "text"}
+                      placeholder={f.placeholder ?? ""}
+                      value={values[f.id] ?? ""}
+                      aria-invalid={errors[f.id] ? true : undefined}
+                      className={errors[f.id] ? "border-destructive" : ""}
+                      onChange={(e) => setValues((v) => ({ ...v, [f.id]: e.target.value }))}
+                    />
+                  )}
+                  {errors[f.id] && (
+                    <p className="text-xs text-destructive">Ce champ est obligatoire.</p>
+                  )}
                 </div>
               ))}
               {fields.length === 0 && (
@@ -206,13 +363,34 @@ function PublicProductPage() {
                   Aucun formulaire actif : créez-en un depuis l'espace Formulaires.
                 </p>
               )}
-              <Button className="w-full" size="lg">
+              <div className="space-y-1 rounded-xl border p-3 text-sm">
+                <div className="flex justify-between">
+                  <span>
+                    {product.name} × {quantity}
+                  </span>
+                  <span>{formatMoney(subtotal, store.currency)}</span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Livraison</span>
+                  <span>{formatMoney(shipping, store.currency)}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>Total</span>
+                  <span>{formatMoney(total, store.currency)}</span>
+                </div>
+              </div>
+              <Button
+                className="w-full"
+                size="lg"
+                disabled={fields.length === 0}
+                onClick={submit}
+              >
                 <Check className="mr-2 h-4 w-4" />
                 {design?.buttonText ?? "Commander maintenant"}
               </Button>
               <p className="text-center text-xs text-muted-foreground">
                 Paiement à la livraison · Frais de livraison{" "}
-                {formatMoney(form?.settings.shippingFee ?? 0, store.currency)}
+                {formatMoney(shipping, store.currency)}
               </p>
             </CardContent>
           </Card>
