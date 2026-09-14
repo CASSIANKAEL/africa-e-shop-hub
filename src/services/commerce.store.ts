@@ -56,6 +56,7 @@ let state: CommerceState = {
   orders: initialOrders,
   team: initialTeam,
   activeStoreId: firstStoreId,
+  notifications: [],
 };
 
 const listeners = new Set<() => void>();
