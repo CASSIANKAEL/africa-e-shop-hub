@@ -20,6 +20,21 @@ export const defaultWhatsappWidget: WhatsappWidget = {
   position: "right",
 };
 
+export const defaultGoogleSheets: GoogleSheetsConfig = {
+  account: { connected: false, email: "" },
+  sheet: { connected: false, url: "", tab: "Commandes" },
+  autoSyncOrders: true,
+};
+
+export const defaultGoogleShopping: GoogleShoppingConfig = {
+  enabled: false,
+  account: { connected: false, email: "" },
+  sheet: { connected: false, url: "", tab: "Flux produits" },
+  merchantId: "",
+  country: "CI",
+  autoSyncFeed: true,
+};
+
 interface FormsState {
   forms: OrderForm[];
   pixels: PixelIntegration[];
@@ -27,6 +42,10 @@ interface FormsState {
   integrations: Record<string, AppIntegration[]>;
   /** Bouton WhatsApp de la boutique en ligne, propre à chaque boutique. */
   whatsapp: Record<string, WhatsappWidget>;
+  /** Connexion Google Sheets, propre à chaque boutique. */
+  googleSheets: Record<string, GoogleSheetsConfig>;
+  /** Flux Google Shopping, propre à chaque boutique. */
+  googleShopping: Record<string, GoogleShoppingConfig>;
 }
 
 let state: FormsState = {
@@ -34,6 +53,8 @@ let state: FormsState = {
   pixels: initialPixels,
   integrations: {},
   whatsapp: {},
+  googleSheets: {},
+  googleShopping: {},
 };
 
 const listeners = new Set<() => void>();
