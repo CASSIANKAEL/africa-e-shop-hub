@@ -65,27 +65,44 @@ function setState(next: Partial<FormsState>) {
 }
 
 const WA_KEY = "sooko-whatsapp-widgets";
+const GS_KEY = "sooko-google-sheets";
+const GSHOP_KEY = "sooko-google-shopping";
 let hydrated = false;
 
-/** Charge les boutons WhatsApp enregistrés (après l'hydratation, côté navigateur). */
+function readMap<T>(key: string): Record<string, T> | null {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as Record<string, T>) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Charge les réglages enregistrés (après l'hydratation, côté navigateur). */
 function hydrateWhatsapp() {
   if (hydrated || typeof window === "undefined") return;
   hydrated = true;
+  const wa = readMap<WhatsappWidget>(WA_KEY);
+  const gs = readMap<GoogleSheetsConfig>(GS_KEY);
+  const gshop = readMap<GoogleShoppingConfig>(GSHOP_KEY);
+  setState({
+    ...(wa ? { whatsapp: wa } : {}),
+    ...(gs ? { googleSheets: gs } : {}),
+    ...(gshop ? { googleShopping: gshop } : {}),
+  });
+}
+
+function persist(key: string, value: unknown) {
+  if (typeof window === "undefined") return;
   try {
-    const raw = window.localStorage.getItem(WA_KEY);
-    if (raw) setState({ whatsapp: JSON.parse(raw) as Record<string, WhatsappWidget> });
+    window.localStorage.setItem(key, JSON.stringify(value));
   } catch {
     /* stockage indisponible */
   }
 }
 
 function persistWhatsapp() {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(WA_KEY, JSON.stringify(state.whatsapp));
-  } catch {
-    /* stockage indisponible */
-  }
+  persist(WA_KEY, state.whatsapp);
 }
 
 function subscribe(listener: () => void) {
