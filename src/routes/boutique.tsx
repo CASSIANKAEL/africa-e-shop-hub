@@ -317,7 +317,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {(Object.entries(fontPairs) as [StoreTheme["fontPair"], { label: string }][]).map(
+                    {(Object.entries(fontPairs) as [StoreTheme["fontPair"], { label: string; heading: string }][]).map(
                       ([key, pair]) => (
                         <SelectItem key={key} value={key} style={{ fontFamily: pair.heading }}>
                           {pair.label}
@@ -477,7 +477,7 @@ function StoreEditor({ storeId }: { storeId: string }) {
         </TabsContent>
       </Tabs>
 
-      <aside className="sticky top-4 hidden xl:block">
+      <aside className="xl:sticky xl:top-4">
         <div className="mb-3 flex items-center justify-between">
           <div><p className="font-semibold">Aperçu en direct</p><p className="text-xs text-muted-foreground">Les changements apparaissent immédiatement.</p></div>
           <div className="flex rounded-md border bg-background p-1">
@@ -497,6 +497,70 @@ function StoreEditor({ storeId }: { storeId: string }) {
 }
 
 /* ---------- Petits composants ---------- */
+
+const COLOR_PALETTES: { name: string; colors: Pick<StoreTheme, "primary" | "primaryText" | "background" | "surface" | "text" | "muted" | "accent"> }[] = [
+  { name: "Savane", colors: { primary: "#b54708", primaryText: "#fffaf5", background: "#fffaf2", surface: "#ffffff", text: "#2b1b12", muted: "#795f50", accent: "#2f7d64" } },
+  { name: "Lagune", colors: { primary: "#075985", primaryText: "#f0f9ff", background: "#f8fafc", surface: "#ffffff", text: "#172033", muted: "#64748b", accent: "#f2bd48" } },
+  { name: "Ébène", colors: { primary: "#171717", primaryText: "#ffffff", background: "#fafafa", surface: "#ffffff", text: "#171717", muted: "#737373", accent: "#dc9f54" } },
+];
+
+const SECTION_CONFIG: Record<StoreSectionId, { label: string; hint: string; visibility: keyof StoreTheme }> = {
+  announcement: { label: "Bandeau d'annonce", hint: "Message placé en haut de la boutique.", visibility: "showAnnouncement" },
+  hero: { label: "Bannière d'accueil", hint: "Titre et présentation de la boutique.", visibility: "showHero" },
+  benefits: { label: "Arguments de confiance", hint: "Paiement, livraison et garanties.", visibility: "showBenefits" },
+  categories: { label: "Catégories", hint: "Accès rapide aux catégories de produits.", visibility: "showCategories" },
+  products: { label: "Produits", hint: "Catalogue des produits disponibles.", visibility: "showProducts" },
+  footer: { label: "Pied de page", hint: "Informations affichées en bas de page.", visibility: "showFooter" },
+};
+
+function SectionManager({ theme, set }: { theme: StoreTheme; set: (patch: Partial<StoreTheme>) => void }) {
+  const [dragged, setDragged] = useState<StoreSectionId | null>(null);
+
+  function dropOn(target: StoreSectionId, event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (!dragged || dragged === target) return;
+    const next = [...theme.sectionOrder];
+    const from = next.indexOf(dragged);
+    const to = next.indexOf(target);
+    if (from < 0 || to < 0) return;
+    next.splice(from, 1);
+    next.splice(to, 0, dragged);
+    set({ sectionOrder: next });
+    setDragged(null);
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="mb-3 text-xs text-muted-foreground">Saisissez un bloc par sa poignée puis déposez-le à la position souhaitée.</p>
+      {theme.sectionOrder.map((id) => {
+        const config = SECTION_CONFIG[id];
+        const enabled = Boolean(theme[config.visibility]);
+        return (
+          <div
+            key={id}
+            draggable
+            onDragStart={() => setDragged(id)}
+            onDragEnd={() => setDragged(null)}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={(event) => dropOn(id, event)}
+            className={`flex items-center gap-3 rounded-md border bg-card p-3 transition-opacity ${dragged === id ? "opacity-50" : "opacity-100"}`}
+          >
+            <GripVertical className="h-5 w-5 shrink-0 cursor-grab text-muted-foreground" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">{config.label}</p>
+              <p className="text-xs text-muted-foreground">{config.hint}</p>
+            </div>
+            <Switch
+              aria-label={`${enabled ? "Masquer" : "Afficher"} ${config.label}`}
+              checked={enabled}
+              onCheckedChange={(checked) => set({ [config.visibility]: checked } as Partial<StoreTheme>)}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
