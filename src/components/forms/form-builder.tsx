@@ -11,7 +11,6 @@ import {
   Save,
   Smartphone,
   Trash2,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -71,8 +70,6 @@ export function FormBuilder({
   const [thanksOpen, setThanksOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
-  const [activeSection, setActiveSection] = useState<"general" | "fields" | "appearance" | "settings">("fields");
-  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const [draggedFieldId, setDraggedFieldId] = useState<string | null>(null);
   const [dragOverFieldId, setDragOverFieldId] = useState<string | null>(null);
   const { t } = useLanguage();
@@ -165,21 +162,19 @@ export function FormBuilder({
   const toggleBlock = (id: string) => setOpenBlock((v) => (v === id ? null : id));
 
   const saveBar = (
-    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-      <div className="flex min-w-0 items-center gap-2">
-        <Badge variant={form.status === "active" ? "default" : "secondary"}>
-          {form.status === "active" ? "En ligne" : "Brouillon"}
-        </Badge>
-        <span className="truncate text-xs text-muted-foreground">Modifications dans l’aperçu</span>
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-      <Button variant="outline" className="hidden sm:inline-flex" onClick={() => patch({ status: form.status === "active" ? "draft" : "active" })}>
-        {form.status === "active" ? "Dépublier" : "Publier"}
-      </Button>
+    <div className="flex flex-wrap items-center gap-3">
       <Button onClick={submit}>
         <Save className="mr-2 h-4 w-4" /> {saveLabel}
       </Button>
-      </div>
+      <Button
+        variant="outline"
+        onClick={() => patch({ status: form.status === "active" ? "draft" : "active" })}
+      >
+        {form.status === "active" ? "Repasser en brouillon" : "Publier le formulaire"}
+      </Button>
+      <Badge variant={form.status === "active" ? "default" : "secondary"}>
+        {form.status === "active" ? "En ligne" : "Brouillon"}
+      </Badge>
     </div>
   );
 
@@ -593,71 +588,10 @@ export function FormBuilder({
     </div>
   );
 
-  const previewPanel = (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex-row items-center justify-between gap-2 space-y-0 border-b bg-muted/30 p-3 sm:p-4">
-        <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs">
-          <Button type="button" variant={previewTab === "form" ? "secondary" : "ghost"} size="sm" onClick={() => setPreviewTab("form")}>
-            {t("previewForm")}
-          </Button>
-          <Button type="button" variant={previewTab === "thanks" ? "secondary" : "ghost"} size="sm" onClick={() => setPreviewTab("thanks")}>
-            {t("previewThanks")}
-          </Button>
-        </div>
-        <div className="flex gap-1">
-          <Button type="button" variant={device === "desktop" ? "secondary" : "ghost"} size="icon" aria-label="Aperçu ordinateur" onClick={() => setDevice("desktop")}>
-            <Monitor className="h-4 w-4" />
-          </Button>
-          <Button type="button" variant={device === "mobile" ? "secondary" : "ghost"} size="icon" aria-label="Aperçu mobile" onClick={() => setDevice("mobile")}>
-            <Smartphone className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-3 sm:p-5">
-        <div className={cn("mx-auto rounded-2xl bg-muted/60 p-3 sm:p-5", device === "mobile" ? "max-w-[390px]" : "max-w-[560px]")}>
-          {display.mode === "popup" && previewTab === "form" && (
-            <p className="mb-3 text-center text-xs text-muted-foreground">Aperçu de la fenêtre pop-up</p>
-          )}
-          {display.mode === "embedded" && previewTab === "form" && (
-            <div className="mb-3 space-y-2">
-              <div className="h-20 rounded-xl bg-background" />
-              <div className="h-2 w-1/2 rounded bg-background" />
-            </div>
-          )}
-          {previewTab === "form" ? previewForm : previewThanks}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
 
   return (
-    <div className="space-y-4">
-      <div className="sticky top-0 z-20 -mx-1 rounded-xl border bg-background/95 p-2 shadow-sm backdrop-blur">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <div className="min-w-0 overflow-x-auto">
-            <div className="flex min-w-max gap-1">
-              {([
-                ["general", "Général"],
-                ["fields", "Champs"],
-                ["appearance", "Apparence"],
-                ["settings", "Réglages"],
-              ] as const).map(([key, label]) => (
-                <Button key={key} type="button" size="sm" variant={activeSection === key ? "secondary" : "ghost"} onClick={() => setActiveSection(key)}>
-                  {label}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <Button type="button" size="sm" variant="outline" className="xl:hidden" onClick={() => setMobilePreviewOpen(true)}>
-            <Eye className="mr-2 h-4 w-4" /> Aperçu
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-[minmax(420px,0.9fr)_minmax(520px,1.1fr)]">
-      <div className="min-w-0 space-y-4">
-        {activeSection === "general" && <>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
+      <div className="space-y-4">
         <Card>
           <CardContent className="grid gap-4 p-5 sm:grid-cols-2">
             <div className="space-y-2">
@@ -790,15 +724,13 @@ export function FormBuilder({
             )}
           </CardContent>
         </Card>
-        </>}
 
         {/* 2. Blocs */}
-        {(activeSection === "fields" || activeSection === "appearance") && <Card>
+        <Card>
           <CardHeader>
-            <CardTitle className="text-base">{activeSection === "fields" ? "Champs du formulaire" : "Apparence du formulaire"}</CardTitle>
+            <CardTitle className="text-base">Modifier votre formulaire</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {activeSection === "appearance" && <>
             {blockRow({
               id: "title",
               title: "Titre du formulaire",
@@ -826,9 +758,8 @@ export function FormBuilder({
                 />
               ),
             })}
-            </>}
 
-            {activeSection === "fields" && form.fields.map((field) =>
+            {form.fields.map((field) =>
               blockRow({
                 id: field.id,
                 draggable: true,
@@ -909,11 +840,10 @@ export function FormBuilder({
               }),
             )}
 
-            {activeSection === "fields" && <Button type="button" variant="outline" className="w-full border-dashed" onClick={addField}>
+            <Button type="button" variant="outline" onClick={addField}>
               <Plus className="mr-2 h-4 w-4" /> Ajouter un bloc
-            </Button>}
+            </Button>
 
-            {activeSection === "appearance" && <>
             {blockRow({
               id: "quantity",
               title: "Sélecteur de quantité",
@@ -1058,12 +988,10 @@ export function FormBuilder({
                 </div>
               ),
             })}
-            </>}
           </CardContent>
-        </Card>}
+        </Card>
 
         {/* 3. Page de remerciement */}
-        {activeSection === "settings" && <>
         <Card>
           <button
             type="button"
@@ -1257,35 +1185,81 @@ export function FormBuilder({
             </CardContent>
           )}
         </Card>
-        </>}
 
-        <div className="sticky bottom-20 z-10 rounded-xl border bg-background/95 p-3 shadow-lg backdrop-blur md:bottom-3">
-          {saveBar}
-        </div>
+        {saveBar}
       </div>
 
       {/* Aperçu */}
-      <div className="hidden xl:sticky xl:top-20 xl:block xl:self-start">
-        {previewPanel}
-      </div>
-      </div>
+      <div className="xl:sticky xl:top-6 xl:self-start">
+        <Card>
+          <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
+            <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setPreviewTab("form")}
+                className={cn(
+                  "rounded-md px-2 py-1",
+                  previewTab === "form" && "bg-background font-medium shadow-sm",
+                )}
+              >
+                {t("previewForm")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewTab("thanks")}
+                className={cn(
+                  "rounded-md px-2 py-1",
+                  previewTab === "thanks" && "bg-background font-medium shadow-sm",
+                )}
+              >
+                {t("previewThanks")}
+              </button>
+            </div>
 
-      {mobilePreviewOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-background p-3 xl:hidden">
-          <div className="mx-auto max-w-2xl space-y-3 pb-10">
-            <div className="sticky top-0 z-10 flex items-center justify-between rounded-xl border bg-background/95 p-3 backdrop-blur">
-              <div>
-                <p className="font-display font-semibold">Aperçu client</p>
-                <p className="text-xs text-muted-foreground">Les changements apparaissent immédiatement.</p>
-              </div>
-              <Button type="button" variant="ghost" size="icon" aria-label="Fermer l’aperçu" onClick={() => setMobilePreviewOpen(false)}>
-                <X className="h-5 w-5" />
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant={device === "desktop" ? "secondary" : "ghost"}
+                size="icon"
+                aria-label="Aperçu ordinateur"
+                onClick={() => setDevice("desktop")}
+              >
+                <Monitor className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant={device === "mobile" ? "secondary" : "ghost"}
+                size="icon"
+                aria-label="Aperçu mobile"
+                onClick={() => setDevice("mobile")}
+              >
+                <Smartphone className="h-4 w-4" />
               </Button>
             </div>
-            {previewPanel}
-          </div>
-        </div>
-      )}
+          </CardHeader>
+          <CardContent>
+            <div
+              className={cn(
+                "mx-auto rounded-2xl bg-muted/60 p-3",
+                device === "mobile" ? "max-w-[320px]" : "",
+              )}
+            >
+              {display.mode === "popup" && previewTab === "form" && (
+                <p className="mb-2 text-center text-xs text-muted-foreground">
+                  Page produit assombrie — le formulaire s'ouvre en pop-up
+                </p>
+              )}
+              {display.mode === "embedded" && previewTab === "form" && (
+                <div className="mb-2 space-y-1.5">
+                  <div className="h-16 rounded-xl bg-background" />
+                  <div className="h-2 w-1/2 rounded bg-background" />
+                </div>
+              )}
+              {previewTab === "form" ? previewForm : previewThanks}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
