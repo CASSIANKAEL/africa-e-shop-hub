@@ -3,6 +3,8 @@ import { useSyncExternalStore } from "react";
 import type {
   AppIntegration,
   AppIntegrationKey,
+  GoogleSheetsConfig,
+  GoogleShoppingConfig,
   OrderForm,
   PixelIntegration,
   WhatsappWidget,
