@@ -122,14 +122,6 @@ function FormsHubPage() {
       status: shopping.enabled ? "Activé" : "Désactivé",
       detail: shopping.sheet.connected ? "Flux produits connecté" : "Flux produits à connecter",
     },
-    {
-      to: "/formulaires/site" as const,
-      icon: Plug,
-      title: "Site",
-      text: "SMS, transporteur ou webhook pour automatiser les commandes du site.",
-      status: `${connected} connectée(s)`,
-      detail: `${integrations.length} disponibles`,
-    },
   ];
 
   return (
