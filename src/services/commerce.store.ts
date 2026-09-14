@@ -1,6 +1,14 @@
 import { useSyncExternalStore } from "react";
 
-import type { Order, OrderStatus, Product, Store, TeamMember, TeamRole } from "@/types";
+import type {
+  AppNotification,
+  Order,
+  OrderStatus,
+  Product,
+  Store,
+  TeamMember,
+  TeamRole,
+} from "@/types";
 import {
   orders as initialOrders,
   products as initialProducts,
@@ -14,6 +22,7 @@ interface CommerceState {
   team: TeamMember[];
   /** Boutique active : chaque boutique est indépendante, une seule à la fois. */
   activeStoreId: string;
+  notifications: AppNotification[];
 }
 
 const firstStoreId = initialStores[0]?.id ?? "";
@@ -47,6 +56,7 @@ let state: CommerceState = {
   orders: initialOrders,
   team: initialTeam,
   activeStoreId: firstStoreId,
+  notifications: [],
 };
 
 const listeners = new Set<() => void>();
@@ -107,6 +117,27 @@ export function useTeam(storeId?: string): TeamMember[] {
 
 export function useCouriers(storeId?: string): TeamMember[] {
   return useTeam(storeId).filter((m) => m.role === "courier");
+}
+
+/** Notifications destinées à un rôle (et, pour un livreur, à lui seul). */
+export function useNotifications(role: TeamRole = "admin", courierId?: string): AppNotification[] {
+  const s = useCommerceState();
+  return s.notifications.filter(
+    (n) =>
+      n.storeId === s.activeStoreId &&
+      n.audience.includes(role) &&
+      (role !== "courier" || !n.courierId || n.courierId === courierId),
+  );
+}
+
+function notify(input: Omit<AppNotification, "id" | "createdAt" | "read">) {
+  const notification: AppNotification = {
+    ...input,
+    id: `nt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    createdAt: new Date().toISOString(),
+    read: false,
+  };
+  setState({ notifications: [notification, ...state.notifications].slice(0, 100) });
 }
 
 export type NewTeamMemberInput = {
@@ -191,8 +222,9 @@ export const commerceStore = {
   updateOrderStatus(
     orderId: string,
     status: OrderStatus,
-    options?: { followUpAt?: string | null; comment?: string },
+    options?: { followUpAt?: string | null; comment?: string; byCourier?: boolean },
   ) {
+    const before = state.orders.find((o) => o.id === orderId);
     setState({
       orders: state.orders.map((o) => {
         if (o.id !== orderId) return o;
@@ -215,6 +247,34 @@ export const commerceStore = {
         return next;
       }),
     });
+    if (!before || before.status === status) return;
+    const base = { storeId: before.storeId, orderId, audience: ["admin", "closer"] as TeamRole[] };
+    if (status === "delivered") {
+      notify({ ...base, messageKey: "notifOrderDelivered", vars: { ref: before.reference } });
+    } else if (before.status === "delivered") {
+      notify({ ...base, messageKey: "notifOrderReopened", vars: { ref: before.reference } });
+    } else if (options?.byCourier) {
+      notify({
+        ...base,
+        messageKey: "notifOrderNotDelivered",
+        vars: { ref: before.reference, status },
+      });
+    }
+  },
+  /** Notifie l'équipe d'une nouvelle commande entrante. */
+  notifyNewOrder(orderId: string) {
+    const order = state.orders.find((o) => o.id === orderId);
+    if (!order) return;
+    notify({
+      storeId: order.storeId,
+      orderId,
+      audience: ["admin", "closer"],
+      messageKey: "notifOrderNew",
+      vars: { ref: order.reference },
+    });
+  },
+  markNotificationsRead() {
+    setState({ notifications: state.notifications.map((n) => ({ ...n, read: true })) });
   },
   addComment(orderId: string, text: string) {
     if (!text.trim()) return;
@@ -304,6 +364,20 @@ export const commerceStore = {
         return next;
       }),
     });
+    const order = state.orders.find((o) => o.id === orderId);
+    if (order && courierId) {
+      notify({
+        storeId: order.storeId,
+        orderId,
+        audience: ["courier"],
+        courierId,
+        messageKey: "notifOrderAssigned",
+        vars: {
+          ref: order.reference,
+          name: state.team.find((m) => m.id === courierId)?.fullName ?? "",
+        },
+      });
+    }
   },
   /** Consigne destinée au livreur attribué. */
   setCourierNote(orderId: string, note: string | null) {

@@ -104,6 +104,23 @@ export interface TeamMember {
   createdAt: string;
 }
 
+/* ---------- Notifications ---------- */
+
+export interface AppNotification {
+  id: string;
+  storeId: string;
+  orderId: string;
+  /** Clé du dictionnaire + variables d'interpolation. */
+  messageKey: string;
+  vars?: Record<string, string>;
+  /** Rôles destinataires. */
+  audience: TeamRole[];
+  /** Livreur destinataire précis (si audience courier). */
+  courierId?: string;
+  createdAt: string;
+  read: boolean;
+}
+
 export interface DashboardMetrics {
   revenue: number;
   revenueChange: number;

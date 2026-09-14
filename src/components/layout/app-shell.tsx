@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { Bell, Languages, Search } from "lucide-react";
+import { Languages, Search } from "lucide-react";
 
 import { AppSidebar } from "./app-sidebar";
 import { MobileBottomNav } from "./mobile-bottom-nav";
+import { NotificationBell } from "./notification-bell";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -53,9 +54,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="ghost" size="icon" aria-label={t("notifications")}>
-                <Bell className="h-4 w-4" />
-              </Button>
+              <NotificationBell role="admin" />
               <div className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3">
                 <Avatar className="h-7 w-7">
                   <AvatarFallback className="bg-primary text-xs text-primary-foreground">

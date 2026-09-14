@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { useOrderLabels } from "@/components/commerce/order-status-badge";
 import { OrderStats } from "@/components/commerce/order-stats";
+import { CourierStatusSelect } from "@/components/commerce/courier-status-select";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import {
   commerceStore,
   useActiveStoreId,
@@ -79,19 +81,22 @@ function DeliveriesPage() {
         </Card>
       ) : (
         <>
-          <div className="mb-4 max-w-xs">
-            <Select value={selected} onValueChange={setCourierId}>
-              <SelectTrigger aria-label={t("chooseCourier")}>
-                <SelectValue placeholder={t("chooseCourier")} />
-              </SelectTrigger>
-              <SelectContent>
-                {couriers.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="mb-4 flex items-center gap-2">
+            <div className="max-w-xs flex-1">
+              <Select value={selected} onValueChange={setCourierId}>
+                <SelectTrigger aria-label={t("chooseCourier")}>
+                  <SelectValue placeholder={t("chooseCourier")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {couriers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.fullName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <NotificationBell role="courier" courierId={selected} />
           </div>
 
           <OrderStats orders={orders} variant="courier" />
@@ -139,17 +144,39 @@ function DeliveriesPage() {
                         {order.courierNote}
                       </p>
                     )}
+                    {(order.comments ?? []).slice(-2).map((c) => (
+                      <p key={c.id} className="rounded-lg border border-border p-2 text-xs">
+                        {c.text}
+                      </p>
+                    ))}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Badge variant={order.status === "delivered" ? "default" : "secondary"}>
                         <Truck className="mr-1 h-3.5 w-3.5" />
                         {statusLabels[order.status]}
                       </Badge>
-                      {order.status !== "delivered" && (
+                      <CourierStatusSelect orderId={order.id} status={order.status} />
+                      {order.status === "delivered" ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => {
+                            commerceStore.updateOrderStatus(order.id, "shipped", {
+                              byCourier: true,
+                            });
+                            toast.success(t("statusUpdated"));
+                          }}
+                        >
+                          {t("markNotDelivered")}
+                        </Button>
+                      ) : (
                         <Button
                           size="sm"
                           className="gap-2"
                           onClick={() => {
-                            commerceStore.updateOrderStatus(order.id, "delivered");
+                            commerceStore.updateOrderStatus(order.id, "delivered", {
+                              byCourier: true,
+                            });
                             toast.success(t("orderDelivered"));
                           }}
                         >
