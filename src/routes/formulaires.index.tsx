@@ -4,7 +4,6 @@ import {
   FileText,
   Layers,
   MessageCircle,
-  Plug,
   ShoppingBag,
   Target,
 } from "lucide-react";
@@ -17,7 +16,6 @@ import { whatsappNumber } from "@/lib/countries";
 import { formatNumber, formatPercent } from "@/lib/format";
 import { useActiveStore, useActiveStoreId } from "@/services/commerce.store";
 import {
-  useAppIntegrations,
   useGoogleSheets,
   useGoogleShopping,
   useForms,
