@@ -17,6 +17,7 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as EquipeRouteImport } from './routes/equipe'
 import { Route as LivraisonsRouteImport } from './routes/livraisons'
 import { Route as ParametresRouteImport } from './routes/parametres'
+import { Route as TableauDeBordRouteImport } from './routes/tableau-de-bord'
 import { Route as VueEnsembleRouteImport } from './routes/vue-ensemble'
 import { Route as CommandesIndexRouteImport } from './routes/commandes.index'
 import { Route as CommandesOrderIdRouteImport } from './routes/commandes.$orderId'
@@ -72,6 +73,11 @@ const LivraisonsRoute = LivraisonsRouteImport.update({
 const ParametresRoute = ParametresRouteImport.update({
   id: '/parametres',
   path: '/parametres',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TableauDeBordRoute = TableauDeBordRouteImport.update({
+  id: '/tableau-de-bord',
+  path: '/tableau-de-bord',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VueEnsembleRoute = VueEnsembleRouteImport.update({
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/equipe': typeof EquipeRoute
   '/livraisons': typeof LivraisonsRoute
   '/parametres': typeof ParametresRoute
+  '/tableau-de-bord': typeof TableauDeBordRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/equipe': typeof EquipeRoute
   '/livraisons': typeof LivraisonsRoute
   '/parametres': typeof ParametresRoute
+  '/tableau-de-bord': typeof TableauDeBordRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/equipe': typeof EquipeRoute
   '/livraisons': typeof LivraisonsRoute
   '/parametres': typeof ParametresRoute
+  '/tableau-de-bord': typeof TableauDeBordRoute
   '/vue-ensemble': typeof VueEnsembleRoute
   '/commandes/$orderId': typeof CommandesOrderIdRoute
   '/formulaires/commande': typeof FormulairesCommandeRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/livraisons'
     | '/parametres'
+    | '/tableau-de-bord'
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/livraisons'
     | '/parametres'
+    | '/tableau-de-bord'
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/livraisons'
     | '/parametres'
+    | '/tableau-de-bord'
     | '/vue-ensemble'
     | '/commandes/$orderId'
     | '/formulaires/commande'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   EquipeRoute: typeof EquipeRoute
   LivraisonsRoute: typeof LivraisonsRoute
   ParametresRoute: typeof ParametresRoute
+  TableauDeBordRoute: typeof TableauDeBordRoute
   VueEnsembleRoute: typeof VueEnsembleRoute
   CommandesOrderIdRoute: typeof CommandesOrderIdRoute
   FormulairesCommandeRoute: typeof FormulairesCommandeRoute
@@ -398,6 +411,13 @@ declare module '@tanstack/react-router' {
       path: '/parametres'
       fullPath: '/parametres'
       preLoaderRoute: typeof ParametresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tableau-de-bord': {
+      id: '/tableau-de-bord'
+      path: '/tableau-de-bord'
+      fullPath: '/tableau-de-bord'
+      preLoaderRoute: typeof TableauDeBordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vue-ensemble': {
@@ -524,6 +544,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipeRoute: EquipeRoute,
   LivraisonsRoute: LivraisonsRoute,
   ParametresRoute: ParametresRoute,
+  TableauDeBordRoute: TableauDeBordRoute,
   VueEnsembleRoute: VueEnsembleRoute,
   CommandesOrderIdRoute: CommandesOrderIdRoute,
   FormulairesCommandeRoute: FormulairesCommandeRoute,

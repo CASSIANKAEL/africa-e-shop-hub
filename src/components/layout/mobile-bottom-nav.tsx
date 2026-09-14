@@ -11,7 +11,7 @@ export function MobileBottomNav() {
   const { t } = useLanguage();
   const { toggleSidebar } = useSidebar();
   const items = [
-    { to: "/" as const, label: t("mobileHome"), icon: Home },
+    { to: "/tableau-de-bord" as const, label: t("mobileHome"), icon: Home },
     { to: "/produits" as const, label: t("products"), icon: Package },
     { to: "/commandes" as const, label: t("orders"), icon: ShoppingCart },
   ];
