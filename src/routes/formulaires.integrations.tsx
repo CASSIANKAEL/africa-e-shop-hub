@@ -170,7 +170,7 @@ function IntegrationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Outils disponibles</CardTitle>
+          <CardTitle className="text-base">Confirmation automatique WhatsApp</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {integrations.map((i) => (
