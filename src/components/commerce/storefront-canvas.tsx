@@ -30,6 +30,49 @@ function TextBlock({ block, theme }: { block: StoreTextBlock; theme: StoreTheme 
   return <p className="text-sm leading-relaxed sm:text-base" style={shared}>{block.text}</p>;
 }
 
+export function AnnouncementBar({ theme }: { theme: StoreTheme }) {
+  const messages = (theme.announcements ?? []).map((text) => text.trim()).filter(Boolean);
+  if (messages.length === 0) return null;
+
+  if (!theme.announcementScroll) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 px-4 py-2 text-center text-xs" style={{ background: theme.primary, color: theme.primaryText }}>
+        {messages.map((message, index) => <span key={`${message}-${index}`}>{message}</span>)}
+      </div>
+    );
+  }
+
+  const loop = [...messages, ...messages];
+  return (
+    <div className="store-marquee py-2 text-xs" style={{ background: theme.primary, color: theme.primaryText }} aria-label="Annonces de la boutique">
+      <div className="store-marquee-track" style={{ animationDuration: `${Math.max(6, theme.announcementSpeed ?? 20)}s` }}>
+        {loop.map((message, index) => (
+          <span key={`${message}-${index}`} className="flex items-center whitespace-nowrap px-6" aria-hidden={index >= messages.length}>
+            {message}
+            <span className="pl-6 opacity-60">•</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function LegalPages({ theme, title = "Informations légales" }: { theme: StoreTheme; title?: string }) {
+  const pages = (theme.legalPages ?? []).filter((page) => page.enabled && page.title.trim());
+  if (!theme.showLegalPages || pages.length === 0) return null;
+  return (
+    <div className="mx-auto w-full max-w-3xl space-y-2 text-left">
+      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: theme.text }}>{title}</p>
+      {pages.map((page) => (
+        <details key={page.id} className="rounded-md px-3 py-2 text-xs" style={{ background: theme.surface, border: `1px solid ${theme.muted}22` }}>
+          <summary className="cursor-pointer font-medium" style={{ color: theme.text }}>{page.title}</summary>
+          <p className="mt-2 whitespace-pre-line leading-relaxed" style={{ color: theme.muted }}>{page.content}</p>
+        </details>
+      ))}
+    </div>
+  );
+}
+
 export function StorefrontCanvas({
   store,
   products,
