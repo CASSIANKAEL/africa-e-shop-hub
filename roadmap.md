@@ -15,3 +15,5 @@
 - [x] Création de produits par IA (page /produits/ia, testée)
 - [x] Boutons directs « Importer CSV » et « Créer avec l'IA » à côté d'« Ajouter un produit »
 - [x] Section Équipe par boutique (admin, closeuse, livreur), invitations/accès, attribution des commandes aux livreurs et espace Livraisons
+
+- [x] Espace d’édition de la boutique active (/boutique) : modèles Éclat et Sahel Market + personnalisation avancée appliquée à la vitrine
