@@ -222,8 +222,9 @@ export const commerceStore = {
   updateOrderStatus(
     orderId: string,
     status: OrderStatus,
-    options?: { followUpAt?: string | null; comment?: string },
+    options?: { followUpAt?: string | null; comment?: string; byCourier?: boolean },
   ) {
+    const before = state.orders.find((o) => o.id === orderId);
     setState({
       orders: state.orders.map((o) => {
         if (o.id !== orderId) return o;
