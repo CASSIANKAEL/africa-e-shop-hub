@@ -187,5 +187,6 @@ export const formsStore = {
         [storeId]: { ...(state.whatsapp[storeId] ?? defaultWhatsappWidget), ...patch },
       },
     });
+    persistWhatsapp();
   },
 };
