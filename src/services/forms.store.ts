@@ -203,7 +203,100 @@ export function useProductOffers(storeId: string, productId: string): OfferCampa
 
 export type NewPixelInput = Omit<PixelIntegration, "id">;
 
+function persistCampaigns() {
+  persist(OFFERS_KEY, state.offerCampaigns);
+}
+
+export function blankCampaign(storeId: string, index: number): OfferCampaign {
+  const now = Date.now();
+  return {
+    id: `oc-${now}`,
+    storeId,
+    name: `Offre de quantité #${index + 1}`,
+    enabled: true,
+    productIds: [],
+    template: "classic",
+    createdAt: new Date().toISOString(),
+    offers: [
+      {
+        id: `q-${now}-1`,
+        quantity: 1,
+        label: "1 unité",
+        discountPercent: 0,
+        freeShipping: false,
+        discountType: "none",
+        discountValue: 0,
+        tag: "",
+        tagColor: "#e2703f",
+        preselected: true,
+      },
+      {
+        id: `q-${now}-2`,
+        quantity: 2,
+        label: "2 unités",
+        discountPercent: 10,
+        freeShipping: false,
+        discountType: "percent",
+        discountValue: 0,
+        tag: "Populaire",
+        tagColor: "#e2703f",
+        preselected: false,
+      },
+      {
+        id: `q-${now}-3`,
+        quantity: 3,
+        label: "3 unités",
+        discountPercent: 15,
+        freeShipping: true,
+        discountType: "percent",
+        discountValue: 0,
+        tag: "Meilleure offre",
+        tagColor: "#1f7a5a",
+        preselected: false,
+      },
+    ],
+  };
+}
+
 export const formsStore = {
+  saveCampaign(campaign: OfferCampaign): OfferCampaign {
+    const exists = state.offerCampaigns.some((c) => c.id === campaign.id);
+    setState({
+      offerCampaigns: exists
+        ? state.offerCampaigns.map((c) => (c.id === campaign.id ? campaign : c))
+        : [campaign, ...state.offerCampaigns],
+    });
+    persistCampaigns();
+    return campaign;
+  },
+  duplicateCampaign(id: string): OfferCampaign | undefined {
+    const source = state.offerCampaigns.find((c) => c.id === id);
+    if (!source) return undefined;
+    const now = Date.now();
+    const copy: OfferCampaign = {
+      ...source,
+      id: `oc-${now}`,
+      name: `${source.name} (copie)`,
+      enabled: false,
+      createdAt: new Date().toISOString(),
+      offers: source.offers.map((o, i) => ({ ...o, id: `q-${now}-${i}` })),
+    };
+    setState({ offerCampaigns: [copy, ...state.offerCampaigns] });
+    persistCampaigns();
+    return copy;
+  },
+  toggleCampaign(id: string) {
+    setState({
+      offerCampaigns: state.offerCampaigns.map((c) =>
+        c.id === id ? { ...c, enabled: !c.enabled } : c,
+      ),
+    });
+    persistCampaigns();
+  },
+  deleteCampaign(id: string) {
+    setState({ offerCampaigns: state.offerCampaigns.filter((c) => c.id !== id) });
+    persistCampaigns();
+  },
   blankForm(storeId: string): OrderForm {
     return { ...emptyForm(storeId), id: `form-${Date.now()}`, createdAt: new Date().toISOString() };
   },
