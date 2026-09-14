@@ -189,7 +189,7 @@ export function AppSidebar() {
                     <span>{t("forms")}</span>
                   </Link>
                 </SidebarMenuButton>
-                {!collapsed && (
+                {!collapsed && isActive(formsItem.url) && (
                   <SidebarMenuSub>
                     {translatedFormSubItems.map((sub) => (
                       <SidebarMenuSubItem key={sub.url}>

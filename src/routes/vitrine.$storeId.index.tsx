@@ -8,6 +8,7 @@ import { stripHtml } from "@/components/commerce/rich-text-editor";
 import { formatMoney } from "@/lib/format";
 import { useProducts, useStores } from "@/services/commerce.store";
 import { useForms } from "@/services/forms.store";
+import { WhatsappFloat } from "@/components/commerce/whatsapp-float";
 
 export const Route = createFileRoute("/vitrine/$storeId/")({
   head: () => ({
@@ -46,6 +47,7 @@ function StorefrontPage() {
   }
 
   return (
+    <>
     <main className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-6">
@@ -131,5 +133,7 @@ function StorefrontPage() {
         </div>
       </section>
     </main>
+      <WhatsappFloat storeId={storeId} />
+    </>
   );
 }
