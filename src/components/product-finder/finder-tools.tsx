@@ -3,8 +3,6 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   BookmarkCheck,
   Bot,
-  Check,
-  ChevronRight,
   FileStack,
   FolderPlus,
   Heart,
@@ -32,7 +30,6 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeWinningProduct } from "@/lib/ai.functions";
-import { formatNumber } from "@/lib/format";
 import { productFinderStore, useProductFinderState } from "@/services/product-finder.store";
 import { spyAds } from "@/services/spy.mock";
 
