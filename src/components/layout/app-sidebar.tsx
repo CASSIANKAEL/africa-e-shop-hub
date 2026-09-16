@@ -16,6 +16,10 @@ import {
   Truck,
   UsersRound,
   Telescope,
+  Compass,
+  Megaphone,
+  TrendingUp,
+  BookmarkCheck,
 } from "lucide-react";
 
 import {
@@ -54,7 +58,19 @@ const mainItems = [
   { title: "Clients", url: "/clients", icon: Users },
   { title: "Équipe", url: "/equipe", icon: UsersRound },
   { title: "Livraisons", url: "/livraisons", icon: Truck },
-  { title: "Veille produits", url: "/veille", icon: Telescope },
+] as const;
+
+const productFinderItem = {
+  title: "Product Finder",
+  url: "/product-finder",
+  icon: Telescope,
+} as const;
+
+const productFinderSubItems = [
+  { title: "Découvrir", url: "/product-finder", icon: Compass },
+  { title: "Explorateur de publicités", url: "/product-finder/publicites", icon: Megaphone },
+  { title: "Produits gagnants", url: "/product-finder/gagnants", icon: TrendingUp },
+  { title: "Enregistrés", url: "/product-finder/enregistres", icon: BookmarkCheck },
 ] as const;
 
 const formsItem = {
@@ -95,7 +111,6 @@ export function AppSidebar() {
     { ...mainItems[5], title: t("customers") },
     { ...mainItems[6], title: t("team") },
     { ...mainItems[7], title: t("deliveries") },
-    mainItems[8],
   ];
   const translatedFormSubItems = [
     { ...formsSubItems[0], title: t("orderForm") },
@@ -212,6 +227,39 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <SidebarGroup>
+          <SidebarGroupLabel>Recherche produits</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(productFinderItem.url)}
+                  tooltip={productFinderItem.title}
+                >
+                  <Link to={productFinderItem.url} onClick={close} className="flex items-center gap-2">
+                    <productFinderItem.icon className="h-4 w-4" />
+                    <span>{productFinderItem.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+                {!collapsed && isActive(productFinderItem.url) && (
+                  <SidebarMenuSub>
+                    {productFinderSubItems.map((sub) => (
+                      <SidebarMenuSubItem key={sub.url}>
+                        <SidebarMenuSubButton asChild isActive={pathname === sub.url}>
+                          <Link to={sub.url} onClick={close} className="flex items-center gap-2">
+                            <sub.icon className="h-3.5 w-3.5" />
+                            <span>{sub.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                )}
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         <SidebarGroup>
           <SidebarGroupLabel>{t("account")}</SidebarGroupLabel>
