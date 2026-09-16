@@ -53,6 +53,7 @@ const mainItems = [
   { title: "Clients", url: "/clients", icon: Users },
   { title: "Équipe", url: "/equipe", icon: UsersRound },
   { title: "Livraisons", url: "/livraisons", icon: Truck },
+  { title: "Veille produits", url: "/veille", icon: Telescope },
 ] as const;
 
 const formsItem = {
