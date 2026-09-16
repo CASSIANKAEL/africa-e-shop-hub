@@ -15,6 +15,7 @@ import {
   Plug,
   Truck,
   UsersRound,
+  Telescope,
 } from "lucide-react";
 
 import {
@@ -94,6 +95,7 @@ export function AppSidebar() {
     { ...mainItems[5], title: t("customers") },
     { ...mainItems[6], title: t("team") },
     { ...mainItems[7], title: t("deliveries") },
+    mainItems[8],
   ];
   const translatedFormSubItems = [
     { ...formsSubItems[0], title: t("orderForm") },
