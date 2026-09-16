@@ -31,9 +31,17 @@ import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offr
 import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
 import { Route as FormulairesSiteRouteImport } from './routes/formulaires.site'
 import { Route as ProductFinderIndexRouteImport } from './routes/product-finder.index'
+import { Route as ProductFinderAgentRouteImport } from './routes/product-finder.agent'
+import { Route as ProductFinderApprovisionnementRouteImport } from './routes/product-finder.approvisionnement'
+import { Route as ProductFinderBalayageRouteImport } from './routes/product-finder.balayage'
+import { Route as ProductFinderCreativesRouteImport } from './routes/product-finder.creatives'
+import { Route as ProductFinderDossiersRouteImport } from './routes/product-finder.dossiers'
 import { Route as ProductFinderEnregistresRouteImport } from './routes/product-finder.enregistres'
 import { Route as ProductFinderGagnantsRouteImport } from './routes/product-finder.gagnants'
+import { Route as ProductFinderMarquesRouteImport } from './routes/product-finder.marques'
 import { Route as ProductFinderPublicitesRouteImport } from './routes/product-finder.publicites'
+import { Route as ProductFinderTendancesRouteImport } from './routes/product-finder.tendances'
+import { Route as ProductFinderTutorielRouteImport } from './routes/product-finder.tutoriel'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsIaRouteImport } from './routes/produits.ia'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
@@ -151,6 +159,32 @@ const ProductFinderIndexRoute = ProductFinderIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProductFinderRoute,
 } as any)
+const ProductFinderAgentRoute = ProductFinderAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderApprovisionnementRoute =
+  ProductFinderApprovisionnementRouteImport.update({
+    id: '/approvisionnement',
+    path: '/approvisionnement',
+    getParentRoute: () => ProductFinderRoute,
+  } as any)
+const ProductFinderBalayageRoute = ProductFinderBalayageRouteImport.update({
+  id: '/balayage',
+  path: '/balayage',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderCreativesRoute = ProductFinderCreativesRouteImport.update({
+  id: '/creatives',
+  path: '/creatives',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderDossiersRoute = ProductFinderDossiersRouteImport.update({
+  id: '/dossiers',
+  path: '/dossiers',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
 const ProductFinderEnregistresRoute =
   ProductFinderEnregistresRouteImport.update({
     id: '/enregistres',
@@ -162,9 +196,24 @@ const ProductFinderGagnantsRoute = ProductFinderGagnantsRouteImport.update({
   path: '/gagnants',
   getParentRoute: () => ProductFinderRoute,
 } as any)
+const ProductFinderMarquesRoute = ProductFinderMarquesRouteImport.update({
+  id: '/marques',
+  path: '/marques',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
 const ProductFinderPublicitesRoute = ProductFinderPublicitesRouteImport.update({
   id: '/publicites',
   path: '/publicites',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderTendancesRoute = ProductFinderTendancesRouteImport.update({
+  id: '/tendances',
+  path: '/tendances',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderTutorielRoute = ProductFinderTutorielRouteImport.update({
+  id: '/tutoriel',
+  path: '/tutoriel',
   getParentRoute: () => ProductFinderRoute,
 } as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
@@ -218,9 +267,17 @@ export interface FileRoutesByFullPath {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/agent': typeof ProductFinderAgentRoute
+  '/product-finder/approvisionnement': typeof ProductFinderApprovisionnementRoute
+  '/product-finder/balayage': typeof ProductFinderBalayageRoute
+  '/product-finder/creatives': typeof ProductFinderCreativesRoute
+  '/product-finder/dossiers': typeof ProductFinderDossiersRoute
   '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
   '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/marques': typeof ProductFinderMarquesRoute
   '/product-finder/publicites': typeof ProductFinderPublicitesRoute
+  '/product-finder/tendances': typeof ProductFinderTendancesRoute
+  '/product-finder/tutoriel': typeof ProductFinderTutorielRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -250,9 +307,17 @@ export interface FileRoutesByTo {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/agent': typeof ProductFinderAgentRoute
+  '/product-finder/approvisionnement': typeof ProductFinderApprovisionnementRoute
+  '/product-finder/balayage': typeof ProductFinderBalayageRoute
+  '/product-finder/creatives': typeof ProductFinderCreativesRoute
+  '/product-finder/dossiers': typeof ProductFinderDossiersRoute
   '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
   '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/marques': typeof ProductFinderMarquesRoute
   '/product-finder/publicites': typeof ProductFinderPublicitesRoute
+  '/product-finder/tendances': typeof ProductFinderTendancesRoute
+  '/product-finder/tutoriel': typeof ProductFinderTutorielRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -284,9 +349,17 @@ export interface FileRoutesById {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/agent': typeof ProductFinderAgentRoute
+  '/product-finder/approvisionnement': typeof ProductFinderApprovisionnementRoute
+  '/product-finder/balayage': typeof ProductFinderBalayageRoute
+  '/product-finder/creatives': typeof ProductFinderCreativesRoute
+  '/product-finder/dossiers': typeof ProductFinderDossiersRoute
   '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
   '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/marques': typeof ProductFinderMarquesRoute
   '/product-finder/publicites': typeof ProductFinderPublicitesRoute
+  '/product-finder/tendances': typeof ProductFinderTendancesRoute
+  '/product-finder/tutoriel': typeof ProductFinderTutorielRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
@@ -319,9 +392,17 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/agent'
+    | '/product-finder/approvisionnement'
+    | '/product-finder/balayage'
+    | '/product-finder/creatives'
+    | '/product-finder/dossiers'
     | '/product-finder/enregistres'
     | '/product-finder/gagnants'
+    | '/product-finder/marques'
     | '/product-finder/publicites'
+    | '/product-finder/tendances'
+    | '/product-finder/tutoriel'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -351,9 +432,17 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/agent'
+    | '/product-finder/approvisionnement'
+    | '/product-finder/balayage'
+    | '/product-finder/creatives'
+    | '/product-finder/dossiers'
     | '/product-finder/enregistres'
     | '/product-finder/gagnants'
+    | '/product-finder/marques'
     | '/product-finder/publicites'
+    | '/product-finder/tendances'
+    | '/product-finder/tutoriel'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -384,9 +473,17 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/agent'
+    | '/product-finder/approvisionnement'
+    | '/product-finder/balayage'
+    | '/product-finder/creatives'
+    | '/product-finder/dossiers'
     | '/product-finder/enregistres'
     | '/product-finder/gagnants'
+    | '/product-finder/marques'
     | '/product-finder/publicites'
+    | '/product-finder/tendances'
+    | '/product-finder/tutoriel'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
@@ -584,6 +681,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductFinderIndexRouteImport
       parentRoute: typeof ProductFinderRoute
     }
+    '/product-finder/agent': {
+      id: '/product-finder/agent'
+      path: '/agent'
+      fullPath: '/product-finder/agent'
+      preLoaderRoute: typeof ProductFinderAgentRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/approvisionnement': {
+      id: '/product-finder/approvisionnement'
+      path: '/approvisionnement'
+      fullPath: '/product-finder/approvisionnement'
+      preLoaderRoute: typeof ProductFinderApprovisionnementRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/balayage': {
+      id: '/product-finder/balayage'
+      path: '/balayage'
+      fullPath: '/product-finder/balayage'
+      preLoaderRoute: typeof ProductFinderBalayageRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/creatives': {
+      id: '/product-finder/creatives'
+      path: '/creatives'
+      fullPath: '/product-finder/creatives'
+      preLoaderRoute: typeof ProductFinderCreativesRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/dossiers': {
+      id: '/product-finder/dossiers'
+      path: '/dossiers'
+      fullPath: '/product-finder/dossiers'
+      preLoaderRoute: typeof ProductFinderDossiersRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
     '/product-finder/enregistres': {
       id: '/product-finder/enregistres'
       path: '/enregistres'
@@ -598,11 +730,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductFinderGagnantsRouteImport
       parentRoute: typeof ProductFinderRoute
     }
+    '/product-finder/marques': {
+      id: '/product-finder/marques'
+      path: '/marques'
+      fullPath: '/product-finder/marques'
+      preLoaderRoute: typeof ProductFinderMarquesRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
     '/product-finder/publicites': {
       id: '/product-finder/publicites'
       path: '/publicites'
       fullPath: '/product-finder/publicites'
       preLoaderRoute: typeof ProductFinderPublicitesRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/tendances': {
+      id: '/product-finder/tendances'
+      path: '/tendances'
+      fullPath: '/product-finder/tendances'
+      preLoaderRoute: typeof ProductFinderTendancesRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/tutoriel': {
+      id: '/product-finder/tutoriel'
+      path: '/tutoriel'
+      fullPath: '/product-finder/tutoriel'
+      preLoaderRoute: typeof ProductFinderTutorielRouteImport
       parentRoute: typeof ProductFinderRoute
     }
     '/produits/': {
@@ -651,16 +804,32 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProductFinderRouteChildren {
+  ProductFinderAgentRoute: typeof ProductFinderAgentRoute
+  ProductFinderApprovisionnementRoute: typeof ProductFinderApprovisionnementRoute
+  ProductFinderBalayageRoute: typeof ProductFinderBalayageRoute
+  ProductFinderCreativesRoute: typeof ProductFinderCreativesRoute
+  ProductFinderDossiersRoute: typeof ProductFinderDossiersRoute
   ProductFinderEnregistresRoute: typeof ProductFinderEnregistresRoute
   ProductFinderGagnantsRoute: typeof ProductFinderGagnantsRoute
+  ProductFinderMarquesRoute: typeof ProductFinderMarquesRoute
   ProductFinderPublicitesRoute: typeof ProductFinderPublicitesRoute
+  ProductFinderTendancesRoute: typeof ProductFinderTendancesRoute
+  ProductFinderTutorielRoute: typeof ProductFinderTutorielRoute
   ProductFinderIndexRoute: typeof ProductFinderIndexRoute
 }
 
 const ProductFinderRouteChildren: ProductFinderRouteChildren = {
+  ProductFinderAgentRoute: ProductFinderAgentRoute,
+  ProductFinderApprovisionnementRoute: ProductFinderApprovisionnementRoute,
+  ProductFinderBalayageRoute: ProductFinderBalayageRoute,
+  ProductFinderCreativesRoute: ProductFinderCreativesRoute,
+  ProductFinderDossiersRoute: ProductFinderDossiersRoute,
   ProductFinderEnregistresRoute: ProductFinderEnregistresRoute,
   ProductFinderGagnantsRoute: ProductFinderGagnantsRoute,
+  ProductFinderMarquesRoute: ProductFinderMarquesRoute,
   ProductFinderPublicitesRoute: ProductFinderPublicitesRoute,
+  ProductFinderTendancesRoute: ProductFinderTendancesRoute,
+  ProductFinderTutorielRoute: ProductFinderTutorielRoute,
   ProductFinderIndexRoute: ProductFinderIndexRoute,
 }
 
