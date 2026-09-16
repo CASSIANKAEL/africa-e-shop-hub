@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Clock3, Flame, Heart, MessageCircle, TrendingUp } from "lucide-react";
 
@@ -8,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/format";
-import { SPY_FAVORITES_KEY, spyAds } from "@/services/spy.mock";
+import { productFinderStore, useProductFinderState } from "@/services/product-finder.store";
+import { spyAds } from "@/services/spy.mock";
 
 export const Route = createFileRoute("/product-finder/gagnants")({
   head: () => ({
@@ -24,30 +24,11 @@ export const Route = createFileRoute("/product-finder/gagnants")({
   component: WinnersPage,
 });
 
-function getSaved(): string[] {
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(SPY_FAVORITES_KEY) ?? "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
 function WinnersPage() {
-  const [saved, setSaved] = useState<string[]>([]);
+  const { favorites: saved } = useProductFinderState();
   const winners = [...spyAds]
     .sort((a, b) => (b.likes + b.comments) / Math.max(b.runningDays, 1) - (a.likes + a.comments) / Math.max(a.runningDays, 1))
     .slice(0, 6);
-
-  useEffect(() => setSaved(getSaved()), []);
-
-  const toggleSaved = (id: string) => {
-    setSaved((previous) => {
-      const next = previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id];
-      window.localStorage.setItem(SPY_FAVORITES_KEY, JSON.stringify(next));
-      return next;
-    });
-  };
 
   return (
     <AppShell>
@@ -69,7 +50,7 @@ function WinnersPage() {
                       <p className="text-xs text-muted-foreground">{ad.country} · {ad.category}</p>
                       <h2 className="mt-1 line-clamp-2 text-sm font-semibold sm:text-base">{ad.headline}</h2>
                     </div>
-                    <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => toggleSaved(ad.id)} aria-label={isSaved ? "Retirer des enregistrements" : "Enregistrer le produit"}>
+                    <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => productFinderStore.toggleFavorite(ad.id)} aria-label={isSaved ? "Retirer des enregistrements" : "Enregistrer le produit"}>
                       {isSaved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
                     </Button>
                   </div>

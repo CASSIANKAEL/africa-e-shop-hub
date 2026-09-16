@@ -43,6 +43,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
   const [platform, setPlatform] = useState<PlatformFilter>("all");
   const [format, setFormat] = useState<FormatFilter>("all");
   const [country, setCountry] = useState("all");
+  const [date, setDate] = useState("all");
   const [duration, setDuration] = useState<DurationFilter>("all");
   const { favorites } = useProductFinderState();
 
@@ -53,6 +54,9 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
       if (platform !== "all" && ad.platform !== platform) return false;
       if (format !== "all" && ad.format !== format) return false;
       if (country !== "all" && ad.countryCode !== country) return false;
+      if (date === "7" && ad.runningDays > 7) return false;
+      if (date === "30" && ad.runningDays > 30) return false;
+      if (date === "90" && ad.runningDays > 90) return false;
       if (duration === "week" && ad.runningDays > 7) return false;
       if (duration === "month" && (ad.runningDays <= 7 || ad.runningDays > 30)) return false;
       if (duration === "long" && ad.runningDays <= 30) return false;
@@ -61,7 +65,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
         .toLowerCase()
         .includes(normalizedQuery);
     });
-  }, [country, duration, favorites, format, platform, query, savedOnly]);
+  }, [country, date, duration, favorites, format, platform, query, savedOnly]);
 
   return (
     <div className="space-y-4">
@@ -110,6 +114,17 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
                 {spyCountries.map((item) => (
                   <SelectItem key={item.code} value={item.code}>{item.name}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={date} onValueChange={setDate}>
+              <SelectTrigger className="h-9 w-[145px]" aria-label="Date">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toute date</SelectItem>
+                <SelectItem value="7">7 derniers jours</SelectItem>
+                <SelectItem value="30">30 derniers jours</SelectItem>
+                <SelectItem value="90">90 derniers jours</SelectItem>
               </SelectContent>
             </Select>
             <Select value={duration} onValueChange={(value) => setDuration(value as DurationFilter)}>
