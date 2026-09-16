@@ -17,6 +17,7 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as EquipeRouteImport } from './routes/equipe'
 import { Route as LivraisonsRouteImport } from './routes/livraisons'
 import { Route as ParametresRouteImport } from './routes/parametres'
+import { Route as ProductFinderRouteImport } from './routes/product-finder'
 import { Route as TableauDeBordRouteImport } from './routes/tableau-de-bord'
 import { Route as VeilleRouteImport } from './routes/veille'
 import { Route as VueEnsembleRouteImport } from './routes/vue-ensemble'
@@ -29,6 +30,10 @@ import { Route as FormulairesIntegrationsRouteImport } from './routes/formulaire
 import { Route as FormulairesOffresRouteImport } from './routes/formulaires.offres'
 import { Route as FormulairesPixelsRouteImport } from './routes/formulaires.pixels'
 import { Route as FormulairesSiteRouteImport } from './routes/formulaires.site'
+import { Route as ProductFinderIndexRouteImport } from './routes/product-finder.index'
+import { Route as ProductFinderEnregistresRouteImport } from './routes/product-finder.enregistres'
+import { Route as ProductFinderGagnantsRouteImport } from './routes/product-finder.gagnants'
+import { Route as ProductFinderPublicitesRouteImport } from './routes/product-finder.publicites'
 import { Route as ProduitsIndexRouteImport } from './routes/produits.index'
 import { Route as ProduitsIaRouteImport } from './routes/produits.ia'
 import { Route as ProduitsImportRouteImport } from './routes/produits.import'
@@ -74,6 +79,11 @@ const LivraisonsRoute = LivraisonsRouteImport.update({
 const ParametresRoute = ParametresRouteImport.update({
   id: '/parametres',
   path: '/parametres',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductFinderRoute = ProductFinderRouteImport.update({
+  id: '/product-finder',
+  path: '/product-finder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TableauDeBordRoute = TableauDeBordRouteImport.update({
@@ -136,6 +146,27 @@ const FormulairesSiteRoute = FormulairesSiteRouteImport.update({
   path: '/formulaires/site',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductFinderIndexRoute = ProductFinderIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderEnregistresRoute =
+  ProductFinderEnregistresRouteImport.update({
+    id: '/enregistres',
+    path: '/enregistres',
+    getParentRoute: () => ProductFinderRoute,
+  } as any)
+const ProductFinderGagnantsRoute = ProductFinderGagnantsRouteImport.update({
+  id: '/gagnants',
+  path: '/gagnants',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
+const ProductFinderPublicitesRoute = ProductFinderPublicitesRouteImport.update({
+  id: '/publicites',
+  path: '/publicites',
+  getParentRoute: () => ProductFinderRoute,
+} as any)
 const ProduitsIndexRoute = ProduitsIndexRouteImport.update({
   id: '/produits/',
   path: '/produits/',
@@ -176,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/equipe': typeof EquipeRoute
   '/livraisons': typeof LivraisonsRoute
   '/parametres': typeof ParametresRoute
+  '/product-finder': typeof ProductFinderRouteWithChildren
   '/tableau-de-bord': typeof TableauDeBordRoute
   '/veille': typeof VeilleRoute
   '/vue-ensemble': typeof VueEnsembleRoute
@@ -186,11 +218,15 @@ export interface FileRoutesByFullPath {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
+  '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/publicites': typeof ProductFinderPublicitesRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
   '/formulaires/': typeof FormulairesIndexRoute
+  '/product-finder/': typeof ProductFinderIndexRoute
   '/produits/': typeof ProduitsIndexRoute
   '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
   '/vitrine/$storeId/': typeof VitrineStoreIdIndexRoute
@@ -214,11 +250,15 @@ export interface FileRoutesByTo {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
+  '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/publicites': typeof ProductFinderPublicitesRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes': typeof CommandesIndexRoute
   '/formulaires': typeof FormulairesIndexRoute
+  '/product-finder': typeof ProductFinderIndexRoute
   '/produits': typeof ProduitsIndexRoute
   '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
   '/vitrine/$storeId': typeof VitrineStoreIdIndexRoute
@@ -233,6 +273,7 @@ export interface FileRoutesById {
   '/equipe': typeof EquipeRoute
   '/livraisons': typeof LivraisonsRoute
   '/parametres': typeof ParametresRoute
+  '/product-finder': typeof ProductFinderRouteWithChildren
   '/tableau-de-bord': typeof TableauDeBordRoute
   '/veille': typeof VeilleRoute
   '/vue-ensemble': typeof VueEnsembleRoute
@@ -243,11 +284,15 @@ export interface FileRoutesById {
   '/formulaires/offres': typeof FormulairesOffresRoute
   '/formulaires/pixels': typeof FormulairesPixelsRoute
   '/formulaires/site': typeof FormulairesSiteRoute
+  '/product-finder/enregistres': typeof ProductFinderEnregistresRoute
+  '/product-finder/gagnants': typeof ProductFinderGagnantsRoute
+  '/product-finder/publicites': typeof ProductFinderPublicitesRoute
   '/produits/ia': typeof ProduitsIaRoute
   '/produits/import': typeof ProduitsImportRoute
   '/produits/nouveau': typeof ProduitsNouveauRoute
   '/commandes/': typeof CommandesIndexRoute
   '/formulaires/': typeof FormulairesIndexRoute
+  '/product-finder/': typeof ProductFinderIndexRoute
   '/produits/': typeof ProduitsIndexRoute
   '/vitrine/$storeId/$productId': typeof VitrineStoreIdProductIdRoute
   '/vitrine/$storeId/': typeof VitrineStoreIdIndexRoute
@@ -263,6 +308,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/livraisons'
     | '/parametres'
+    | '/product-finder'
     | '/tableau-de-bord'
     | '/veille'
     | '/vue-ensemble'
@@ -273,11 +319,15 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/enregistres'
+    | '/product-finder/gagnants'
+    | '/product-finder/publicites'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
     | '/formulaires/'
+    | '/product-finder/'
     | '/produits/'
     | '/vitrine/$storeId/$productId'
     | '/vitrine/$storeId/'
@@ -301,11 +351,15 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/enregistres'
+    | '/product-finder/gagnants'
+    | '/product-finder/publicites'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes'
     | '/formulaires'
+    | '/product-finder'
     | '/produits'
     | '/vitrine/$storeId/$productId'
     | '/vitrine/$storeId'
@@ -319,6 +373,7 @@ export interface FileRouteTypes {
     | '/equipe'
     | '/livraisons'
     | '/parametres'
+    | '/product-finder'
     | '/tableau-de-bord'
     | '/veille'
     | '/vue-ensemble'
@@ -329,11 +384,15 @@ export interface FileRouteTypes {
     | '/formulaires/offres'
     | '/formulaires/pixels'
     | '/formulaires/site'
+    | '/product-finder/enregistres'
+    | '/product-finder/gagnants'
+    | '/product-finder/publicites'
     | '/produits/ia'
     | '/produits/import'
     | '/produits/nouveau'
     | '/commandes/'
     | '/formulaires/'
+    | '/product-finder/'
     | '/produits/'
     | '/vitrine/$storeId/$productId'
     | '/vitrine/$storeId/'
@@ -348,6 +407,7 @@ export interface RootRouteChildren {
   EquipeRoute: typeof EquipeRoute
   LivraisonsRoute: typeof LivraisonsRoute
   ParametresRoute: typeof ParametresRoute
+  ProductFinderRoute: typeof ProductFinderRouteWithChildren
   TableauDeBordRoute: typeof TableauDeBordRoute
   VeilleRoute: typeof VeilleRoute
   VueEnsembleRoute: typeof VueEnsembleRoute
@@ -424,6 +484,13 @@ declare module '@tanstack/react-router' {
       path: '/parametres'
       fullPath: '/parametres'
       preLoaderRoute: typeof ParametresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product-finder': {
+      id: '/product-finder'
+      path: '/product-finder'
+      fullPath: '/product-finder'
+      preLoaderRoute: typeof ProductFinderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tableau-de-bord': {
@@ -510,6 +577,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormulairesSiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/product-finder/': {
+      id: '/product-finder/'
+      path: '/'
+      fullPath: '/product-finder/'
+      preLoaderRoute: typeof ProductFinderIndexRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/enregistres': {
+      id: '/product-finder/enregistres'
+      path: '/enregistres'
+      fullPath: '/product-finder/enregistres'
+      preLoaderRoute: typeof ProductFinderEnregistresRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/gagnants': {
+      id: '/product-finder/gagnants'
+      path: '/gagnants'
+      fullPath: '/product-finder/gagnants'
+      preLoaderRoute: typeof ProductFinderGagnantsRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
+    '/product-finder/publicites': {
+      id: '/product-finder/publicites'
+      path: '/publicites'
+      fullPath: '/product-finder/publicites'
+      preLoaderRoute: typeof ProductFinderPublicitesRouteImport
+      parentRoute: typeof ProductFinderRoute
+    }
     '/produits/': {
       id: '/produits/'
       path: '/produits'
@@ -555,6 +650,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ProductFinderRouteChildren {
+  ProductFinderEnregistresRoute: typeof ProductFinderEnregistresRoute
+  ProductFinderGagnantsRoute: typeof ProductFinderGagnantsRoute
+  ProductFinderPublicitesRoute: typeof ProductFinderPublicitesRoute
+  ProductFinderIndexRoute: typeof ProductFinderIndexRoute
+}
+
+const ProductFinderRouteChildren: ProductFinderRouteChildren = {
+  ProductFinderEnregistresRoute: ProductFinderEnregistresRoute,
+  ProductFinderGagnantsRoute: ProductFinderGagnantsRoute,
+  ProductFinderPublicitesRoute: ProductFinderPublicitesRoute,
+  ProductFinderIndexRoute: ProductFinderIndexRoute,
+}
+
+const ProductFinderRouteWithChildren = ProductFinderRoute._addFileChildren(
+  ProductFinderRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AbonnementRoute: AbonnementRoute,
@@ -564,6 +677,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipeRoute: EquipeRoute,
   LivraisonsRoute: LivraisonsRoute,
   ParametresRoute: ParametresRoute,
+  ProductFinderRoute: ProductFinderRouteWithChildren,
   TableauDeBordRoute: TableauDeBordRoute,
   VeilleRoute: VeilleRoute,
   VueEnsembleRoute: VueEnsembleRoute,

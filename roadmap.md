@@ -23,3 +23,4 @@
 - [x] Offres de quantité multiples par produits choisis (remise fixe/pourcentage, étiquette, image, présélection, duplication, aperçu direct)
 - [x] Landing page de présentation à l'accueil (/) ; tableau de bord déplacé sur /tableau-de-bord
 - [x] Veille produits (/veille) : explorateur de publicités avec recherche, filtres (plateforme, format, pays, ancienneté), cartes d’annonces et enregistrement en favoris
+- [x] Product Finder indépendant : Découvrir, Explorateur de publicités, Produits gagnants et Enregistrés avec sous-menu contextuel
