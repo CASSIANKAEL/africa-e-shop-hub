@@ -20,6 +20,13 @@ import {
   Megaphone,
   TrendingUp,
   BookmarkCheck,
+  Bot,
+  FileStack,
+  FolderKanban,
+  PackageSearch,
+  Radar,
+  Shapes,
+  CircleHelp,
 } from "lucide-react";
 
 import {
@@ -69,8 +76,16 @@ const productFinderItem = {
 const productFinderSubItems = [
   { title: "Découvrir", url: "/product-finder", icon: Compass },
   { title: "Explorateur de publicités", url: "/product-finder/publicites", icon: Megaphone },
+  { title: "Suivi de marque", url: "/product-finder/marques", icon: Radar },
+  { title: "Fichier de balayage", url: "/product-finder/balayage", icon: FileStack },
+  { title: "Tendances principales", url: "/product-finder/tendances", icon: TrendingUp },
+  { title: "Agent gagnant IA", url: "/product-finder/agent", icon: Bot },
+  { title: "Creative Finder", url: "/product-finder/creatives", icon: Shapes },
+  { title: "Approvisionnement rapide", url: "/product-finder/approvisionnement", icon: PackageSearch },
+  { title: "Mes dossiers", url: "/product-finder/dossiers", icon: FolderKanban },
   { title: "Produits gagnants", url: "/product-finder/gagnants", icon: TrendingUp },
   { title: "Enregistrés", url: "/product-finder/enregistres", icon: BookmarkCheck },
+  { title: "Tutoriel", url: "/product-finder/tutoriel", icon: CircleHelp },
 ] as const;
 
 const formsItem = {

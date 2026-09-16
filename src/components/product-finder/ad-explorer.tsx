@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bookmark,
   BookmarkCheck,
@@ -25,7 +25,6 @@ import {
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
-  SPY_FAVORITES_KEY,
   spyAds,
   spyCountries,
   spyPlatforms,
@@ -33,38 +32,20 @@ import {
   type SpyFormat,
   type SpyPlatform,
 } from "@/services/spy.mock";
+import { productFinderStore, useProductFinderState } from "@/services/product-finder.store";
 
 type PlatformFilter = SpyPlatform | "all";
 type FormatFilter = SpyFormat | "all";
 type DurationFilter = "all" | "week" | "month" | "long";
-
-function loadFavorites(): string[] {
-  try {
-    const raw = window.localStorage.getItem(SPY_FAVORITES_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : [];
-  } catch {
-    return [];
-  }
-}
 
 export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
   const [query, setQuery] = useState("");
   const [platform, setPlatform] = useState<PlatformFilter>("all");
   const [format, setFormat] = useState<FormatFilter>("all");
   const [country, setCountry] = useState("all");
+  const [date, setDate] = useState("all");
   const [duration, setDuration] = useState<DurationFilter>("all");
-  const [favorites, setFavorites] = useState<string[]>([]);
-
-  useEffect(() => setFavorites(loadFavorites()), []);
-
-  const toggleFavorite = (id: string) => {
-    setFavorites((previous) => {
-      const next = previous.includes(id) ? previous.filter((favorite) => favorite !== id) : [...previous, id];
-      window.localStorage.setItem(SPY_FAVORITES_KEY, JSON.stringify(next));
-      return next;
-    });
-  };
+  const { favorites } = useProductFinderState();
 
   const results = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -73,6 +54,9 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
       if (platform !== "all" && ad.platform !== platform) return false;
       if (format !== "all" && ad.format !== format) return false;
       if (country !== "all" && ad.countryCode !== country) return false;
+      if (date === "7" && ad.runningDays > 7) return false;
+      if (date === "30" && ad.runningDays > 30) return false;
+      if (date === "90" && ad.runningDays > 90) return false;
       if (duration === "week" && ad.runningDays > 7) return false;
       if (duration === "month" && (ad.runningDays <= 7 || ad.runningDays > 30)) return false;
       if (duration === "long" && ad.runningDays <= 30) return false;
@@ -81,7 +65,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
         .toLowerCase()
         .includes(normalizedQuery);
     });
-  }, [country, duration, favorites, format, platform, query, savedOnly]);
+  }, [country, date, duration, favorites, format, platform, query, savedOnly]);
 
   return (
     <div className="space-y-4">
@@ -132,6 +116,17 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
                 ))}
               </SelectContent>
             </Select>
+            <Select value={date} onValueChange={setDate}>
+              <SelectTrigger className="h-9 w-[145px]" aria-label="Date">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toute date</SelectItem>
+                <SelectItem value="7">7 derniers jours</SelectItem>
+                <SelectItem value="30">30 derniers jours</SelectItem>
+                <SelectItem value="90">90 derniers jours</SelectItem>
+              </SelectContent>
+            </Select>
             <Select value={duration} onValueChange={(value) => setDuration(value as DurationFilter)}>
               <SelectTrigger className="h-9 w-[170px]" aria-label="Ancienneté">
                 <SelectValue />
@@ -164,7 +159,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
               key={ad.id}
               ad={ad}
               saved={favorites.includes(ad.id)}
-              onToggleSave={() => toggleFavorite(ad.id)}
+              onToggleSave={() => productFinderStore.toggleFavorite(ad.id)}
             />
           ))}
         </div>

@@ -24,3 +24,4 @@
 - [x] Landing page de présentation à l'accueil (/) ; tableau de bord déplacé sur /tableau-de-bord
 - [x] Veille produits (/veille) : explorateur de publicités avec recherche, filtres (plateforme, format, pays, ancienneté), cartes d’annonces et enregistrement en favoris
 - [x] Product Finder indépendant : Découvrir, Explorateur de publicités, Produits gagnants et Enregistrés avec sous-menu contextuel
+- [x] Product Finder complet : suivi de marque, fichier de balayage, tendances, Agent gagnant IA, Creative Finder, approvisionnement, dossiers, tutoriel et filtres avancés

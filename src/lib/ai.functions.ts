@@ -18,6 +18,11 @@ const GenerateInput = z.object({
 
 });
 
+const AnalyzeWinningInput = z.object({
+  product: z.string().min(3).max(1000),
+  market: z.string().min(2).max(100),
+});
+
 export type GeneratedProduct = z.infer<typeof ProductIdea>;
 
 /** Lit un flux SSE et concatène les deltas de texte. */
@@ -98,4 +103,56 @@ export const generateProductsWithAi = createServerFn({ method: "POST" })
     } catch {
       return [];
     }
+  });
+
+async function readResponsesSse(res: Response): Promise<string> {
+  const reader = res.body?.getReader();
+  if (!reader) return "";
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data:")) continue;
+      const data = line.slice(5).trim();
+      if (!data || data === "[DONE]") continue;
+      try {
+        const event = JSON.parse(data) as { type?: string; delta?: string; response?: { output_text?: string } };
+        if (event.type === "response.output_text.delta") text += event.delta ?? "";
+        if (event.type === "response.completed" && !text) text = event.response?.output_text ?? "";
+      } catch {
+        // ignore malformed event fragments
+      }
+    }
+  }
+  return text;
+}
+
+export const analyzeWinningProduct = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => AnalyzeWinningInput.parse(input))
+  .handler(async ({ data }): Promise<string> => {
+    const key = process.env["LOVABLE_API_KEY"];
+    if (!key) throw new Error("L’analyse IA n’est pas configurée.");
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch" },
+      body: JSON.stringify({
+        model: "openai/gpt-6-astra",
+        stream: true,
+        reasoning: { effort: "low", summary: "auto" },
+        include: ["reasoning.encrypted_content"],
+        input: `Analyse cette idée de produit e-commerce pour le marché ${data.market} : « ${data.product} ». Réponds en français, sans inventer de statistiques. Donne exactement quatre sections courtes : Potentiel, Angle de vente, Risques, Test recommandé. Privilégie le paiement à la livraison et les réalités du commerce africain.`,
+      }),
+    });
+    if (!res.ok || !res.body) {
+      const message = await res.text();
+      throw new Error(message.slice(0, 240) || "Analyse indisponible.");
+    }
+    const text = await readResponsesSse(res);
+    return text || "L’analyse n’a pas produit de résultat. Réessayez avec une description plus précise.";
   });
