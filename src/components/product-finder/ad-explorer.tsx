@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bookmark,
   BookmarkCheck,
@@ -25,7 +25,6 @@ import {
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
-  SPY_FAVORITES_KEY,
   spyAds,
   spyCountries,
   spyPlatforms,
@@ -33,20 +32,11 @@ import {
   type SpyFormat,
   type SpyPlatform,
 } from "@/services/spy.mock";
+import { productFinderStore, useProductFinderState } from "@/services/product-finder.store";
 
 type PlatformFilter = SpyPlatform | "all";
 type FormatFilter = SpyFormat | "all";
 type DurationFilter = "all" | "week" | "month" | "long";
-
-function loadFavorites(): string[] {
-  try {
-    const raw = window.localStorage.getItem(SPY_FAVORITES_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : [];
-  } catch {
-    return [];
-  }
-}
 
 export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
   const [query, setQuery] = useState("");
@@ -54,17 +44,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
   const [format, setFormat] = useState<FormatFilter>("all");
   const [country, setCountry] = useState("all");
   const [duration, setDuration] = useState<DurationFilter>("all");
-  const [favorites, setFavorites] = useState<string[]>([]);
-
-  useEffect(() => setFavorites(loadFavorites()), []);
-
-  const toggleFavorite = (id: string) => {
-    setFavorites((previous) => {
-      const next = previous.includes(id) ? previous.filter((favorite) => favorite !== id) : [...previous, id];
-      window.localStorage.setItem(SPY_FAVORITES_KEY, JSON.stringify(next));
-      return next;
-    });
-  };
+  const { favorites } = useProductFinderState();
 
   const results = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -164,7 +144,7 @@ export function AdExplorer({ savedOnly = false }: { savedOnly?: boolean }) {
               key={ad.id}
               ad={ad}
               saved={favorites.includes(ad.id)}
-              onToggleSave={() => toggleFavorite(ad.id)}
+              onToggleSave={() => productFinderStore.toggleFavorite(ad.id)}
             />
           ))}
         </div>

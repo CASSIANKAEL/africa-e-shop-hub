@@ -3,8 +3,10 @@ import type { Currency } from "@/types";
 
 const zeroDecimalCurrencies = new Set<Currency>(["XOF", "XAF", "GNF", "RWF", "UGX"]);
 
+const ssrSafeLocale = () => typeof window === "undefined" ? "fr-FR" : getActiveLocale();
+
 export function formatMoney(value: number, currency: Currency = "XOF"): string {
-  return new Intl.NumberFormat(getActiveLocale(), {
+  return new Intl.NumberFormat(ssrSafeLocale(), {
     style: "currency",
     currency,
     maximumFractionDigits: zeroDecimalCurrencies.has(currency) ? 0 : 2,
@@ -12,21 +14,21 @@ export function formatMoney(value: number, currency: Currency = "XOF"): string {
 }
 
 export function formatCompactMoney(value: number, currency: Currency = "XOF"): string {
-  return new Intl.NumberFormat(getActiveLocale(), {
+  return new Intl.NumberFormat(ssrSafeLocale(), {
     style: "currency", currency, notation: "compact", maximumFractionDigits: 1,
   }).format(value);
 }
 
 export function formatNumber(value: number): string {
-  return new Intl.NumberFormat(getActiveLocale()).format(value);
+  return new Intl.NumberFormat("fr-FR").format(value);
 }
 
 export function formatPercent(value: number): string {
-  return new Intl.NumberFormat(getActiveLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(value) + " %";
+  return new Intl.NumberFormat(ssrSafeLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(value) + " %";
 }
 
 export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat(getActiveLocale(), {
+  return new Intl.DateTimeFormat(ssrSafeLocale(), {
     timeZone: "UTC", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
   }).format(new Date(iso));
 }
